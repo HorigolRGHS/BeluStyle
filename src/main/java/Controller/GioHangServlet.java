@@ -1,5 +1,6 @@
 package controller;
 
+import dao.ProductDAOImpl;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,10 +46,10 @@ public class GioHangServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException {
         String command = request.getParameter("command");
-        String ma_san_pham = request.getParameter("ma_san_pham");
+        String productId = request.getParameter("productId");
         if (command.equals("addCart")) {
-            Product p = new Product(Integer.parseInt(ma_san_pham), 0, "", "",
-                    0.0, "", "");
+            Product p = ProductDAOImpl.getProductbyId(Integer.parseInt(productId));
+
             addToCart(p);
             // sau khi them vao gio hang ta se chuyen toi trang gio hang
             // can tao session de luu tru gia tri
@@ -60,8 +61,7 @@ public class GioHangServlet extends HttpServlet {
             response.sendRedirect("cart.jsp");
         } else {
             if (command.equals("deleteCart")) {
-                Product p = new Product(Integer.parseInt(ma_san_pham), 0, "", "",
-                        0.0, "", "");
+                Product p = ProductDAOImpl.getProductbyId(Integer.parseInt(productId));
                 deleteFromCart(p);
                 HttpSession session = request.getSession();
 
@@ -71,8 +71,7 @@ public class GioHangServlet extends HttpServlet {
                 response.sendRedirect("cart.jsp");
             } else {
                 if (command.equals("removeCart")) {
-                    Product p = new Product(Integer.parseInt(ma_san_pham), 0, "", "",
-                            0.0, "", "");
+                    Product p = ProductDAOImpl.getProductbyId(Integer.parseInt(productId));
                     removeFromCart(p);
                     HttpSession session = request.getSession();
 
@@ -81,8 +80,7 @@ public class GioHangServlet extends HttpServlet {
                     response.sendRedirect("cart.jsp");
                 } else {
                     if (command.equals("setCart")) {
-                        Product p = new Product(Integer.parseInt(ma_san_pham), 0, "", "",
-                                0.0, "", "");
+                        Product p = ProductDAOImpl.getProductbyId(Integer.parseInt(productId));
                         setCart(p, Integer.parseInt((String) request.getParameter("soluong")));
                         HttpSession session = request.getSession();
 
@@ -96,7 +94,7 @@ public class GioHangServlet extends HttpServlet {
 
     private String removeFromCart(Product p) {
         for (Cart item : cart) {
-            if (item.getP().getMa_san_pham() == p.getMa_san_pham()) {
+            if (item.getP().getProductID() == p.getProductID()) {
                 cart.remove(item);
                 return "cart";
             }
@@ -106,7 +104,7 @@ public class GioHangServlet extends HttpServlet {
 
     private String setCart(Product p, int s) {
         for (Cart item : cart) {
-            if (item.getP().getMa_san_pham() == p.getMa_san_pham()) {
+            if (item.getP().getProductID() == p.getProductID()) {
                 item.setQuantity(s);
                 return "cart";
             }
@@ -118,25 +116,35 @@ public class GioHangServlet extends HttpServlet {
         return "cart";
     }
 
-    // phuongw thuc them san pham moi vao trong gio hang
+// Phương thức thêm sản phẩm mới vào trong giỏ hàng
     public String addToCart(Product p) {
         for (Cart item : cart) {
-            if (item.getP().getMa_san_pham() == p.getMa_san_pham()) {
-                item.setQuantity(item.getQuantity() + 1);
+            if (item.getP().getProductID() == p.getProductID()) {
+                if (item.getQuantity() < p.getQuantity()) {
+                    item.setQuantity(item.getQuantity() + 1);
+                } else {
+                    // You can add a message here to notify that the product quantity is not sufficient
+                    System.out.println("The quantity in the cart cannot exceed the available product quantity.");
+                }
                 return "cart";
             }
         }
-        Cart c = new Cart();
-        c.setP(p);
-        c.setQuantity(1);
-        cart.add(c);
+        if (p.getQuantity() > 0) {
+            Cart c = new Cart();
+            c.setP(p);
+            c.setQuantity(1);
+            cart.add(c);
+        } else {
+            // You can add a message here to notify that the product is out of stock
+            System.out.println("The product is out of stock.");
+        }
         return "cart";
     }
 
     // phuongw thuc giam bot 1 san pham khoi trong gio hang
     public String deleteFromCart(Product p) {
         for (Cart item : cart) {
-            if (item.getP().getMa_san_pham() == p.getMa_san_pham() && item.getQuantity() > 1) {
+            if (item.getP().getProductID() == p.getProductID() && item.getQuantity() > 1) {
                 item.setQuantity(item.getQuantity() - 1);
                 return "cart";
             }

@@ -1,85 +1,91 @@
 package model;
 
 public class Product {
+    private int productID;
+    private int categoryID;
+    private int brandID;
+    private String name;
+    private int quantity;
+    private String image;
+    private double price;
+    private String description;
 
-	private int ma_san_pham;
-	private int ma_the_loai;
-	private String ten_san_pham;
-	private String hinh_anh;
-	private Double gia_ban;
-	private String hang_san_xuat;
-	private String thong_tin;
+    public Product() {}
 
-	public Product() {
-	}
+    public Product(int productID, int categoryID, int brandID, String name, int quantity, String image, double price, String description) {
+        this.productID = productID;
+        this.categoryID = categoryID;
+        this.brandID = brandID;
+        this.name = name;
+        this.quantity = quantity;
+        this.image = image;
+        this.price = price;
+        this.description = description;
+    }
 
-	public Product(int ma_san_pham, int ma_the_loai, String ten_san_pham,
-			String hinh_anh, Double gia_ban, String hang_san_xuat,
-			String thong_tin) {
-		this.ma_san_pham = ma_san_pham;
-		this.ma_the_loai = ma_the_loai;
-		this.ten_san_pham = ten_san_pham;
-		this.hinh_anh = hinh_anh;
-		this.gia_ban = gia_ban;
-		this.hang_san_xuat = hang_san_xuat;
-		this.thong_tin = thong_tin;
-	}
+    public int getProductID() {
+        return productID;
+    }
 
-	public int getMa_san_pham() {
-		return ma_san_pham;
-	}
+    public void setProductID(int productID) {
+        this.productID = productID;
+    }
 
-	public void setMa_san_pham(int ma_san_pham) {
-		this.ma_san_pham = ma_san_pham;
-	}
+    public int getCategoryID() {
+        return categoryID;
+    }
 
-	public String getTen_san_pham() {
-		return ten_san_pham;
-	}
+    public void setCategoryID(int categoryID) {
+        this.categoryID = categoryID;
+    }
 
-	public void setTen_san_pham(String ten_san_pham) {
-		this.ten_san_pham = ten_san_pham;
-	}
+    public int getBrandID() {
+        return brandID;
+    }
 
-	public String getHinh_anh() {
-		return hinh_anh;
-	}
+    public void setBrandID(int brandID) {
+        this.brandID = brandID;
+    }
 
-	public void setHinh_anh(String hinh_anh) {
-		this.hinh_anh = hinh_anh;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public Double getGia_ban() {
-		return gia_ban;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setGia_ban(Double gia_ban) {
-		this.gia_ban = gia_ban;
-	}
+    public int getQuantity() {
+        return quantity;
+    }
 
-	public String getHang_san_xuat() {
-		return hang_san_xuat;
-	}
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
 
-	public void setHang_san_xuat(String hang_san_xuat) {
-		this.hang_san_xuat = hang_san_xuat;
-	}
+    public String getImage() {
+        return image;
+    }
 
-	public String getThong_tin() {
-		return thong_tin;
-	}
+    public void setImage(String image) {
+        this.image = image;
+    }
 
-	public void getThong_tin(String thong_tin) {
-		this.thong_tin = thong_tin;
-	}
+    public double getPrice() {
+        return price;
+    }
 
+    public void setPrice(double price) {
+        this.price = price;
+    }
 
-	public int getMa_the_loai() {
-		return ma_the_loai;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public void setMa_the_loai(int ma_the_loai) {
-		this.ma_the_loai = ma_the_loai;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
+    
 }

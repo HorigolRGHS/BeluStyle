@@ -2,14 +2,14 @@ package dao;
 
 import java.util.List;
 
-import model.History;
+import model.Order;
 
 public interface HistoryDAO {
 	
 	//thêm mới một lịch sử mua hàng.
-	public void addHistory(History h);
+	public void addHistory(Order h);
 	
 	//lọc lịch sử của khách hàng.
-	public List<History> getList(int user_id);
+	public List<Order> getList(int user_id);
 
 }

@@ -1,42 +1,29 @@
 package model;
 
 public class Category {
+    private int categoryID;
+    private String name;
 
-	private int ma_the_loai;
-	private String ten_the_loai;
-	private String mo_ta;
+    public Category() {}
 
-	public Category() {
-	}
+    public Category(int categoryID, String name) {
+        this.categoryID = categoryID;
+        this.name = name;
+    }
 
-	public Category(int ma_the_loai, String ten_the_loai, String mo_ta) {
-		this.ma_the_loai = ma_the_loai;
-		this.ten_the_loai = ten_the_loai;
-		this.mo_ta = mo_ta;
-	}
+    public int getCategoryID() {
+        return categoryID;
+    }
 
-	public int getMa_the_loai() {
-		return ma_the_loai;
-	}
+    public void setCategoryID(int categoryID) {
+        this.categoryID = categoryID;
+    }
 
-	public void setMa_the_loai(int ma_the_loai) {
-		this.ma_the_loai = ma_the_loai;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public String getTen_the_loai() {
-		return ten_the_loai;
-	}
-
-	public void setTen_the_loai(String ten_the_loai) {
-		this.ten_the_loai = ten_the_loai;
-	}
-
-	public String getMo_ta() {
-		return mo_ta;
-	}
-
-	public void setMo_ta(String mo_ta) {
-		this.mo_ta = mo_ta;
-	}
-
+    public void setName(String name) {
+        this.name = name;
+    }
 }

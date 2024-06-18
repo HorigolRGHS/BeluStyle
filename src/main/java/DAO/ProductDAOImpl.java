@@ -6,23 +6,23 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import Ultil.DBConnect;
+import Util.DBConnect;
 import model.Product;
 
-public class ProductDAOImpl implements ProductDAO {
+public class ProductDAOImpl {
 
-    @Override
     public void addProduct(Product p) {
-        Connection con = DBConnect.getConnecttion();
-        String sql = "INSERT INTO product VALUES (?, ?, ?, ?, ?, ?)";
+        Connection con = DBConnect.getConnection();
+        String sql = "INSERT INTO Product (CategoryID, BrandID, [Name], [Image], Price, [Description]) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try {
             PreparedStatement ps = con.prepareStatement(sql);
-            ps.setInt(1, p.getMa_san_pham());
-            ps.setString(2, p.getTen_san_pham());
-            ps.setString(3, p.getHinh_anh());
-            ps.setDouble(4, p.getGia_ban());
-            ps.setString(5, p.getHang_san_xuat());
-            ps.setString(6, p.getThong_tin());
+            ps.setInt(1, p.getCategoryID());
+            ps.setInt(2, p.getBrandID());
+            ps.setString(3, p.getName());
+            ps.setInt(4, p.getQuantity());
+            ps.setString(5, p.getImage());
+            ps.setDouble(6, p.getPrice());
+            ps.setString(7, p.getDescription());
             ps.executeUpdate();
             con.close();
         } catch (SQLException e) {
@@ -30,49 +30,70 @@ public class ProductDAOImpl implements ProductDAO {
         }
     }
 
-    @Override
+    public void subtractQuantity(Product p, int quantityToSubtract) {
+        Connection con = DBConnect.getConnection();
+        String sql = "UPDATE Product SET Quantity = ? WHERE ProductID = ?";
+
+        try {
+            int newQuantity = p.getQuantity() - quantityToSubtract;
+            if (newQuantity < 0) {
+                newQuantity = 0;  // Ensure quantity doesn't go below zero
+            }
+
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1, newQuantity);
+            ps.setInt(2, p.getProductID());
+            ps.executeUpdate();
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     public List<Product> getList() {
-        Connection con = DBConnect.getConnecttion();
+        Connection con = DBConnect.getConnection();
         String sql = "SELECT * FROM product";
         List<Product> list = new ArrayList<>();
         try {
             PreparedStatement ps = con.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                int ma_san_pham = rs.getInt("ma_san_pham");
-                int ma_the_loai = rs.getInt("ma_the_loai");
-                String ten_san_pham = rs.getString("ten_san_pham");
-                String hinh_anh = rs.getString("hinh_anh");
-                Double gia_ban = rs.getDouble("gia_ban");
-                String hang_san_xuat = rs.getString("hang_san_xuat");
-                String thong_tin = rs.getString("thong_tin");
-                list.add(new Product(ma_san_pham, ma_the_loai, ten_san_pham, hinh_anh, gia_ban, hang_san_xuat, thong_tin));
+                int productID = rs.getInt("ProductID");
+                int categoryID = rs.getInt("CategoryID");
+                int brandID = rs.getInt("BrandID");
+                String name = rs.getString("Name");
+                int quantity = rs.getInt("Quantity");
+                String image = rs.getString("Image");
+                double price = rs.getDouble("Price");
+                String description = rs.getString("Description");
+                list.add(new Product(productID, categoryID, brandID, name, quantity, image, price, description));
             }
             con.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
         return list;
     }
 
-    @Override
     public List<Product> getListByCategory(int id) {
-        Connection con = DBConnect.getConnecttion();
-        String sql = "SELECT * FROM product WHERE ma_the_loai = ?";
+        Connection con = DBConnect.getConnection();
+        String sql = "SELECT * FROM product WHERE categoryID = ?";
         List<Product> list = new ArrayList<>();
         try {
             PreparedStatement ps = con.prepareStatement(sql);
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                int ma_san_pham = rs.getInt("ma_san_pham");
-                int ma_the_loai = rs.getInt("ma_the_loai");
-                String ten_san_pham = rs.getString("ten_san_pham");
-                String hinh_anh = rs.getString("hinh_anh");
-                Double gia_ban = rs.getDouble("gia_ban");
-                String hang_san_xuat = rs.getString("hang_san_xuat");
-                String thong_tin = rs.getString("thong_tin");
-                list.add(new Product(ma_san_pham, ma_the_loai, ten_san_pham, hinh_anh, gia_ban, hang_san_xuat, thong_tin));
+                int productID = rs.getInt("ProductID");
+                int categoryID = id;
+                int brandID = rs.getInt("BrandID");
+                String name = rs.getString("Name");
+                int quantity = rs.getInt("quantity");
+                String image = rs.getString("Image");
+                double price = rs.getDouble("Price");
+                String description = rs.getString("Description");
+                list.add(new Product(productID, categoryID, brandID, name, quantity, image, price, description));
             }
             con.close();
         } catch (SQLException e) {
@@ -81,24 +102,24 @@ public class ProductDAOImpl implements ProductDAO {
         return list;
     }
 
-    @Override
-    public Product getProduct(int id) {
-        Connection con = DBConnect.getConnecttion();
-        String sql = "SELECT * FROM product WHERE ma_san_pham = ?";
+    public static Product getProductbyId(int id) {
+        Connection con = DBConnect.getConnection();
+        String sql = "SELECT * FROM product WHERE ProductID = ?";
         Product p = new Product();
         try {
             PreparedStatement ps = con.prepareStatement(sql);
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                int ma_san_pham = rs.getInt("ma_san_pham");
-                int ma_the_loai = rs.getInt("ma_the_loai");
-                String ten_san_pham = rs.getString("ten_san_pham");
-                String hinh_anh = rs.getString("hinh_anh");
-                Double gia_ban = rs.getDouble("gia_ban");
-                String hang_san_xuat = rs.getString("hang_san_xuat");
-                String thong_tin = rs.getString("thong_tin");
-                p = new Product(ma_san_pham, ma_the_loai, ten_san_pham, hinh_anh, gia_ban, hang_san_xuat, thong_tin);
+                int productID = id;
+                int categoryID = rs.getInt("CategoryID");
+                int brandID = rs.getInt("BrandID");
+                String name = rs.getString("Name");
+                int quantity = rs.getInt("quantity");
+                String image = rs.getString("Image");
+                double price = rs.getDouble("Price");
+                String description = rs.getString("Description");
+                p = new Product(productID, categoryID, brandID, name, quantity, image, price, description);
             }
             con.close();
         } catch (SQLException e) {
@@ -107,16 +128,18 @@ public class ProductDAOImpl implements ProductDAO {
         return p;
     }
 
-    @Override
-    public List<Product> searchList(String ten_san_pham, String ten_the_loai) {
-        Connection con = DBConnect.getConnecttion();
-        StringBuilder sql = new StringBuilder("SELECT * FROM product, category WHERE product.ma_the_loai = category.ma_the_loai");
+    public List<Product> searchList(String productName, String categoryName, String brandName) {
+        Connection con = DBConnect.getConnection();
+        StringBuilder sql = new StringBuilder("SELECT * FROM product, category, brand WHERE product.CategoryID = category.CategoryID AND product.BrandID = brand.BrandID");
 
-        if (!ten_san_pham.isEmpty()) {
-            sql.append(" AND ten_san_pham = N'").append(ten_san_pham).append("'");
+        if (!productName.isEmpty()) {
+            sql.append(" AND Product.name like N'%").append(productName).append("%'");
         }
-        if (!ten_the_loai.isEmpty()) {
-            sql.append(" AND ten_the_loai = N'").append(ten_the_loai).append("'");
+        if (!categoryName.isEmpty()) {
+            sql.append(" AND category.Name like N'%").append(categoryName).append("%'");
+        }
+        if (!brandName.isEmpty()) {
+            sql.append(" AND brand.Name like N'%").append(brandName).append("%'");
         }
 
         List<Product> list = new ArrayList<>();
@@ -124,14 +147,15 @@ public class ProductDAOImpl implements ProductDAO {
             PreparedStatement ps = con.prepareStatement(sql.toString());
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                int ma_san_pham = rs.getInt("ma_san_pham");
-                int ma_the_loai = rs.getInt("ma_the_loai");
-                String productName = rs.getString("ten_san_pham");
-                String hinh_anh = rs.getString("hinh_anh");
-                Double gia_ban = rs.getDouble("gia_ban");
-                String hang_san_xuat = rs.getString("hang_san_xuat");
-                String thong_tin = rs.getString("thong_tin");
-                list.add(new Product(ma_san_pham, ma_the_loai, productName, hinh_anh, gia_ban, hang_san_xuat, thong_tin));
+                int productID = rs.getInt("ProductID");
+                int categoryID = rs.getInt("CategoryID");
+                int brandID = rs.getInt("BrandID");
+                String name = rs.getString("Name");
+                int quantity = rs.getInt("Quantity");
+                String image = rs.getString("Image");
+                double price = rs.getDouble("Price");
+                String description = rs.getString("Description");
+                list.add(new Product(productID, categoryID, brandID, name, quantity, image, price, description));
             }
             con.close();
         } catch (SQLException e) {
@@ -141,10 +165,10 @@ public class ProductDAOImpl implements ProductDAO {
     }
 
     public static void main(String[] args) {
-        Product p = new Product(0, 1, "S6", "da", 500000.0, "", "");
-        ProductDAOImpl productDAO = new ProductDAOImpl();
-        // productDAO.addProduct(p);
-        // System.out.println(productDAO.getList());
-        System.out.println(productDAO.getListByCategory(1));
+//        Product p = new Product(0, 1, 1, "S6", "da", 500000.0, "", "");
+//        ProductDAOImpl productDAO = new ProductDAOImpl();
+//        // productDAO.addProduct(p);
+//        // System.out.println(productDAO.getList());
+//        System.out.println(productDAO.getListByCategory(1));
     }
 }

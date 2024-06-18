@@ -1,26 +1,23 @@
 package dao;
 
+import Util.DBConnect;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import Ultil.DBConnect;
-
 import model.Category;
 
-public class CategoryDAOImpl implements CategoryDAO {
+public class CategoryDAOImpl {
 
-    @Override
+    // Add a new Category
     public void addCategory(Category c) {
-        Connection con = DBConnect.getConnecttion();
-        String sql = "INSERT INTO category VALUES (?, ?, ?)";
+        Connection con = DBConnect.getConnection();
+        String sql = "INSERT INTO Category ([Name]) VALUES (?)";
         try {
             PreparedStatement ps = con.prepareStatement(sql);
-            ps.setInt(1, c.getMa_the_loai());
-            ps.setString(2, c.getTen_the_loai());
-            ps.setString(3, c.getMo_ta());
+            ps.setString(1, c.getName());
             ps.executeUpdate();
             con.close();
         } catch (SQLException e) {
@@ -28,19 +25,18 @@ public class CategoryDAOImpl implements CategoryDAO {
         }
     }
 
-    @Override
+    // Retrieve all Categories
     public List<Category> getList() {
-        Connection con = DBConnect.getConnecttion();
-        String sql = "SELECT * FROM category";
+        Connection con = DBConnect.getConnection();
+        String sql = "SELECT * FROM Category";
         List<Category> list = new ArrayList<>();
         try {
             PreparedStatement ps = con.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                int ma_the_loai = rs.getInt("ma_the_loai");
-                String ten_the_loai = rs.getString("ten_the_loai");
-                String mo_ta = rs.getString("mo_ta");
-                list.add(new Category(ma_the_loai, ten_the_loai, mo_ta));
+                int categoryID = rs.getInt("CategoryID");
+                String name = rs.getString("Name");
+                list.add(new Category(categoryID, name));
             }
             con.close();
         } catch (SQLException e) {
@@ -49,22 +45,13 @@ public class CategoryDAOImpl implements CategoryDAO {
         return list;
     }
 
-    public static void main(String[] args) {
-        CategoryDAOImpl dao = new CategoryDAOImpl();
-        Category c = new Category(8, "Samsung", "DT");
-        // dao.addCategory(c);
-        // System.out.println(dao.getList());
-        // dao.delCategory(10);
-        dao.updateCategory(c);
-    }
-
-    @Override
-    public void delCategory(int ma_the_loai) {
-        Connection con = DBConnect.getConnecttion();
-        String sql = "DELETE FROM category WHERE ma_the_loai = ?";
+    // Delete a Category by ID
+    public void delCategory(int id) {
+        Connection con = DBConnect.getConnection();
+        String sql = "DELETE FROM Category WHERE CategoryID = ?";
         try {
             PreparedStatement ps = con.prepareStatement(sql);
-            ps.setInt(1, ma_the_loai);
+            ps.setInt(1, id);
             ps.executeUpdate();
             con.close();
         } catch (SQLException e) {
@@ -72,20 +59,19 @@ public class CategoryDAOImpl implements CategoryDAO {
         }
     }
 
-    @Override
+    // Retrieve a single Category by ID
     public Category getCategory(int id) {
-        Connection con = DBConnect.getConnecttion();
-        String sql = "SELECT * FROM category WHERE ma_the_loai = ?";
+        Connection con = DBConnect.getConnection();
+        String sql = "SELECT * FROM Category WHERE CategoryID = ?";
         Category c = null;
         try {
             PreparedStatement ps = con.prepareStatement(sql);
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                int ma_the_loai = rs.getInt("ma_the_loai");
-                String ten_the_loai = rs.getString("ten_the_loai");
-                String mo_ta = rs.getString("mo_ta");
-                c = new Category(ma_the_loai, ten_the_loai, mo_ta);
+                int categoryID = rs.getInt("CategoryID");
+                String name = rs.getString("Name");
+                c = new Category(categoryID, name);
             }
             con.close();
         } catch (SQLException e) {
@@ -94,15 +80,14 @@ public class CategoryDAOImpl implements CategoryDAO {
         return c;
     }
 
-    @Override
+    // Update a Category
     public void updateCategory(Category c) {
-        Connection con = DBConnect.getConnecttion();
-        String sql = "UPDATE category SET ten_the_loai = ?, mo_ta = ? WHERE ma_the_loai = ?";
+        Connection con = DBConnect.getConnection();
+        String sql = "UPDATE Category SET Name = ? WHERE CategoryID = ?";
         try {
             PreparedStatement ps = con.prepareStatement(sql);
-            ps.setString(1, c.getTen_the_loai());
-            ps.setString(2, c.getMo_ta());
-            ps.setInt(3, c.getMa_the_loai());
+            ps.setString(1, c.getName());
+            ps.setInt(2, c.getCategoryID());
             ps.executeUpdate();
             con.close();
         } catch (SQLException e) {

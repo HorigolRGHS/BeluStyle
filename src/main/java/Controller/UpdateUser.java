@@ -13,7 +13,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import dao.UserDAOImpl;
-import dao.UserDAO;
 import model.User;
 
 /**
@@ -43,27 +42,27 @@ public class UpdateUser extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.setCharacterEncoding("utf-8");
 		response.setCharacterEncoding("utf-8");
-		String user_id = request.getParameter("id");
 		String username = request.getParameter("username");
 		String password = request.getParameter("password");
-java.sql.Date ngaysinh= null;
+                String fullName = request.getParameter("fullName");
+java.sql.Date dob= null;
 		
 		try {
-			ngaysinh = new java.sql.Date((new SimpleDateFormat("yyyy-MM-dd").parse(request.getParameter("ngaysinh"))).getTime());
+			dob = new java.sql.Date((new SimpleDateFormat("yyyy-MM-dd").parse(request.getParameter("dob"))).getTime());
 		} catch (ParseException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		String gioitinh = request.getParameter("gioitinh");
+		String sex = request.getParameter("gioitinh");
 		String email = request.getParameter("email");
-		String sdt = request.getParameter("sdt");
-		String diachi = request.getParameter("diachi");
+		String phoneNumber = request.getParameter("phoneNumber");
+		String address = request.getParameter("address");
 
 		
 		String err = "";
 		String url = "/update_user.jsp";
 
-		if (password.equals("") || email.equals("") || sdt.equals("") || diachi.equals("")) {
+		if (password.equals("") || email.equals("") || phoneNumber.equals("") || address.equals("")) {
 			err += "Phải nhập đầy đủ thông tin!";
 		} else {
 			 
@@ -76,7 +75,7 @@ java.sql.Date ngaysinh= null;
 				}else{
 					Pattern pattenObj2 = Pattern
 							.compile("(09)\\d{8}|(01)\\d{9}");
-					Matcher matcherObj2 = pattenObj2.matcher(sdt);
+					Matcher matcherObj2 = pattenObj2.matcher(phoneNumber);
 					if (!matcherObj2.matches()) {
 						err += "Sđt sai định dạng!";}
 				}
@@ -88,7 +87,7 @@ java.sql.Date ngaysinh= null;
 
 		try {
 			if (err.length() == 0) {
-				User u= new User(Integer.parseInt(user_id), username, password, ngaysinh, gioitinh, email, sdt, diachi, "2");
+				User u= new User(username, password, fullName, dob, sex, email, phoneNumber, address, UserDAOImpl.getUser(username).getRole(), UserDAOImpl.getUser(username).getWallet());
 				userDAO.updateUser(u);
 				url = "/index.jsp";
 			} else {
@@ -102,5 +101,7 @@ java.sql.Date ngaysinh= null;
 			response.sendRedirect("/register.jsp");
 		}
 	}
+        
+        
 
 }

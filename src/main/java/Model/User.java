@@ -1,104 +1,115 @@
 package model;
 
+import java.sql.Date;
 
 public class User {
+    private String username;
+    private String password;
+    private String fullName;
+    private Date dob;
+    private String sex;
+    private String email;
+    private String phoneNumber;
+    private String address;
+    private String role;
+    private double wallet;
 
-	private int user_id;
-	private String username;
-	private String password;
-	private java.sql.Date ngaysinh;
-	private String gioitinh;
-	private String email;
-	private String sdt;
-	private String diachi;
-	private String role;
+    public User() {
+    }
 
-	public User() {
-	}
+    public User(String username, String password, String fullName, Date dob, String sex, String email, String phoneNumber, String address, String role, double wallet) {
+        this.username = username;
+        this.password = password;
+        this.fullName = fullName;
+        this.dob = dob;
+        this.sex = sex;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.address = address;
+        this.role = role;
+        this.wallet = wallet;
+    }
 
-	public User(int user_id, String username, String password, java.sql.Date ngaysinh, String gioitinh, String email, String sdt, String diachi,
-			String role) {
-		this.user_id = user_id;
-		this.username = username;
-		this.password = password;
-		this.ngaysinh = ngaysinh;
-		this.gioitinh = gioitinh;
-		this.email = email;
-		this.sdt = sdt;
-		this.diachi = diachi;
-		this.role = role;
-	}
+    public String getUsername() {
+        return username;
+    }
 
-	public int getUser_id() {
-		return user_id;
-	}
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
-	public void setUser_id(int user_id) {
-		this.user_id = user_id;
-	}
+    public String getPassword() {
+        return password;
+    }
 
-	public String getUsername() {
-		return username;
-	}
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
-	public void setUsername(String username) {
-		this.username = username;
-	}
+    public String getFullName() {
+        return fullName;
+    }
 
-	public String getPassword() {
-		return password;
-	}
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
-	
-	public java.sql.Date getNgaysinh() {
-		return ngaysinh;
-	}
+    public Date getDob() {
+        return dob;
+    }
 
-	public void setNgaysinh(java.sql.Date ngaysinh) {
-		this.ngaysinh = ngaysinh;
-	}
-	
-	public String getGioitinh() {
-		return gioitinh;
-	}
+    public void setDob(Date dob) {
+        this.dob = dob;
+    }
 
-	public void setGioitinh(String gioitinh) {
-		this.gioitinh = gioitinh;
-	}
+    public String getSex() {
+        return sex;
+    }
 
-	public String getEmail() {
-		return email;
-	}
+    public void setSex(String sex) {
+        this.sex = sex;
+    }
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
-	
-	public String getSdt() {
-		return sdt;
-	}
+    public String getEmail() {
+        return email;
+    }
 
-	public void setSdt(String sdt) {
-		this.sdt = sdt;
-	}
-	
-	public String getDiachi() {
-		return diachi;
-	}
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-	public void setDiachi(String diachi) {
-		this.diachi = diachi;
-	}
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
 
-	public String getRole() {
-		return role;
-	}
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
 
-	public void setRole(String role) {
-		this.role = role;
-	}
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public double getWallet() {
+        return wallet;
+    }
+
+    public void setWallet(double wallet) {
+        this.wallet = wallet;
+    }
+    
+    
 
 }
