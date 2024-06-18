@@ -12,7 +12,7 @@ import java.sql.*;
  */
 public class DBConnect {
 
-    private static String cnnString = "jdbc:sqlserver://localhost:1433;databaseName=ContactDB;user=sa;password=***;encrypt=true;trustServerCertificate=true;";
+    private static String cnnString = "jdbc:sqlserver://localhost:1433;databaseName=BeluStyle;user=sa;password=***;encrypt=true;trustServerCertificate=true;";
     private static Connection conn = null;
 
 
@@ -20,7 +20,7 @@ public class DBConnect {
         Connection cons = null;
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-            cons = DriverManager.getConnection("jdbc:sqlserver://localhost:1433;databaseName=BeluStyle;user=sa;password=anhyeuemsuzune;encrypt=true;trustServerCertificate=true;");
+            cons = DriverManager.getConnection(cnnString);
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
