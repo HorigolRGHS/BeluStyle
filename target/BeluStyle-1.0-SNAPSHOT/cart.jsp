@@ -163,11 +163,11 @@
                             </div>
                         </div>
                     </div>
-                    <%if (cart.size() > 0) {%>
+                    <%if (cart != null && cart.size() > 0) { %>
                     <a class="checkout" href="history" style="text-decoration: none;">Lịch sử</a>
                     <a class="checkout" href="ConfirmServlet?username=<%=username%>" style="text-decoration: none;">Thanh
                         toán</a>
-                        <%} else {%>
+                        <% } else {%>
 <!--                        <form action="history" method="get" class="checkout">
                         <input type="hidden" name="username" value="<%= username%>" />
                         <button type="submit" class="btn btn-link" style="text-decoration: none; padding: 0; border: none; background: none; color: inherit;">
