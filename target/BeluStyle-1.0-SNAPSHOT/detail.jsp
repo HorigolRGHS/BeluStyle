@@ -121,7 +121,7 @@
 
                 <div class="left-1">
                     <img
-                        src="sanpham/<%=productDAO.getProductbyId(Integer.parseInt(productID))
+                        src="images/product/<%=productDAO.getProductbyId(Integer.parseInt(productID))
                                                 .getImage()%>"
                         width="200px" height="200px" />
                 </div>

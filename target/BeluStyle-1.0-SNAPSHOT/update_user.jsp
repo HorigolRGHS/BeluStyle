@@ -32,23 +32,27 @@
 			</div>
 			<form action="UpdateUser" method="post">
 				<li style="color: red"><%=err%></li>
-				Tên đăng nhập
+				Username
 				<li><input type="text" class="text"
 					value="<%=u.getUsername()%>" readonly name="username"><a
 					href="#" class=" icon2 user2"></a></li>
-				Mật khẩu
-				<li><input type="password" value="" 
+				Password
+				<li><input type="password" value="***" readonly
 					name="password"><a href="#" class=" icon2 lock2"></a></li>
-				Ngày sinh
-				<li><input type="date" value="<%=u.getNgaysinh()%>"
+                                Full Name
+				<li><input type="text" class="text"
+					value="<%=u.getFullName()%>" name="fullName"><a
+					href="#" class=" icon2 user2"></a></li>
+				Birthday
+				<li><input type="date" value="<%=u.getDob()%>"
 					onfocus="this.value = '';"
-					onblur="if (this.value == '') {this.value = '<%=u.getNgaysinh() %>';}"
-					name="ngaysinh"><a href="#" class=" icon2 lock2"></a></li>
-				Giới tính
-				<li><input type="text" value="<%=u.getGioitinh() %>"
+					onblur="if (this.value == '') {this.value = '<%=u.getDob()%>';}"
+					name="dob"><a href="#" class=" icon2 lock2"></a></li>
+				Sex
+				<li><input type="text" value="<%=u.getSex()%>"
 					list="exampleList" onfocus="this.value = '';"
-					onblur="if (this.value == '') {this.value = '<%=u.getGioitinh() %>';}"
-					name="gioitinh"> <datalist id="exampleList">
+					onblur="if (this.value == '') {this.value = '<%=u.getSex()%>';}"
+					name="sex"> <datalist id="exampleList">
 					<option value="Nam">
 					<option value="Nữ">
 					</datalist><a href="#" class=" icon2 lock2"></a></li>
@@ -56,21 +60,21 @@
 				<li><input type="text" value="<%= u.getEmail() %>" onfocus="this.value = '';"
 					onblur="if (this.value == '') {this.value = '<%=u.getEmail() %>';}" name="email"><a
 					href="#" class=" icon2 lock2"></a></li>
-				Số điện thoại
-				<li><input type="text" value="<%=u.getSdt() %>"
+				Phone Number
+				<li><input type="text" value="<%=u.getPhoneNumber()%>"
 					onfocus="this.value = '';"
-					onblur="if (this.value == '') {this.value = '<%=u.getSdt() %>';}" name="sdt"><a
+					onblur="if (this.value == '') {this.value = '<%=u.getPhoneNumber()%>';}" name="phoneNumber"><a
 					href="#" class=" icon2 lock2"></a></li>
-				Địa chỉ
-				<li><input type="text" value="<%=u.getDiachi() %>"
+				Address
+				<li><input type="text" value="<%=u.getAddress()%>"
 					onfocus="this.value = '';"
-					onblur="if (this.value == '') {this.value = '<%=u.getDiachi() %>';}"
-					name="diachi"><a href="#" class=" icon2 lock2"></a></li>
+					onblur="if (this.value == '') {this.value = '<%=u.getAddress()%>';}"
+					name="address"><a href="#" class=" icon2 lock2"></a></li>
 
 				
 				<div class="submit two">
 					<input type="submit" value="CẬP NHẬT">
-					<input type="hidden" value="<%=u.getUser_id()%>" name="id">
+					
 				</div>
 				<h5>
 					<a href="index.jsp">Trở về</a>

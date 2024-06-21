@@ -24,19 +24,19 @@
 			</div>
 			<form action="RegisterServlet" method="post">
 				<li style="color: red"><%=err%></li>
-				Tên đăng nhập
+				Username
 				<li><input type="text" class="text" value=""
 					name="username"><a href="#" class=" icon2 user2"></a></li>
-				Mật khẩu	
+				Password	
 				<li><input type="password" value=""
 					name="password"><a href="#" class=" icon2 lock2"></a></li>
-                                Họ và 
+                                Full name:
 				<li><input type="text" class="text" value=""
 					name="fullName"><a href="#" class=" icon2 user2"></a></li>
-				Ngày sinh
+				Birthday
 				<li><input type="date" value=""
 					name="dob"><a href="#" class=" icon2 lock2"></a></li>
-				Giới tính
+				Sex
 				<li><input type="text" value="" list="exampleList"
 					name="sex"> 
 					<datalist id="exampleList">
@@ -46,10 +46,10 @@
 				Email
 				<li><input type="text" value=""
 					name="email"><a href="#" class=" icon2 lock2"></a></li>
-				Số điện thoại
+				Phone Number
 				<li><input type="text" value=""				
 					name="phoneNumber"><a href="#" class=" icon2 lock2"></a></li>
-				Địa chỉ
+				Address
 				<li><input type="text" value=""
 					name="address"><a href="#" class=" icon2 lock2"></a></li>
 					

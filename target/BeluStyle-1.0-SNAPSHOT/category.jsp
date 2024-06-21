@@ -25,7 +25,7 @@
 
                     %>
                     <li><a href="index.jsp?categoryID=<%=c.getCategoryID()%>"> <i class="fa fa-home"><img
-                                    src="images/<%=c.getCategoryID()%>.png"></i>
+                                    src="images/category/<%=c.getCategoryID()%>.png"></i>
                     <strong><%=c.getName()%></strong> 
                         </a> </li>
 

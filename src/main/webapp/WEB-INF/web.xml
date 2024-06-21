@@ -1,10 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app id="WebApp_ID" version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
-    <display-name>shop</display-name>
+    <display-name>BeluStyle</display-name>
+    <servlet>
+        <servlet-name>UpdateUser</servlet-name>
+        <servlet-class>controller.UpdateUser</servlet-class>
+    </servlet>
+        <servlet-mapping>
+        <servlet-name>UpdateUser</servlet-name>
+        <url-pattern>/UpdateUser</url-pattern>
+    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>HistoryServlet</servlet-name>
         <url-pattern>/history</url-pattern>
     </servlet-mapping>
+
     <welcome-file-list>
         <!--    <welcome-file>index.html</welcome-file>
     <welcome-file>index.htm</welcome-file>-->
@@ -96,16 +105,6 @@
     <servlet-mapping>
         <servlet-name>ResetPassword</servlet-name>
         <url-pattern>/ResetPassword</url-pattern>
-    </servlet-mapping>
-    <servlet>
-        <description/>
-        <display-name>UpdateUser</display-name>
-        <servlet-name>UpdateUser</servlet-name>
-        <servlet-class>controller.UpdateUser</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>UpdateUser</servlet-name>
-        <url-pattern>/UpdateUser</url-pattern>
     </servlet-mapping>
     <servlet>
         <description/>

@@ -110,7 +110,7 @@
                             <li class="preorder">
                                 <span class="tagimg"></span>
                                 <a href="detail.jsp?productID=${product.getProductID()}">
-                                    <img src="sanpham/${product.getImage()}" width="250px" height="250px" />
+                                    <img src="images/product/${product.getImage()}" width="250px" height="250px" />
                                     <h3>${product.getName()}</h3>
                                     <h4>
                                         Giá: <fmt:formatNumber value="${product.getPrice()}" type="number" minFractionDigits="0" /> VNĐ

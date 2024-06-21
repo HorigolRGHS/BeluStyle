@@ -116,7 +116,7 @@
 
                             <li class="preorder"><span class="tagimg "></span> <a
                                     href="detail.jsp?productID=<%=p.getProductID()%>"> <img
-                                        src="sanpham/<%=p.getImage()%>" width=" 250px" height="250px" />
+                                        src="images/product/<%=p.getImage()%>" width=" 250px" height="250px" />
                                     <h3><%=p.getName()%></h3>
                                     <h4>
                                         Giá:
