@@ -1,11 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app id="WebApp_ID" version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
     <display-name>BeluStyle</display-name>
+    <filter>
+        <filter-name>AdminFilter</filter-name>
+        <filter-class>filter.AdminFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>AdminFilter</filter-name>
+        <url-pattern>/AdminPanel.jsp</url-pattern> <url-pattern>/EditProduct</url-pattern>
+    </filter-mapping>
     <servlet>
         <servlet-name>UpdateUser</servlet-name>
         <servlet-class>controller.UpdateUser</servlet-class>
     </servlet>
-        <servlet-mapping>
+    <servlet>
+        <servlet-name>DeleteProduct</servlet-name>
+        <servlet-class>controller.DeleteProduct</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>EditProduct</servlet-name>
+        <servlet-class>controller.EditProduct</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AddProduct</servlet-name>
+        <servlet-class>controller.AddProduct</servlet-class>
+        <multipart-config>
+            <max-file-size>10485760</max-file-size>
+            <!-- 10 MB -->
+            <max-request-size>52428800</max-request-size>
+            <!-- 50 MB -->
+            <file-size-threshold>2097152</file-size-threshold>
+            <!-- 2 MB -->
+        </multipart-config>
+    </servlet>
+    <servlet-mapping>
         <servlet-name>UpdateUser</servlet-name>
         <url-pattern>/UpdateUser</url-pattern>
     </servlet-mapping>
@@ -13,10 +41,21 @@
         <servlet-name>HistoryServlet</servlet-name>
         <url-pattern>/history</url-pattern>
     </servlet-mapping>
-
+    <servlet-mapping>
+        <servlet-name>DeleteProduct</servlet-name>
+        <url-pattern>/DeleteProduct</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>EditProduct</servlet-name>
+        <url-pattern>/EditProduct</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AddProduct</servlet-name>
+        <url-pattern>/AddProduct</url-pattern>
+    </servlet-mapping>
     <welcome-file-list>
         <!--    <welcome-file>index.html</welcome-file>
-    <welcome-file>index.htm</welcome-file>-->
+        <welcome-file>index.htm</welcome-file>-->
         <welcome-file>index.jsp</welcome-file>
         <welcome-file>default.html</welcome-file>
         <welcome-file>default.htm</welcome-file>

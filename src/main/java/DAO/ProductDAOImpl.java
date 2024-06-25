@@ -7,6 +7,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import Util.DBConnect;
+import model.Brand;
+import model.Category;
 import model.Product;
 
 public class ProductDAOImpl {
@@ -163,6 +165,245 @@ public class ProductDAOImpl {
         }
         return list;
     }
+
+    public static ArrayList<Product> getAllProduct() {
+        ArrayList<Product> productList = new ArrayList<>();
+        DBConnect.Connect();
+        if (DBConnect.isConnected()) {
+            try ( PreparedStatement ptmt = DBConnect.prepareStatement("SELECT * FROM Product");  ResultSet rs = ptmt.executeQuery()) {
+
+                while (rs.next()) {
+                    int productId = rs.getInt("ProductID");
+                    int categoryId = rs.getInt("CategoryID");
+                    int brandId = rs.getInt("BrandID");
+                    String name = rs.getString("Name");
+                    int quantity = rs.getInt("Quantity");
+                    String image = rs.getString("Image");
+                    double price = rs.getDouble("Price"); // Use BigDecimal for currency
+                    String description = rs.getString("Description");
+
+                    Product product = new Product(productId, categoryId, brandId, name, quantity, image, price, description);
+                    productList.add(product);
+                }
+
+            } catch (SQLException e) {
+                System.err.println("SQLException at getAllProduct: " + e.getMessage());
+                // Consider logging the error or throwing a custom exception for better handling
+            }
+        }
+
+        return productList;
+    }
+
+    public static ArrayList<Category> getAllCategory() {
+        ArrayList<Category> temp = new ArrayList<>();
+        DBConnect.Connect();
+        if (DBConnect.isConnected()) {
+            try {
+                ResultSet rs = DBConnect.ExecuteQuery("Select * from Category");
+                while (rs.next()) {
+                    temp.add(new Category(rs.getInt("CategoryID"), rs.getString("Name")));
+                }
+            } catch (Exception e) {
+                System.out.println("EXCEPTION AT getAllCategory:" + e.getMessage());
+            }
+        }
+        return temp;
+    }
+
+    public static ArrayList<Brand> getAllBrand() {
+        ArrayList<Brand> temp = new ArrayList<>();
+        DBConnect.Connect();
+        if (DBConnect.isConnected()) {
+            try {
+                ResultSet rs = DBConnect.ExecuteQuery("Select * from Brand");
+                while (rs.next()) {
+                    temp.add(new Brand(rs.getInt("BrandID"), rs.getString("Name")));
+                }
+            } catch (Exception e) {
+                System.out.println("EXCEPTION AT getAllBrand:" + e.getMessage());
+            }
+        }
+        return temp;
+    }
+
+    public static boolean addProduct(int categoryID, int BrandID, String name, String image, float price, int quantity, String description) {
+        DBConnect.Connect();
+        if (DBConnect.isConnected()) {
+            try {
+                ResultSet rs = DBConnect.ExecuteQuery("Insert into Product(CategoryID, BrandID, [Name], Image, Price, Quantity, [Description]) Values(" + categoryID + "," + BrandID + ",'" + name + "','" + image + "'," + price + "," + price + ",'" + description + "')");
+                DBConnect.Disconnect();
+            } catch (Exception e) {
+                System.out.println("EXCEPTION AT addProduct:" + e.getMessage());
+            }
+        } else {
+            return false;
+        }
+        return true;
+    }
+
+    public static Product getProductById(int productId) {
+        Product product = null; // Start with null to indicate no product found
+        DBConnect.Connect();
+        if (DBConnect.isConnected()) {
+            try ( PreparedStatement ptmt = DBConnect.prepareStatement("SELECT * FROM Product WHERE ProductID = ?");) {
+
+                ptmt.setInt(1, productId); // Set the parameter safely
+
+                try ( ResultSet rs = ptmt.executeQuery()) {
+                    if (rs.next()) {
+                        int fetchedProductId = rs.getInt("ProductID");
+                        int categoryName = rs.getInt("CategoryID");
+                        int brandName = rs.getInt("BrandID");
+                        String name = rs.getString("Name");
+                        String image = rs.getString("Image");
+                        double price = rs.getDouble("Price");
+                        int quantity = rs.getInt("Quantity");
+                        String description = rs.getString("Description");
+
+                        // Assuming your Product constructor takes these parameters in this order
+                        product = new Product(fetchedProductId, categoryName, brandName, name, quantity, image, price, description);
+                    }
+                }
+
+            } catch (SQLException e) {
+                System.err.println("SQLException at getProductById: " + e.getMessage());
+                // Consider logging the error or throwing a custom exception 
+            }
+        }
+        return product; // Return the product (null if not found)
+    }
+
+    public static int getIdCategory(String ProductCategory) {
+        int temp = 0;
+        DBConnect.Connect();
+        if (DBConnect.isConnected()) {
+            try {
+                ResultSet rs = DBConnect.ExecuteQuery("SELECT CategoryID FROM Category WHERE Name = '" + ProductCategory + "'");
+                while (rs.next()) {
+                    temp = rs.getInt("CategoryID");
+                }
+                DBConnect.Disconnect();
+            } catch (Exception e) {
+                System.out.println("EXCEPTION AT getIdCategory:" + e.getMessage());
+            }
+        }
+        return temp;
+    }
+
+    public static int getIdBrand(String ProductBrand) {
+        int temp = 0;
+        DBConnect.Connect();
+        if (DBConnect.isConnected()) {
+            try {
+                ResultSet rs = DBConnect.ExecuteQuery("SELECT BrandID FROM Brand WHERE [Name] = '" + ProductBrand + "'");
+                while (rs.next()) {
+                    temp = rs.getInt("BrandID");
+                }
+                DBConnect.Disconnect();
+            } catch (Exception e) {
+                System.out.println("EXCEPTION AT getIdBrand:" + e.getMessage());
+            }
+        }
+        return temp;
+    }
+
+    public static String getCategoryNameById(int categoryId) {
+        String categoryName = null; // Initialize to null
+        DBConnect.Connect();
+        if (DBConnect.isConnected()) {
+            try ( PreparedStatement ptmt = DBConnect.prepareStatement("SELECT Name FROM Category WHERE CategoryID = ?")) {
+                ptmt.setInt(1, categoryId);
+
+                try ( ResultSet rs = ptmt.executeQuery()) {
+                    if (rs.next()) {
+                        categoryName = rs.getString("Name");
+                    }
+                }
+            } catch (SQLException e) {
+                System.err.println("SQLException at getCategoryNameById: " + e.getMessage());
+            }
+        }
+        return categoryName; // Return the name (null if not found)
+    }
+
+    public static String getBrandNameById(int brandId) {
+        String brandName = null;
+        DBConnect.Connect();
+        if (DBConnect.isConnected()) {
+            try ( PreparedStatement ptmt = DBConnect.prepareStatement("SELECT [Name] FROM Brand WHERE BrandID = ?")) {
+                ptmt.setInt(1, brandId);
+
+                try ( ResultSet rs = ptmt.executeQuery()) {
+                    if (rs.next()) {
+                        brandName = rs.getString("Name");
+                    }
+                }
+            } catch (SQLException e) {
+                System.err.println("SQLException at getBrandNameById: " + e.getMessage());
+            }
+        }
+        return brandName;
+    }
+
+    public static boolean updateProduct(int ProductID, int CategoryID, int BrandID, String name, int quantity, String image, float price, String description) {
+        DBConnect.Connect();
+        if (DBConnect.isConnected()) {
+            try {
+                // Prepare the SQL update statement
+                String sql = "UPDATE Product SET "
+                        + "CategoryID = ?, "
+                        + "BrandID = ?, "
+                        + "[Name] = ?, "
+                        + "Image = ?, "
+                        + "Price = ?, "
+                        + "Quantity = ?, "
+                        + "[Description] = ? "
+                        + "WHERE ProductID = ?";
+
+                // Create a PreparedStatement to prevent SQL injection
+                try ( PreparedStatement pstmt = DBConnect.prepareStatement(sql)) {
+                    pstmt.setInt(1, CategoryID);
+                    pstmt.setInt(2, BrandID);
+                    pstmt.setString(3, name);
+                    pstmt.setString(4, image);
+                    pstmt.setDouble(5, price);
+                    pstmt.setInt(6, quantity);
+                    pstmt.setString(7, description);
+                    pstmt.setInt(8, ProductID);
+
+                    // Execute the update
+                    int rowsAffected = pstmt.executeUpdate();
+
+                    // Check if the update was successful
+                    return rowsAffected > 0;
+                }
+            } catch (Exception e) {
+                System.out.println("EXCEPTION AT updateProduct:" + e.getMessage());
+                return false;
+            } finally {
+                DBConnect.Disconnect(); // Always disconnect, even if an exception occurs
+            }
+        } else {
+            return false; // Database connection failed
+        }
+    }
+
+    public static void deleteProduct(int productId) {
+        String query = "DELETE FROM Product WHERE productId = ?";
+        DBConnect.Connect();
+        if (DBConnect.isConnected()) {
+            try ( PreparedStatement ps = DBConnect.prepareStatement(query)) {
+                ps.setInt(1, productId);
+                ps.executeUpdate();
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.out.println("Error at deleteProduct : " + e.getMessage());
+            }
+        }
+
+    }
+
 
     public static void main(String[] args) {
 //        Product p = new Product(0, 1, 1, "S6", "da", 500000.0, "", "");

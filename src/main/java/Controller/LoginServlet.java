@@ -19,72 +19,83 @@ import dao.UserDAOImpl;
  * Servlet implementation class LoginServlet
  */
 public class LoginServlet extends HttpServlet {
-	private static final long serialVersionUID = 1L;
-	private UserDAOImpl userDAO = new UserDAOImpl();
-	private List<Cart> cart = new ArrayList<Cart>();
-	/**
-	 * @see HttpServlet#HttpServlet()
-	 */
-	public LoginServlet() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
-	 *      response)
-	 */
-	protected void doGet(HttpServletRequest request,
-			HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-	}
+    private static final long serialVersionUID = 1L;
+    private UserDAOImpl userDAO = new UserDAOImpl();
+    private List<Cart> cart = new ArrayList<Cart>();
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
-	 *      response)
-	 */
-	protected void doPost(HttpServletRequest request,
-			HttpServletResponse response) throws ServletException, IOException {
-		String username = request.getParameter("username");
-		String password = request.getParameter("password");
+    /**
+     * @see HttpServlet#HttpServlet()
+     */
+    public LoginServlet() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
 
-		String err = "";
-		if (username.equals("") || password.equals("")) {
-			err += "Phải nhập đầy đủ thông tin!";
-		} else {
-			if (userDAO.login(username, password) == false) {
-				err += "Tên đăng nhập hoặc mật khẩu không chính xác!";
-			}
-		}
+    /**
+     * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+     * response)
+     */
+    protected void doGet(HttpServletRequest request,
+            HttpServletResponse response) throws ServletException, IOException {
+        // TODO Auto-generated method stub
+    }
 
-		if (err.length() > 0) {
-			request.setAttribute("err", err);
-		}
+    /**
+     * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
+     * response)
+     */
+    protected void doPost(HttpServletRequest request,
+            HttpServletResponse response) throws ServletException, IOException {
+        String username = request.getParameter("username");
+        String password = request.getParameter("password");
 
-		String url = "/login.jsp";
-		try {
-			if (err.length() == 0) {
-				HttpSession session = request.getSession();
-				session.setAttribute("username", username);
-				session.setAttribute("cart", cart);
-				userDAO.login(username, password);
-				Cookie loginCookie = new Cookie("username",username);
-	            //setting cookie to expiry in 30 mins
-	            loginCookie.setMaxAge(30*60);
-	            response.addCookie(loginCookie);
-	            response.sendRedirect("index.jsp");
-				url = "/index.jsp";
-			} else {
-				url = "/login.jsp";
-				RequestDispatcher rd = getServletContext()
-						.getRequestDispatcher(url);
-				rd.forward(request, response);
-			}
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-			response.sendRedirect("/login.jsp");
-		}
-	}
+        String err = "";
+        if (username.equals("") || password.equals("")) {
+            err += "Phải nhập đầy đủ thông tin!";
+        } else {
+            if (userDAO.login(username, password) == false) {
+                err += "Tên đăng nhập hoặc mật khẩu không chính xác!";
+            }
+        }
+
+        if (err.length() > 0) {
+            request.setAttribute("err", err);
+        }
+
+        String url = "/login.jsp";
+        try {
+            if (err.length() == 0) {
+                HttpSession session = request.getSession();
+                session.setAttribute("username", username);
+                session.setAttribute("cart", cart);
+                double wallet = userDAO.getWallet(username);
+                System.out.println(wallet);
+                session.setAttribute("Wallet", wallet);
+                String userRole = userDAO.getUserRole(username); // Implement getUserRole in UserDAOImpl
+                session.setAttribute("role", userRole);
+                userDAO.login(username, password);
+                Cookie loginCookie = new Cookie("username", username);
+                //setting cookie to expiry in 30 mins
+                loginCookie.setMaxAge(30 * 60);
+                response.addCookie(loginCookie);
+                System.out.println(userRole);
+                if ("Admin".equalsIgnoreCase(userRole)) {
+                    response.sendRedirect("AdminPanel.jsp");
+                } else {
+                    response.sendRedirect("index.jsp");
+                }
+            } else {
+                url = "/login.jsp";
+                RequestDispatcher rd = getServletContext()
+                        .getRequestDispatcher(url);
+                rd.forward(request, response);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.sendRedirect("/login.jsp");
+        }
+    }
 
 }

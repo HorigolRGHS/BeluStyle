@@ -1,0 +1,54 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css to edit this template
+*/
+/* 
+    Created on : Jun 21, 2024, 12:08:11 AM
+    Author     : Duong Nhat Anh CE181079
+*/
+
+/* ====================== Wallet Page ========================== */
+
+.image-container {
+    position: relative; /* đặt vị trí tương đối cho .image-container */
+    text-align: center; /* căn giữa nội dung trong .image-container */
+    margin-top: 20px; /* khoảng cách từ đỉnh .image-container xuống phía dưới */
+}
+
+.image-container img {
+    max-width: 80%; /* giới hạn chiều rộng tối đa của hình ảnh */
+    height: auto; /* đảm bảo chiều cao tự động điều chỉnh theo tỷ lệ */
+    display: block; /* loại bỏ khoảng trống dưới hình ảnh */
+    margin: 0 auto; /* căn giữa hình ảnh */
+}
+
+.image-container h1 {
+    position: absolute; /* đặt vị trí tuyệt đối cho tiêu đề h1 */
+    top: 70%; /* vị trí cách đỉnh .image-container 50% */
+    left: 50%; /* căn giữa theo chiều ngang */
+    transform: translate(
+        -50%,
+        -50%
+        ); /* dịch chuyển lùi lại 50% chiều ngang và 50% chiều dọc để căn giữa */
+    padding: 20vh; /* padding xung quanh nội dung */
+
+    color: white; /* màu chữ trắng */
+    border-radius: 5px; /* bo tròn góc */
+    margin: 0; /* loại bỏ margin mặc định của tiêu đề */
+    font-size: 5vw; /* kích thước font chữ */
+}
+
+.image-container h2 {
+    position: absolute; /* đặt vị trí tuyệt đối cho tiêu đề h2 */
+    top: 50%; /* vị trí cách đỉnh .image-container 20px */
+    left: 50%; /* căn giữa theo chiều ngang */
+    transform: translateX(
+        -50%
+        ); /* dịch chuyển lùi lại 50% chiều ngang để căn giữa */
+    padding: 10px 20px; /* padding xung quanh nội dung */
+
+    color: white; /* màu chữ trắng */
+    border-radius: 5px; /* bo tròn góc */
+    margin: 0; /* loại bỏ margin mặc định của tiêu đề */
+    font-size: 3vw; /* kích thước font chữ */
+}
