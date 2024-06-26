@@ -33,7 +33,7 @@
         %>
         <div id="main">
             <div id="head">
-                <img src="images/banner.jpg" width="1057px" height="200px" />
+                <%@include file="banner.jsp" %>
             </div>
             <div id="head-link">
                 <div id='menungang'>

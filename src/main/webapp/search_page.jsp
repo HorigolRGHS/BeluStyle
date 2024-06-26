@@ -19,7 +19,7 @@
 
         <div id="main">
             <div id="head">
-                <img src="images/banner.jpg" width="1057px" height="200px" />
+                <%@include file="banner.jsp" %>
             </div>
 
             <%
@@ -106,7 +106,7 @@
 
                             <li class="preorder"><span class="tagimg "> </span> <a
                                     href="detail.jsp?productID=<%=p.getProductID()%>"> <img
-                                        src="sanpham/<%=p.getImage()%>" width=" 250px" height="250px" />
+                                        src="images/product/<%=p.getImage()%>" width=" 250px" height="250px" />
                                     <h3><%=p.getName()%></h3>
                                     <h4>
                                         Giá:

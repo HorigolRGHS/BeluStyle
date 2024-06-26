@@ -71,7 +71,7 @@
         %>
         <div id="main">
             <div id="head">
-                <img src="images/banner.jpg" width="1057px" height="200px" />
+                <%@include file="banner.jsp" %>
             </div>
             <div id="head-link">
                 <div id='menungang'>
@@ -121,7 +121,7 @@
                     <div class="product">
                         <div class="product-image">
                             <img
-                                src="sanpham/<%=productDAO.getProductbyId(c.getP().getProductID())
+                                src="images/product/<%=productDAO.getProductbyId(c.getP().getProductID())
                                         .getImage()%>">
                         </div>
                         <div class="product-details">
