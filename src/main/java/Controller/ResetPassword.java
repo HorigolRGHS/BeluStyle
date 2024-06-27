@@ -1,4 +1,4 @@
-package controller;
+package Controller;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -27,14 +27,14 @@ import jakarta.servlet.http.HttpSession;
 
 
 import model.User;
-import dao.UserDAOImpl;
+import dao.UserDAO;
 
 /**
  * Servlet implementation class ResetPassword
  */
 public class ResetPassword extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private UserDAOImpl userDAO = new UserDAOImpl();
+	private UserDAO userDAO = new UserDAO();
        
     /**
      * @see HttpServlet#HttpServlet()

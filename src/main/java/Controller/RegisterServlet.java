@@ -1,9 +1,10 @@
-package controller;
+package Controller;
+
+
 
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -19,14 +20,14 @@ import jakarta.servlet.http.HttpSession;
 
 import model.Cart;
 import model.User;
-import dao.UserDAOImpl;
+import dao.UserDAO;
 
 /**
  * Servlet implementation class RegisterServlet
  */
 public class RegisterServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private UserDAOImpl userDAO = new UserDAOImpl();
+	private UserDAO userDAO = new UserDAO();
 	private List<Cart> cart = new ArrayList<Cart>();
 
 	/**
@@ -43,7 +44,7 @@ public class RegisterServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
+		request.getRequestDispatcher("register.jsp").forward(request, response);
 	}
 
 	/**
@@ -73,7 +74,7 @@ public class RegisterServlet extends HttpServlet {
 		System.out.println(username);
 
 		String err = "";
-		String url = "/register.jsp";
+		String url = "/register";
 
 		if (username.equals("") || password.equals("") || email.equals("") || address.equals("") || phoneNumber.equals("")) {
 			err += "Phải nhập đầy đủ thông tin!";
@@ -106,10 +107,10 @@ public class RegisterServlet extends HttpServlet {
 	            //setting cookie to expiry in 30 mins
 	            loginCookie.setMaxAge(30*60);
 	            response.addCookie(loginCookie);
-	            response.sendRedirect("index.jsp");
+	            response.sendRedirect("index");
 				
 			} else {
-				url = "/register.jsp";
+				url = "/register";
 				RequestDispatcher rd = getServletContext()
 						.getRequestDispatcher(url);
 				rd.forward(request, response);
@@ -117,7 +118,7 @@ public class RegisterServlet extends HttpServlet {
 			
 		} catch (Exception e) {
 			e.printStackTrace();
-			response.sendRedirect("/register.jsp");
+			response.sendRedirect("/register");
 		}
 
 	}

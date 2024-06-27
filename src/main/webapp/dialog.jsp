@@ -4,7 +4,7 @@
     Author     : Duong Nhat Anh CE181079
 --%>
 
-<%@page import="dao.ProductDAOImpl"%>
+<%@page import="dao.ProductDAO"%>
 <%@page import="model.Product"%>
 <%@page import="model.Brand"%>
 <%@page import="model.Category"%>
@@ -38,7 +38,7 @@
                     <label for="category">Category:</label><br>
                     <select name="category" class="drop-lists" id="category">
                         <%
-                            ArrayList<Category> listCate = ProductDAOImpl.getAllCategory();
+                            ArrayList<Category> listCate = ProductDAO.getAllCategory();
                             for (Category cate : listCate) {
                         %>
                         <option value="<%= cate.getCategoryID()%>"><%= cate.getName() %></option>
@@ -50,7 +50,7 @@
                     <label for="brand">Brand:</label><br>
                     <select name="brand" class="drop-lists" id="brand">
                         <%
-                            ArrayList<Brand> listBrand = ProductDAOImpl.getAllBrand();
+                            ArrayList<Brand> listBrand = ProductDAO.getAllBrand();
                             for (Brand brand : listBrand) {
                         %>
                         <option value="<%= brand.getBrandID()%>"><%= brand.getName() %></option>

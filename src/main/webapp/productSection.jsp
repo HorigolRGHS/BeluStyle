@@ -1,4 +1,4 @@
-<%@page import="dao.ProductDAOImpl"%>
+<%@page import="dao.ProductDAO"%>
 <%@page import="model.Brand"%>
 <%@page import="model.Category"%>
 <%@page import="java.util.ArrayList"%>
@@ -33,15 +33,15 @@
                 </thead>
                 <tbody>
                     <%
-                        ArrayList<Product> prolist = ProductDAOImpl.getAllProduct();
+                        ArrayList<Product> prolist = ProductDAO.getAllProduct();
                         if (prolist != null) {
                             for (Product pro : prolist) {
                     %>
                     <tr>
                 <form action="DeleteProduct" method="post">
                     <td><%= pro.getProductID() %></td>
-                    <td><%= ProductDAOImpl.getCategoryNameById(pro.getCategoryID()) %></td>
-                    <td><%= ProductDAOImpl.getBrandNameById(pro.getBrandID()) %></td>
+                    <td><%= ProductDAO.getCategoryNameById(pro.getCategoryID()) %></td>
+                    <td><%= ProductDAO.getBrandNameById(pro.getBrandID()) %></td>
                     <td><%= pro.getName() %></td>
                     <td><%= pro.getQuantity() %></td>
                     <td><img src="./images/product/<%= pro.getImage() %>" alt="<%= pro.getImage() %>" width="50"></td>

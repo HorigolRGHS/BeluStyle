@@ -1,7 +1,7 @@
 <%@page import="java.util.ArrayList"%>
 <%@page import="model.Category"%>
 <%@page import="java.util.List"%>
-<%@page import="dao.CategoryDAOImpl"%>
+<%@page import="dao.CategoryDAO"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
          pageEncoding="UTF-8"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -13,7 +13,7 @@
     </head>
     <body>
         <%
-            CategoryDAOImpl categoryDAO = new CategoryDAOImpl();
+            CategoryDAO categoryDAO = new CategoryDAO();
             List<Category> list = new ArrayList<Category>();
             list = categoryDAO.getList();
         %>
@@ -24,7 +24,7 @@
                         for (Category c : list) {
 
                     %>
-                    <li><a href="index.jsp?categoryID=<%=c.getCategoryID()%>"> <i class="fa fa-home"><img
+                    <li><a href="index?categoryID=<%=c.getCategoryID()%>"> <i class="fa fa-home"><img
                                     src="images/category/<%=c.getCategoryID()%>.png"></i>
                             <strong><%=c.getName()%></strong> 
                         </a> </li>

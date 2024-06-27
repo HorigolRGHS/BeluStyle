@@ -23,7 +23,7 @@
 
                     <span></span>
                 </div>
-                <form action="LoginServlet" method="post">
+                <form action="login" method="post">
                     <% String mess = "";
                                     if (request.getAttribute("mess") != null) {
                                         mess = (String) request.getAttribute("mess");%>
@@ -57,7 +57,7 @@
                         </ul>
                     </div>
                     <h5>
-                        Bạn muốn đăng ký tài khoản?<a href="register.jsp"> Đăng ký </a>
+                        Bạn muốn đăng ký tài khoản?<a href="register"> Đăng ký </a>
                     </h5>
                 </form>
             </div>

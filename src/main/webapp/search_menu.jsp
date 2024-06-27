@@ -3,7 +3,7 @@
 <%@page import="java.util.ArrayList"%>
 <%@page import="model.Category"%>
 <%@page import="java.util.List"%>
-<%@page import="dao.CategoryDAOImpl"%>
+<%@page import="dao.CategoryDAO"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
          pageEncoding="UTF-8"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -15,7 +15,7 @@
     </head>
     <body>
         <%
-            CategoryDAOImpl categoryDAO = new CategoryDAOImpl();
+            CategoryDAO categoryDAO = new CategoryDAO();
             BrandDAO brandDAO = new BrandDAO();
             List<Category> categoryList = new ArrayList<Category>();
             List<Brand> brandList = new ArrayList<Brand>();
@@ -27,7 +27,7 @@
             <nav>
                 <ul class="mcd-menu">
                     <li>
-                        <form accept-charset="utf-8" method="post" action="SearchServlet" name="SearchServlet">
+                        <form accept-charset="utf-8" method="post" action="search" name="SearchServlet">
                             <p>
                                 <label for="tensp">Tên sản phẩm</label>
                                 <br>

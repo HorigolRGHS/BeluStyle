@@ -1,4 +1,4 @@
-package controller;
+package Controller;
 
 import java.io.IOException;
 import java.sql.Timestamp;
@@ -27,8 +27,8 @@ import model.Order;
 import model.User;
 import dao.OrderDAO;
 import dao.OrderDetailDAO;
-import dao.ProductDAOImpl;
-import dao.UserDAOImpl;
+import dao.ProductDAO;
+import dao.UserDAO;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -40,8 +40,8 @@ import model.OrderDetail;
 public class ConfirmServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
-    private UserDAOImpl userDAO = new UserDAOImpl();
-    private ProductDAOImpl productDAO = new ProductDAOImpl();
+    private UserDAO userDAO = new UserDAO();
+    private ProductDAO productDAO = new ProductDAO();
     private OrderDAO orderDAO = new OrderDAO();
     private OrderDetailDAO orderDetailDAO = new OrderDetailDAO();
 
@@ -126,7 +126,7 @@ public class ConfirmServlet extends HttpServlet {
 
         cart.clear();
         request.getSession().setAttribute("cart", cart);
-        response.sendRedirect("index.jsp");
+        response.sendRedirect("index");
     }
 
     /**

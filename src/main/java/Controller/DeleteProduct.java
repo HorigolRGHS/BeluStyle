@@ -5,7 +5,7 @@
 
 package controller;
 
-import dao.ProductDAOImpl;
+import dao.ProductDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -71,7 +71,7 @@ public class DeleteProduct extends HttpServlet {
         int productId = Integer.parseInt(request.getParameter("productId"));
 
         // Delete product using DAO
-        ProductDAOImpl.deleteProduct(productId);
+        ProductDAO.deleteProduct(productId);
 
         // Redirect back to the product list (index.jsp)
         response.sendRedirect("AdminPanel.jsp");

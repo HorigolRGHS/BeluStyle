@@ -5,7 +5,7 @@
 
 package controller;
 
-import dao.ProductDAOImpl;
+import dao.ProductDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -99,7 +99,7 @@ public class EditProduct extends HttpServlet {
         }
 
         // Add the product using DAO
-        boolean success = ProductDAOImpl.updateProduct(productID, categoryID, brandID, productName, quantity, fileName, price, description);
+        boolean success = ProductDAO.updateProduct(productID, categoryID, brandID, productName, quantity, fileName, price, description);
 
         if (success) {
             response.sendRedirect("AdminPanel.jsp");

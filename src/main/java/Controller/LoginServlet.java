@@ -1,4 +1,6 @@
-package controller;
+package Controller;
+
+
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -13,7 +15,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import model.Cart;
-import dao.UserDAOImpl;
+import dao.UserDAO;
 
 /**
  * Servlet implementation class LoginServlet
@@ -21,7 +23,7 @@ import dao.UserDAOImpl;
 public class LoginServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
-    private UserDAOImpl userDAO = new UserDAOImpl();
+    private UserDAO userDAO = new UserDAO();
     private List<Cart> cart = new ArrayList<Cart>();
 
     /**
@@ -38,7 +40,7 @@ public class LoginServlet extends HttpServlet {
      */
     protected void doGet(HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException {
-        // TODO Auto-generated method stub
+        request.getRequestDispatcher("login.jsp").forward(request, response);
     }
 
     /**
@@ -63,7 +65,7 @@ public class LoginServlet extends HttpServlet {
             request.setAttribute("err", err);
         }
 
-        String url = "/login.jsp";
+        String url = "/login";
         try {
             if (err.length() == 0) {
                 HttpSession session = request.getSession();
@@ -72,7 +74,7 @@ public class LoginServlet extends HttpServlet {
                 double wallet = userDAO.getWallet(username);
                 System.out.println(wallet);
                 session.setAttribute("Wallet", wallet);
-                String userRole = userDAO.getUserRole(username); // Implement getUserRole in UserDAOImpl
+                String userRole = userDAO.getUserRole(username); // Implement getUserRole in UserDAO
                 session.setAttribute("role", userRole);
                 userDAO.login(username, password);
                 Cookie loginCookie = new Cookie("username", username);
@@ -83,10 +85,10 @@ public class LoginServlet extends HttpServlet {
                 if ("Admin".equalsIgnoreCase(userRole)) {
                     response.sendRedirect("AdminPanel.jsp");
                 } else {
-                    response.sendRedirect("index.jsp");
+                    response.sendRedirect("index");
                 }
             } else {
-                url = "/login.jsp";
+                url = "/login";
                 RequestDispatcher rd = getServletContext()
                         .getRequestDispatcher(url);
                 rd.forward(request, response);
@@ -94,7 +96,7 @@ public class LoginServlet extends HttpServlet {
 
         } catch (Exception e) {
             e.printStackTrace();
-            response.sendRedirect("/login.jsp");
+            response.sendRedirect("/login");
         }
     }
 

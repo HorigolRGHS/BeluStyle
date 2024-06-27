@@ -1,6 +1,6 @@
 <%@ page import="java.util.List"%>
 <%@ page import="model.Product"%>
-<%@ page import="dao.ProductDAOImpl"%>
+<%@ page import="dao.ProductDAO"%>
 <%@ page import="java.text.NumberFormat"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
@@ -37,52 +37,12 @@
             <div id="head">
                 <%@include file="banner.jsp" %>
             </div>
-            <%
-                String username = null;
-                Cookie[] cookies = request.getCookies();
-                if (cookies != null) {
-                    for (Cookie cookie : cookies) {
-                        if (cookie.getName().equals("username")) {
-                            username = cookie.getValue();
-                        }
-                    }
-                }
-
-                if (username != null) {
-            %>
-            <div id="head-link">
-                <div id='menungang'>
-                    <ul>
-                        <li class='last'><a href="index.jsp"><span>Trang chủ</span></a></li>
-                        <li class='last'><a href="product.jsp"><span>Sản phẩm</span></a></li>
-                        <li class='last'><a href="cart.jsp"><span>Giỏ hàng</span></a></li>
-                        <li class='last'><a href="search_page.jsp"><span>Tìm kiếm</span></a></li>
-                        <li class='last' style="float: right;"><a href="LogoutServlet"><span>Đăng xuất</span></a></li>
-                        <li class='last' style="float: right;"><a href="update_user.jsp?username=<%=username%>"><span><%=username%></span></a></li>
-                    </ul>
-                </div>
-            </div>
-            <%
-            } else {
-            %>
-            <div id="head-link">
-                <div id='menungang'>
-                    <ul>
-                        <li class='last'><a href="index.jsp"><span>Trang chủ</span></a></li>
-                        <li class='last'><a href="product.jsp"><span>Sản phẩm</span></a></li>
-                        <li class='last'><a href="search_page.jsp"><span>Tìm kiếm</span></a></li>
-                        <li class='last' style="float: right;"><a href="register.jsp"><span>Đăng ký</span></a></li>
-                        <li class='last' style="float: right;"><a href="login.jsp"><span>Đăng nhập</span></a></li>
-                    </ul>
-                </div>
-            </div>
-            <%
-                }
-            %>
-
+                       
+            <%@include file="navbar.jsp" %>
+            
             <div id="content_center">
                 <%
-                    ProductDAOImpl productDAO = new ProductDAOImpl();
+                    ProductDAO productDAO = new ProductDAO();
                     List<Product> products = productDAO.getList();
 
                     NumberFormat nf = NumberFormat.getInstance();
@@ -109,7 +69,7 @@
                         <c:forEach var="product" items="${paginatedProducts}">
                             <li class="preorder">
                                 <span class="tagimg"></span>
-                                <a href="detail.jsp?productID=${product.getProductID()}">
+                                <a href="detail?productID=${product.getProductID()}">
                                     <img src="images/product/${product.getImage()}" width="250px" height="250px" />
                                     <h3>${product.getName()}</h3>
                                     <h4>

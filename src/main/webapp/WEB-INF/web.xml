@@ -7,11 +7,12 @@
     </filter>
     <filter-mapping>
         <filter-name>AdminFilter</filter-name>
-        <url-pattern>/AdminPanel.jsp</url-pattern> <url-pattern>/EditProduct</url-pattern>
+        <url-pattern>/AdminPanel.jsp</url-pattern>
+        <url-pattern>/EditProduct</url-pattern>
     </filter-mapping>
     <servlet>
         <servlet-name>UpdateUser</servlet-name>
-        <servlet-class>controller.UpdateUser</servlet-class>
+        <servlet-class>Controller.UpdateUser</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>DeleteProduct</servlet-name>
@@ -33,9 +34,13 @@
             <!-- 2 MB -->
         </multipart-config>
     </servlet>
+    <servlet>
+        <servlet-name>IndexServlet</servlet-name>
+        <servlet-class>Controller.IndexServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>UpdateUser</servlet-name>
-        <url-pattern>/UpdateUser</url-pattern>
+        <url-pattern>/update-user</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>HistoryServlet</servlet-name>
@@ -53,9 +58,18 @@
         <servlet-name>AddProduct</servlet-name>
         <url-pattern>/AddProduct</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>IndexServlet</servlet-name>
+        <url-pattern>/index</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ProductDetailServlet</servlet-name>
+        <url-pattern>/detail</url-pattern>
+    </servlet-mapping>
     <welcome-file-list>
         <!--    <welcome-file>index.html</welcome-file>
-        <welcome-file>index.htm</welcome-file>-->
+        -->
+        <welcome-file>index</welcome-file>
         <welcome-file>index.jsp</welcome-file>
         <welcome-file>default.html</welcome-file>
         <welcome-file>default.htm</welcome-file>
@@ -65,35 +79,39 @@
         <description/>
         <display-name>RegisterServlet</display-name>
         <servlet-name>RegisterServlet</servlet-name>
-        <servlet-class>controller.RegisterServlet</servlet-class>
+        <servlet-class>Controller.RegisterServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>HistoryServlet</servlet-name>
         <servlet-class>Controller.HistoryServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>ProductDetailServlet</servlet-name>
+        <servlet-class>Controller.ProductDetailServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>RegisterServlet</servlet-name>
-        <url-pattern>/RegisterServlet</url-pattern>
+        <url-pattern>/register</url-pattern>
     </servlet-mapping>
     <servlet>
         <description/>
         <display-name>LoginServlet</display-name>
         <servlet-name>LoginServlet</servlet-name>
-        <servlet-class>controller.LoginServlet</servlet-class>
+        <servlet-class>Controller.LoginServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>LoginServlet</servlet-name>
-        <url-pattern>/LoginServlet</url-pattern>
+        <url-pattern>/login</url-pattern>
     </servlet-mapping>
     <servlet>
         <description/>
-        <display-name>GioHangServlet</display-name>
-        <servlet-name>GioHangServlet</servlet-name>
-        <servlet-class>controller.GioHangServlet</servlet-class>
+        <display-name>CartServlet</display-name>
+        <servlet-name>CartServlet</servlet-name>
+        <servlet-class>Controller.CartServlet</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>GioHangServlet</servlet-name>
-        <url-pattern>/GioHangServlet</url-pattern>
+        <servlet-name>CartServlet</servlet-name>
+        <url-pattern>/cart</url-pattern>
     </servlet-mapping>
     <servlet>
         <description/>
@@ -129,7 +147,7 @@
         <description/>
         <display-name>LogoutServlet</display-name>
         <servlet-name>LogoutServlet</servlet-name>
-        <servlet-class>controller.LogoutServlet</servlet-class>
+        <servlet-class>Controller.LogoutServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>LogoutServlet</servlet-name>
@@ -139,7 +157,7 @@
         <description/>
         <display-name>ResetPassword</display-name>
         <servlet-name>ResetPassword</servlet-name>
-        <servlet-class>controller.ResetPassword</servlet-class>
+        <servlet-class>Controller.ResetPassword</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>ResetPassword</servlet-name>
@@ -149,17 +167,17 @@
         <description/>
         <display-name>SearchServlet</display-name>
         <servlet-name>SearchServlet</servlet-name>
-        <servlet-class>controller.SearchServlet</servlet-class>
+        <servlet-class>Controller.SearchServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>SearchServlet</servlet-name>
-        <url-pattern>/SearchServlet</url-pattern>
+        <url-pattern>/search</url-pattern>
     </servlet-mapping>
     <servlet>
         <description/>
         <display-name>ConfirmServlet</display-name>
         <servlet-name>ConfirmServlet</servlet-name>
-        <servlet-class>controller.ConfirmServlet</servlet-class>
+        <servlet-class>Controller.ConfirmServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>ConfirmServlet</servlet-name>

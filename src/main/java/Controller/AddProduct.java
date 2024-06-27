@@ -4,7 +4,7 @@
  */
 package controller;
 
-import dao.ProductDAOImpl;
+import dao.ProductDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -98,7 +98,7 @@ public class AddProduct extends HttpServlet {
             Files.copy(fileContent, Paths.get(uploadDir, fileName), StandardCopyOption.REPLACE_EXISTING);
         }
 
-        boolean success = ProductDAOImpl.addProduct(categoryID, brandID, productName, fileName, price, quantity, description);
+        boolean success = ProductDAO.addProduct(categoryID, brandID, productName, fileName, price, quantity, description);
 
         if (success) {
             response.sendRedirect("AdminPanel.jsp#products");

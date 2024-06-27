@@ -1,4 +1,4 @@
-package controller;
+package Controller;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -12,7 +12,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import dao.UserDAOImpl;
+import dao.UserDAO;
 import model.User;
 
 /**
@@ -21,7 +21,7 @@ import model.User;
 public class UpdateUser extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
-    private UserDAOImpl userDAO = new UserDAOImpl();
+    private UserDAO userDAO = new UserDAO();
 
     /**
      * @see HttpServlet#HttpServlet()
@@ -36,7 +36,7 @@ public class UpdateUser extends HttpServlet {
      * response)
      */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // TODO Auto-generated method stub
+        request.getRequestDispatcher("update_user.jsp").forward(request, response);
     }
 
     /**
@@ -91,7 +91,7 @@ public class UpdateUser extends HttpServlet {
 
         try {
             if (err.length() == 0) {
-                User u = new User(username, password, fullName, dob, sex, email, phoneNumber, address, UserDAOImpl.getUser(username).getRole(), UserDAOImpl.getUser(username).getWallet());
+                User u = new User(username, password, fullName, dob, sex, email, phoneNumber, address, UserDAO.getUser(username).getRole(), UserDAO.getUser(username).getWallet());
                 userDAO.updateUser(u);
                 url = "/index.jsp";
             } else {

@@ -1,4 +1,4 @@
-package controller;
+package Controller;
 
 import java.io.IOException;
 
@@ -30,7 +30,7 @@ public class SearchServlet extends HttpServlet {
      * response)
      */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
+        request.getRequestDispatcher("search_page.jsp").forward(request, response);
     }
 
     /**

@@ -4,7 +4,7 @@
     Author     : Duong Nhat Anh CE181079
 --%>
 
-<%@page import="dao.ProductDAOImpl"%>
+<%@page import="dao.ProductDAO"%>
 <%@page import="model.Category"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="model.Brand"%>
@@ -35,11 +35,11 @@
         <%
             // Fetch the product details
             int productId = Integer.parseInt(request.getParameter("productId"));
-            Product product = ProductDAOImpl.getProductById(productId);
+            Product product = ProductDAO.getProductById(productId);
 
             // Fetch the categories and brands
-            ArrayList<Category> listCate = ProductDAOImpl.getAllCategory();
-            ArrayList<Brand> listBrand = ProductDAOImpl.getAllBrand();
+            ArrayList<Category> listCate = ProductDAO.getAllCategory();
+            ArrayList<Brand> listBrand = ProductDAO.getAllBrand();
         %>
         <!-- Edit-Dialog -->
         <div class="dialog overlay" id="EditProduct">

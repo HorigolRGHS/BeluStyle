@@ -1,7 +1,7 @@
 
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-<%@page import="dao.UserDAOImpl"%>
+<%@page import="dao.UserDAO"%>
 <%@page import="model.User"%>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -18,7 +18,7 @@
 			err = (String) request.getAttribute("err");
 		}
 		String username= request.getParameter("username");
-		UserDAOImpl userDAO = new UserDAOImpl();
+		UserDAO userDAO = new UserDAO();
 		User u= userDAO.getUser(username);
 	%>
 
@@ -30,7 +30,7 @@
 				<h2>Cập nhật thông tin</h2>
 				<lable></lable>
 			</div>
-			<form action="UpdateUser" method="post">
+			<form action="update-user" method="post">
 				<li style="color: red"><%=err%></li>
 				Username
 				<li><input type="text" class="text"
@@ -77,7 +77,7 @@
 					
 				</div>
 				<h5>
-					<a href="index.jsp">Trở về</a>
+					<a href="index">Trở về</a>
 				</h5>
 			</form>
 		</div>

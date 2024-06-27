@@ -1,6 +1,6 @@
 <%@page import="model.Cart"%>
 <%@page import="java.util.List"%>
-<%@page import="dao.ProductDAOImpl"%>
+<%@page import="dao.ProductDAO"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="java.text.NumberFormat"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
@@ -58,35 +58,14 @@
         </style>
     </head>
     <body>
-        <%
-            String username = null;
-            Cookie[] cookies = request.getCookies();
-            if (cookies != null) {
-                for (Cookie cookie : cookies) {
-                    if (cookie.getName().equals("username")) {
-                        username = cookie.getValue();
-                    }
-                }
-            }
-        %>
+
         <div id="main">
             <div id="head">
                 <%@include file="banner.jsp" %>
             </div>
-            <div id="head-link">
-                <div id='menungang'>
-                    <ul>
-                        <li class='last'><a href="index.jsp"><span>Trang
-                                    chủ</span></a></li>
-                        <li class='last'><a href="product.jsp"><span>Sản phẩm</span></a></li>
-                        <li class='last'><a href="cart.jsp"><span>Giỏ hàng</span></a></li>
-                        <li class='last'><a href="search_page.jsp"><span>Tìm kiếm</span></a></li>
-                        <li class='last' style="float: right;"><a href="login.jsp"><span>Đăng
-                                    xuất</span></a></li>
-                        <li class='last' style="float: right;"><a href="update_user.jsp?username=<%=username%>"><span><%= username%></span></a></li>			
-                    </ul>
-                </div>
-            </div>
+
+            <%@include file="navbar.jsp" %>
+
             <div id="content">
 
 
@@ -100,7 +79,7 @@
                             class="product-line-price">Tổng tiền</label>
                     </div>
                     <%
-                        ProductDAOImpl productDAO = new ProductDAOImpl();
+                        ProductDAO productDAO = new ProductDAO();
 
                         NumberFormat nf = NumberFormat.getInstance();
                         nf.setMinimumIntegerDigits(0);
@@ -136,9 +115,9 @@
                             VNĐ
                         </div>
                         <div class="product-quantity cart_quantity_button">
-                            <a class="cart_quantity_up" href="GioHangServlet?command=deleteCart&productId=<%=c.getP().getProductID()%>"> - </a>
+                            <a class="cart_quantity_up" href="cart?command=deleteCart&productId=<%=c.getP().getProductID()%>"> - </a>
                             <input class="cart_quantity_input" type="number" value="<%=c.getQuantity()%>" disabled="disabled">
-                            <a class="cart_quantity_up" href="GioHangServlet?command=addCart&productId=<%=c.getP().getProductID()%>"> + </a>
+                            <a class="cart_quantity_up" href="cart?command=addCart&productId=<%=c.getP().getProductID()%>"> + </a>
                         </div>
                         <div class="product-line-price" style="text-align: right"><%=nf.format(productDAO.getProductbyId(
                                 c.getP().getProductID()).getPrice()
@@ -146,7 +125,7 @@
                             VNĐ
 
                             <a
-                                href="GioHangServlet?command=removeCart&productId=<%=c.getP().getProductID()%>"><img style="margin-left: 10px"
+                                href="cart?command=removeCart&productId=<%=c.getP().getProductID()%>"><img style="margin-left: 10px"
                                                                                                                  src="images/delete.png"></a>
                         </div>
 
@@ -163,19 +142,19 @@
                             </div>
                         </div>
                     </div>
-                    <%if (cart != null && cart.size() > 0) { %>
+                    <%if (cart != null && cart.size() > 0) {%>
                     <a class="checkout" href="history" style="text-decoration: none;">Lịch sử</a>
                     <a class="checkout" href="ConfirmServlet?username=<%=username%>" style="text-decoration: none;">Thanh
                         toán</a>
                         <% } else {%>
-<!--                        <form action="history" method="get" class="checkout">
-                        <input type="hidden" name="username" value="<%= username%>" />
-                        <button type="submit" class="btn btn-link" style="text-decoration: none; padding: 0; border: none; background: none; color: inherit;">
-                            Lịch sử
-                        </button>
-                        </form>-->
+                    <!--                        <form action="history" method="get" class="checkout">
+                                            <input type="hidden" name="username" value="<%= username%>" />
+                                            <button type="submit" class="btn btn-link" style="text-decoration: none; padding: 0; border: none; background: none; color: inherit;">
+                                                Lịch sử
+                                            </button>
+                                            </form>-->
                     <a class="checkout" href="history" style="text-decoration: none;">Lịch sử</a>
-                    <a class="checkout" href="product.jsp" style="text-decoration: none;">Thanh
+                    <a class="checkout" href="product" style="text-decoration: none;">Thanh
                         toán</a>
                         <%}%>
                 </div>

@@ -22,7 +22,7 @@
 				<h2>Đăng ký</h2>
 				<lable></lable>
 			</div>
-			<form action="RegisterServlet" method="post">
+			<form action="register" method="post">
 				<li style="color: red"><%=err%></li>
 				Username
 				<li><input type="text" class="text" value=""
