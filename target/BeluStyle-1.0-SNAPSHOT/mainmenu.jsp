@@ -16,7 +16,7 @@
             <ul>
                 <li>
                     <a href="#">
-                        <span class="icon"><img id="LogoBe" src="./images/logo.png" alt="Logo"/></span>
+                        <span class="icon"><img style="width: 50px;  height: 50px" src="images/BeluIcon.png" alt="Logo"/></span>
                         <span class="title">BeluStyle</span>
                     </a>
                 </li>
@@ -50,7 +50,7 @@
                 </li>
 
                 <li>
-                    <a href="logout">
+                    <a href="LogoutServlet">
                         <span class="icon"><ion-icon name="log-out-outline"></ion-icon></span>
                         <span class="title">Sign Out</span>
                     </a>

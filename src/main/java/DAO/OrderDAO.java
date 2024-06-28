@@ -25,7 +25,7 @@ public class OrderDAO {
         }
     }
 
-      public static int count() {
+    public static int count() {
         DBConnect.Connect();
         int count = 0;
         if (DBConnect.isConnected()) {
@@ -95,15 +95,15 @@ public class OrderDAO {
             e.printStackTrace();
         }
     }
-    
+
     public List<OrderHistory> getOrderHistoryByUsername(String username) {
         Connection con = DBConnect.getConnection();
-        String sql = "SELECT o.OrderID, o.OrderDate, od.ProductID, od.Quantity, od.Price, p.Name AS ProductName " +
-                     "FROM [Order] o " +
-                     "JOIN OrderDetail od ON o.OrderID = od.OrderID " +
-                     "JOIN Product p ON od.ProductID = p.ProductID " +
-                     "WHERE o.Username = ?";
-        
+        String sql = "SELECT o.OrderID, o.OrderDate, od.ProductID, od.Quantity, od.Price, p.Name AS ProductName "
+                + "FROM [Order] o "
+                + "JOIN OrderDetail od ON o.OrderID = od.OrderID "
+                + "JOIN Product p ON od.ProductID = p.ProductID "
+                + "WHERE o.Username = ?";
+
         List<OrderHistory> orderHistoryList = new ArrayList<>();
         try {
             PreparedStatement ps = con.prepareStatement(sql);
@@ -126,5 +126,39 @@ public class OrderDAO {
         }
         return orderHistoryList;
     }
+
+    public String getFullnameOrder(String username) {
+        String fullName = null;
+        String sql = "SELECT FullName FROM [User] WHERE Username = ?";
+        try ( Connection con = DBConnect.getConnection();  PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, username);
+
+            try ( ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    fullName = rs.getString("FullName");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // You might want to throw a custom exception here to signal an error
+        }
+        return fullName;
+    }
+    public int getCountOrder(){
+       int temp = 0;
+       DBConnect.Connect();
+       if (DBConnect.isConnected()) {
+           try {
+               ResultSet rs = DBConnect.ExecuteQuery("select COUNT(OrderID) as OrderNumber from [Order]");
+               if (rs.next()) {
+                   temp = rs.getInt("OrderNumber");
+               }
+               DBConnect.Disconnect();
+           } catch (Exception e) {
+               System.out.println(e.getMessage());
+           }
+       }
+       return temp;
+   }
 
 }

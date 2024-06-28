@@ -7,6 +7,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import model.User;
 
 public class UserDAO {
@@ -163,5 +164,21 @@ public class UserDAO {
             e.printStackTrace();
         }
         return role;
+    }
+    public ArrayList<String> getAllFullnameUser(){
+        ArrayList<String> temp = new ArrayList<>();
+        DBConnect.Connect();
+        if (DBConnect.isConnected()) {
+            try {
+                ResultSet rs = DBConnect.ExecuteQuery("Select FullName from [User] where [Role] != 'Admin'");
+                while (rs.next()) {                    
+                    temp.add(rs.getString("FullName"));
+                }
+                DBConnect.Disconnect();
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+        }
+        return temp;
     }
 }

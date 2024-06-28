@@ -16,15 +16,15 @@
     </servlet>
     <servlet>
         <servlet-name>DeleteProduct</servlet-name>
-        <servlet-class>controller.DeleteProduct</servlet-class>
+        <servlet-class>Controller.DeleteProduct</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>EditProduct</servlet-name>
-        <servlet-class>controller.EditProduct</servlet-class>
+        <servlet-class>Controller.EditProduct</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>AddProduct</servlet-name>
-        <servlet-class>controller.AddProduct</servlet-class>
+        <servlet-class>Controller.AddProduct</servlet-class>
         <multipart-config>
             <max-file-size>10485760</max-file-size>
             <!-- 10 MB -->
@@ -37,6 +37,22 @@
     <servlet>
         <servlet-name>IndexServlet</servlet-name>
         <servlet-class>Controller.IndexServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AdminPanelServlet</servlet-name>
+        <servlet-class>Controller.AdminPanelServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>InvoiceOrder</servlet-name>
+        <servlet-class>Controller.InvoiceOrder</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>DelelteOrder</servlet-name>
+        <servlet-class>Controller.DelelteOrder</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>DeleteOrder</servlet-name>
+        <servlet-class>Controller.DeleteOrder</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>UpdateUser</servlet-name>
@@ -65,6 +81,22 @@
     <servlet-mapping>
         <servlet-name>ProductDetailServlet</servlet-name>
         <url-pattern>/detail</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AdminPanelServlet</servlet-name>
+        <url-pattern>/AdminPanel</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>InvoiceOrder</servlet-name>
+        <url-pattern>/InvoiceOrder</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DelelteOrder</servlet-name>
+        <url-pattern>/DelelteOrder</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DeleteOrder</servlet-name>
+        <url-pattern>/DeleteOrder</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <!--    <welcome-file>index.html</welcome-file>

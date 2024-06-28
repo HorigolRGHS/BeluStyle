@@ -1,9 +1,10 @@
 <%@page import="dao.ProductDAO"%>
-<%@page import="model.Brand"%>
-<%@page import="model.Category"%>
-<%@page import="java.util.ArrayList"%>
 <%@page import="model.Product"%>
+<%@page import="java.util.ArrayList"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+
 <!DOCTYPE html>
 <html lang="en">
     <body>
@@ -12,11 +13,13 @@
                 localStorage.setItem('currentSection', 'products');
             }
         </script>
+
         <div class="productBox">
             <div class="cardHeader">
                 <h2>All Products</h2>
-                <a href="#add-product" class="btn" onsubmit="saveCurrentSection()" >Add Product</a>
+                <button id="openModal" class="btn" onsubmit="saveCurrentSection()">Add Product</button>
             </div>
+
             <table class="styled-table">
                 <thead>
                     <tr>
@@ -32,38 +35,35 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <%
-                        ArrayList<Product> prolist = ProductDAO.getAllProduct();
-                        if (prolist != null) {
-                            for (Product pro : prolist) {
-                    %>
-                    <tr>
-                <form action="DeleteProduct" method="post">
-                    <td><%= pro.getProductID() %></td>
-                    <td><%= ProductDAO.getCategoryNameById(pro.getCategoryID()) %></td>
-                    <td><%= ProductDAO.getBrandNameById(pro.getBrandID()) %></td>
-                    <td><%= pro.getName() %></td>
-                    <td><%= pro.getQuantity() %></td>
-                    <td><img src="./images/product/<%= pro.getImage() %>" alt="<%= pro.getImage() %>" width="50"></td>
-                    <td><%= pro.getPrice() %></td>
-                    <td><%= pro.getDescription() %></td>
-                    <td>
-                        <a href="EditProduct?productId=<%= pro.getProductID()%>" class="btn btn-edit" onsubmit="saveCurrentSection()" >Edit</a>
-                        <input type="hidden" name="productId" value="<%= pro.getProductID()%>">
-                        <button type="submit" class="btn btn-delete" onsubmit="saveCurrentSection()" >Delete</button>
-                </form>
-                </td>
-                </tr>
-                <%
-                    }
-                } else {
-                %>
-                <tr>
-                    <td colspan="8">No products available.</td>
-                </tr>
-                <%
-                    }
-                %>
+                    <c:set var="prolist" value="${ProductDAO.getAllProduct()}"/>
+                    <c:choose>
+                        <c:when test="${not empty prolist}">
+                            <c:forEach items="${prolist}" var="pro">
+                                <tr>
+                            <form action="DeleteProduct" method="post">
+                                <td>${pro.productID}</td>
+                                <td>${ProductDAO.getCategoryNameById(pro.categoryID)}</td>
+                                <td>${ProductDAO.getBrandNameById(pro.brandID)}</td>
+                                <td>${pro.name}</td>
+                                <td>${pro.quantity}</td>
+                                <td><img src="./images/product/${pro.image}" alt="${pro.image}" width="50"></td>
+                                <td><fmt:formatNumber value="${pro.price}" type="number" maxFractionDigits="0"/></td>
+                                <td>${pro.description}</td>
+                                <td>
+                                    <a href="EditProduct?productId=${pro.productID}" class="btn btn-edit" onsubmit="saveCurrentSection()"><ion-icon name="create-outline"></ion-icon></a>
+                                    <input type="hidden" name="productId" value="${pro.productID}">
+                                    <a type="submit" class="btn btn-delete" onsubmit="saveCurrentSection()"><ion-icon name="trash-outline"></ion-icon></a>
+                            </form>
+                            </td>
+                            </tr>
+                        </c:forEach>
+                    </c:when>
+                    <c:otherwise>
+                        <tr>
+                            <td colspan="8">No products available.</td>
+                        </tr>
+                    </c:otherwise>
+                </c:choose>
                 </tbody>
             </table>
         </div>

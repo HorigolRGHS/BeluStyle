@@ -90,5 +90,32 @@ public class OrderDetailDAO {
         }
     }
     
+    public List<OrderDetail> getOrderDetailsByOrderId(int orderId) {
+        List<OrderDetail> orderDetails = new ArrayList<>();
+        String sql = "SELECT od.OrderID, od.OrderID, od.ProductID, od.Quantity, od.Price, p.Name AS ProductName "
+                   + "FROM OrderDetail od "
+                   + "JOIN Product p ON od.ProductID = p.ProductID "
+                   + "WHERE od.OrderID = ?"; // Filter by the given order ID
+
+        try (Connection con = DBConnect.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            
+            ps.setInt(1, orderId); // Set the order ID parameter
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    int orderDetailId = rs.getInt("OrderID"); 
+                    int productId = rs.getInt("ProductID");
+                    int quantity = rs.getInt("Quantity");
+                    double price = rs.getDouble("Price");
+                    orderDetails.add(new OrderDetail(orderDetailId, productId, quantity, price));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return orderDetails;
+    }
+    
     
 }

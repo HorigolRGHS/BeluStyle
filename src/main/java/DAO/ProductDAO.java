@@ -404,6 +404,51 @@ public class ProductDAO {
 
     }
 
+    public static String getProductNameById(int productId) {
+        String productName = "";
+        DBConnect.Connect();
+
+        if (DBConnect.isConnected()) {
+            String query = "SELECT Name FROM Product WHERE ProductID = ?";
+            try ( PreparedStatement preparedStatement = DBConnect.prepareStatement(query)) {
+                preparedStatement.setInt(1, productId);
+
+                try ( ResultSet resultSet = preparedStatement.executeQuery()) {
+                    if (resultSet.next()) {
+                        productName = resultSet.getString("Name");
+                    } else {
+                        System.out.println("Không tìm thấy sản phẩm có ProductID: " + productId);
+                    }
+                }
+            } catch (SQLException e) {
+                System.err.println("SQLException tại getProductNameById: " + e.getMessage());
+                e.printStackTrace(); // In ra stack trace để gỡ lỗi chi tiết
+            } finally {
+                DBConnect.Disconnect();
+            }
+        } else {
+            System.err.println("Lỗi kết nối cơ sở dữ liệu!");
+        }
+
+        return productName; // Trả về tên sản phẩm (null nếu không tìm thấy)
+    }
+    
+   public int getCountProduct(){
+       int temp = 0;
+       DBConnect.Connect();
+       if (DBConnect.isConnected()) {
+           try {
+               ResultSet rs = DBConnect.ExecuteQuery("select COUNT(ProductID) as ProductNumber from Product");
+               if (rs.next()) {
+                   temp = rs.getInt("ProductNumber");
+               }
+               DBConnect.Disconnect();
+           } catch (Exception e) {
+               System.out.println(e.getMessage());
+           }
+       }
+       return temp;
+   }
 
     public static void main(String[] args) {
 //        Product p = new Product(0, 1, 1, "S6", "da", 500000.0, "", "");
@@ -412,4 +457,5 @@ public class ProductDAO {
 //        // System.out.println(productDAO.getList());
 //        System.out.println(productDAO.getListByCategory(1));
     }
+
 }

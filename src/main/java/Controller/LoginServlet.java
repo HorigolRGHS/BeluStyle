@@ -83,7 +83,7 @@ public class LoginServlet extends HttpServlet {
                 response.addCookie(loginCookie);
                 System.out.println(userRole);
                 if ("Admin".equalsIgnoreCase(userRole)) {
-                    response.sendRedirect("AdminPanel.jsp");
+                    response.sendRedirect("AdminPanel");
                 } else {
                     response.sendRedirect("index");
                 }
@@ -95,6 +95,7 @@ public class LoginServlet extends HttpServlet {
             }
 
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             e.printStackTrace();
             response.sendRedirect("/login");
         }
