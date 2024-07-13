@@ -10,7 +10,15 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Trang chủ</title>
+        <!-- title of site -->
+        <title>BeluStyle</title>
+
+        <!-- For favicon png -->
+        <link
+            rel="shortcut icon"
+            type="image/icon"
+            href="Banner/Beluicon.png"
+            />
         <link rel="stylesheet" href="css/style.css" />
         <link rel="stylesheet" href="css/menu.css" />
         <link rel="stylesheet" href="css/product.css" />
@@ -57,9 +65,9 @@
                                     </h4> <span class="textkm">Stock quantity: <strong> <%= (p.getQuantity() == 0) ? "Sold out" : p.getQuantity() %> </strong>
                                     </span>
                                     <p class="info">
-                                        <span>Hãng sx: <%= BrandDAO.getBrand(p.getBrandID()).getName()%>
-                                        </span> <span>Giá: <%=nf.format(p.getPrice())%> VNĐ
-                                        </span> <span>Thông tin: <%=p.getDescription()%>
+                                        <span>Manufacturer: <%= BrandDAO.getBrand(p.getBrandID()).getName()%>
+                                        </span> <span>Price: <%=nf.format(p.getPrice())%> VNĐ
+                                        </span> <span>Information: <%=p.getDescription()%>
                                     </p>
                                 </a></li>
 
@@ -74,14 +82,14 @@
                                         src="images/product/<%=p.getImage()%>" width=" 250px" height="250px" />
                                     <h3><%=p.getName()%></h3>
                                     <h4>
-                                        Giá:
+                                        Price:
                                         <%=nf.format(p.getPrice())%>
                                         VNĐ
                                     </h4> <span class="textkm">Stock quantity: <strong> <%= (p.getQuantity() == 0) ? "Sold out" : p.getQuantity() %> </strong>
                                     </span>
                                     <p class="info">
-                                        <span>Hãng sx: <%= BrandDAO.getBrand(p.getBrandID()).getName()%></span> <span>Giá:
-                                            <%=nf.format(p.getPrice())%> VNĐ</span> <span>Thông tin: <%=p.getDescription()%>
+                                        <span>Manufacturer: <%= BrandDAO.getBrand(p.getBrandID()).getName()%></span> <span>Price:
+                                            <%=nf.format(p.getPrice())%> VNĐ</span> <span>Information: <%=p.getDescription()%>
                                     </p>
                                 </a></li>
                                 <%

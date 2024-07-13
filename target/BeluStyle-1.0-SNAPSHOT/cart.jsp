@@ -9,7 +9,16 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Giỏ hàng</title>
+        <title>Cart</title>
+        <!-- title of site -->
+        <title>BeluStyle</title>
+
+        <!-- For favicon png -->
+        <link
+            rel="shortcut icon"
+            type="image/icon"
+            href="Banner/Beluicon.png"
+            />
         <link rel="stylesheet" href="css/cart.css" />
         <link rel="stylesheet" href="css/menu.css" />
         <link rel="stylesheet" href="css/main.css" />
@@ -126,7 +135,7 @@
 
                             <a
                                 href="cart?command=removeCart&productId=<%=c.getP().getProductID()%>"><img style="margin-left: 10px"
-                                                                                                                 src="images/delete.png"></a>
+                                                                                                       src="images/delete.png"></a>
                         </div>
 
                     </div>

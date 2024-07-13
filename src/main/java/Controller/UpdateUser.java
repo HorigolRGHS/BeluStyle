@@ -91,7 +91,7 @@ public class UpdateUser extends HttpServlet {
 
         try {
             if (err.length() == 0) {
-                User u = new User(username, password, fullName, dob, sex, email, phoneNumber, address, UserDAO.getUser(username).getRole(), UserDAO.getUser(username).getWallet());
+                User u = new User(username, password, fullName, dob, sex, email, phoneNumber, address, userDAO.getUser(username).getRole(), userDAO.getUser(username).getWallet());
                 userDAO.updateUser(u);
                 url = "/index.jsp";
             } else {

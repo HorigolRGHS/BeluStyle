@@ -5,9 +5,15 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <link href="css/login.css" rel='stylesheet' type='text/css' />
-        <title>Đăng nhập hệ thống</title>
+        <title>System login</title>
+        <!-- For favicon png -->
+        <link
+            rel="shortcut icon"
+            type="image/icon"
+            href="Banner/Beluicon.png"
+            />
     </head>
-    <body>
+    <body class="align">
         <%
             String err = "";
             if (request.getAttribute("err") != null) {
@@ -15,51 +21,44 @@
             }
         %>
         <!--/start-login-one-->
-        <div class="login-01">
-            <div class="one-login  hvr-float-shadow">
-                <div class="one-login-head">
-                    <img src="images/top-lock.png" alt="" />
-                    <h1>LOGIN</h1>
+        <div class="grid align__item">
 
-                    <span></span>
-                </div>
+            <div class="register">
+
+                <img src="Banner/Beluicon.png" width="150px" height="150px" />
+
+                <h1>LOGIN</h1>
+
                 <form action="login" method="post">
                     <% String mess = "";
-                                    if (request.getAttribute("mess") != null) {
-                                        mess = (String) request.getAttribute("mess");%>
-                    <li style="color: red"><%=mess%></li>	
-                        <% }%>
-                    <li style="color: red"><%=err%></li>
-                    Tên người dùng
-                    <li><input type="text" class="text" value=""
-                               name="username"><a href="#" class=" icon user"></a></li>
-                    Mật khẩu
-                    <li><input type="password" value=""
-                               name="password"><a href="#" class=" icon lock"></a></li>
+                        if (request.getAttribute("mess") != null) {
+                            mess = (String) request.getAttribute("mess");%>
+                    <div style="color: red"><%= err%></div>
+                    <% }%>
+                    <div style="color: red"><%= err%></div>
+                    <!-- User Name -->
+                    <div class="form__field">
+                        <input type="text" placeholder="UserName" name="username"style="width: 100%; outline: 0; padding: .5rem 1rem;">
+                    </div>
+                    <!-- password -->
+                    <div class="form__field">
+                        <input type="password" placeholder="••••••••••••" name="password"style="width: 100%; outline: 0; padding: .5rem 1rem;">
+                    </div>
                     <div class="p-container">
                         <label class="checkbox"><input type="checkbox"
-                                                       name="checkbox" checked><i></i>Ghi nhớ mật khẩu</label>
+                                                       name="checkbox" checked><i></i>Remember password</label>
                         <h6>
-                            <a href="resetpassword.jsp">Khôi phục mật khẩu</a>
+                            <a href="ResetPassword">Password recovery</a>
                         </h6>
                         <div class="clear"></div>
                     </div>
                     <div class="submit">
-                        <input type="submit" value="SIGN IN">
+                        <input type="submit" value="SIGN IN" style="width: 100%; outline: 0; padding: .5rem 1rem;">
                     </div>
-                    <div class="social-icons">
-                        <p>Bạn có thể đăng nhập bằng tài khoản:</p>
-                        <ul class="soc_icons2">
-                            <li class="pic"><a href="#"><i class="icon_4"></i></a></li>
-                            <li class="pic"><a href="#"><i class="icon_5"></i></a></li>
-                            <li class="pic"><a href="#"><i class="icon_6"></i></a></li>
-                            <div class="clear"></div>
-                        </ul>
-                    </div>
-                    <h5>
-                        Bạn muốn đăng ký tài khoản?<a href="register"> Đăng ký </a>
-                    </h5>
                 </form>
+                <h5>
+                    Want to register an account?<a href="register"> Sign up </a>
+                </h5>
             </div>
         </div>
 

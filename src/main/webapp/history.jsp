@@ -13,7 +13,14 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Giỏ hàng</title>
+        <title>History</title>
+
+        <!-- For favicon png -->
+        <link
+            rel="shortcut icon"
+            type="image/icon"
+            href="Banner/Beluicon.png"
+            />
         <link rel="stylesheet" href="css/cart.css" />
         <link rel="stylesheet" href="css/menu.css" />
         <link rel="stylesheet" href="css/main.css" />
@@ -25,9 +32,9 @@
             <div id="head">
                 <%@include file="banner.jsp" %>
             </div>
-                        
+
             <%@include file="navbar.jsp" %>
-            
+
             <div class="container mt-5">
                 <h1>Order History</h1>
                 <table class="table table-bordered">

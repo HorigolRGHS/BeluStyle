@@ -29,15 +29,15 @@
                     <li>
                         <form accept-charset="utf-8" method="post" action="search" name="SearchServlet">
                             <p>
-                                <label for="tensp">Tên sản phẩm</label>
+                                <label for="tensp">Product's name</label>
                                 <br>
                                 <input accept-charset="utf-8" type="text"  name="productName" style="width:97%">
                             </p>
                             <p>
-                                <label for="theloai">Thể loại</label>
+                                <label for="theloai">Category</label>
                                 <br>
                                 <select accept-charset="utf-8" name="categoryName" style="width:100%">
-                                    <option value="" selected="selected">--Chọn thể loại--</option>
+                                    <option value="" selected="selected">--Select category--</option>
                                     <%
                                         for (Category c : categoryList) {
 
@@ -59,7 +59,7 @@
                                     <%}%>
                                 </select>
                             </p>
-                            <input type="submit" value="Tìm kiếm" name="timKiem">
+                            <input type="submit" value="Search" name="timKiem">
                         </form>
                     </li>
                     <li style="color: red"><%=err%></li>

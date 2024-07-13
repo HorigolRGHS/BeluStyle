@@ -11,6 +11,11 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Sản phẩm</title>
+        <link
+            rel="shortcut icon"
+            type="image/icon"
+            href="Banner/Beluicon.png"
+            />
         <link rel="stylesheet" href="css/product.css" />
         <link rel="stylesheet" href="css/style.css" />
         <link rel="stylesheet" href="css/menu.css" />
@@ -37,9 +42,9 @@
             <div id="head">
                 <%@include file="banner.jsp" %>
             </div>
-                       
+
             <%@include file="navbar.jsp" %>
-            
+
             <div id="content_center">
                 <%
                     ProductDAO productDAO = new ProductDAO();
@@ -73,7 +78,7 @@
                                     <img src="images/product/${product.getImage()}" width="250px" height="250px" />
                                     <h3>${product.getName()}</h3>
                                     <h4>
-                                        Giá: <fmt:formatNumber value="${product.getPrice()}" type="number" minFractionDigits="0" /> VNĐ
+                                        Price: <fmt:formatNumber value="${product.getPrice()}" type="number" minFractionDigits="0" /> VNĐ
                                     </h4>
                                     <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
@@ -93,9 +98,9 @@
 
                                     </span>
                                     <p class="info">
-                                        <span>Hãng sx: ${BrandDAO.getBrand(product.getBrandID()).getName()}</span>
-                                        <span>Giá: <fmt:formatNumber value="${product.getPrice()}" type="number" minFractionDigits="0" /> VNĐ</span>
-                                        <span>Thông tin: ${product.getDescription()}</span>
+                                        <span>Manufacturer: ${BrandDAO.getBrand(product.getBrandID()).getName()}</span>
+                                        <span>Price: <fmt:formatNumber value="${product.getPrice()}" type="number" minFractionDigits="0" /> VNĐ</span>
+                                        <span>Information: ${product.getDescription()}</span>
                                     </p>
                                 </a>
                             </li>

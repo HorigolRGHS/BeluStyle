@@ -10,6 +10,11 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Chi tiết sản phẩm</title>
+        <link
+            rel="shortcut icon"
+            type="image/icon"
+            href="Banner/Beluicon.png"
+            />
         <link rel="stylesheet" href="css/detail.css" />
         <link rel="stylesheet" href="css/menu.css" />
         <style type="text/css">
@@ -85,113 +90,79 @@
 
                 if (username != null) {
             %>
-           <div id="head-link">
-                <div id='menungang'>
-                    <ul>
-                        <li class='last'><a href="index.jsp"><span>Trang
-                                    chủ</span></a></li>
-                        <li class='last'><a href="product.jsp"><span>Sản phẩm</span></a></li>
-                        <li class='last'><a href="cart.jsp"><span>Giỏ hàng</span></a></li>
-                        <li class='last'><a href="search_page.jsp"><span>Tìm kiếm</span></a></li>
-                        <li class='last' style="float: right;"><a href="LogoutServlet"><span>Đăng xuất</span></a></li>
-                        <li class='last' style="float: right;"><a href="update_user.jsp?username=<%=username%>"><span><%=username%></span></a></li>
+            <%@include file="navbar.jsp"%>
 
-                    </ul>
+            <div id="content">
+
+                <div class="left-1">
+                    <img src="images/product/<%=productDAO.getProductbyId(Integer.parseInt(productID)).getImage()%>"
+                         width="200px"/>
                 </div>
-            </div>
-            <%
-            } else {
-            %>
-            <div id="head-link">
-                <div id='menungang'>
-                    <ul>
-                        <li class='last'><a href="index.jsp"><span>Trang
-                                    chủ</span></a></li>
-                        <li class='last'><a href="product.jsp"><span>Sản phẩm</span></a></li>
-                        <li class='last'><a href="search_page.jsp"><span>Tìm kiếm</span></a></li>
-                        <li class='last' style="float: right;"><a href="register"><span>Đăng
-                                    ký</span></a></li>
-                        <li class='last' style="float: right;"><a href="login"><span>Đăng
-                                    nhập</span></a></li>
-                    </ul>
-                </div>
-            </div>
-            <%
-                }
-            %>
+                <div class="left-2">
+                    <table>
+                        <tr class="row1">
+                            <td class="col2" colspan="2"
+                                style="padding: 10px; color: blue; font-size: 15px; text-transform: uppercase; text-align: center; font-weight: bold"><%=productDAO.getProductbyId(Integer.parseInt(productID))
+                                        .getName()%></td>
+                        </tr>
+                        <tr class="row2">
+                            <td class="col1">Manufacturer:</td>
+                            <td class="col2"><%= BrandDAO.getBrand(productDAO.getProductById(Integer.parseInt(productID)).getBrandID()).getName()%></td>
+                        </tr>
 
-        <div id="content">
-
-            <div class="left-1">
-                <img src="images/product/<%=productDAO.getProductbyId(Integer.parseInt(productID)).getImage()%>"
-                     width="200px"/>
-            </div>
-            <div class="left-2">
-                <table>
-                    <tr class="row1">
-                        <td class="col2" colspan="2"
-                            style="padding: 10px; color: blue; font-size: 15px; text-transform: uppercase; text-align: center; font-weight: bold"><%=productDAO.getProductbyId(Integer.parseInt(productID))
-                                    .getName()%></td>
-                    </tr>
-                    <tr class="row2">
-                        <td class="col1">Hãng sản xuất:</td>
-                        <td class="col2"><%= BrandDAO.getBrand(productDAO.getProductById(Integer.parseInt(productID)).getBrandID()).getName()%></td>
-                    </tr>
-
-                    <tr class="row2">
-                        <td class="col1">Giá bán:</td>
+                        <tr class="row2">
+                            <td class="col1">Price:</td>
                             <td class="col2"><%=nf.format(productDAO.getProductbyId(Integer.parseInt(productID))
                                     .getPrice())%> VNĐ</td>
-                    </tr>
-                    <tr class="row2">
-                        <td class="col1">Stock Quantity:</td>
+                        </tr>
+                        <tr class="row2">
+                            <td class="col1">Stock Quantity:</td>
                             <td class="col2"><%=productDAO.getProductbyId(Integer.parseInt(productID))
                                     .getQuantity()%></td>
-                    </tr>
+                        </tr>
 
-                </table>
+                    </table>
+                </div>
+                <% if (username != null) {%>
+                <div
+                    style="margin-left: auto; margin-right: auto; text-align: center; margin-top: 10px; padding: 10px; clear: both;">
+                    <a
+                        href="#"><img
+                            src="images/giohang.png" /></a>
+                    <form action="cart" method="post">
+                           <input type="number" min="1" max="<%=productDAO.getProductbyId(Integer.parseInt(productID))
+                                .getQuantity()%>" value="1" name="quantity"/>
+                        <input type="hidden" value="setCart" name="command"/>
+                        <input type="hidden" value="<%=productID%>" name="productId"/>
+                        <input type="submit" value="Thêm vào giỏ hàng">
+                    </form>	
+                </div>
+                <%} else { %>
+                <div
+                    style="margin-left: auto; margin-right: auto; text-align: center; margin-top: 10px; padding: 10px; clear: both;">
+                    <a
+                        href="login"><img
+                            src="images/giohang.png" /></a>
+                </div>
+                <%}%>
+                <div class="left-3">
+                    <article> <input type="checkbox" id="read_more"
+                                     role="button"> <label for="read_more" onclick=""
+                                     style="width: 770px; margin-left: 150px; margin-right: auto;"><span>View details </span> <span>Close</span></label> <section>
+                            <table>
+
+                                <!-- thong tin chung -->
+                                <tr rowspan="2">
+                                    <%= productDAO.getProductById(Integer.parseInt(productID)).getDescription()%>
+                                </tr>
+
+
+                            </table>
+                        </section> </article>
+                </div>
+
             </div>
-            <% if (username != null) {%>
-            <div
-                style="margin-left: auto; margin-right: auto; text-align: center; margin-top: 10px; padding: 10px; clear: both;">
-                <a
-                    href="#"><img
-                        src="images/giohang.png" /></a>
-                <form action="cart" method="post">
-                       <input type="number" min="1" max="<%=productDAO.getProductbyId(Integer.parseInt(productID))
-                               .getQuantity()%>" value="1" name="quantity"/>
-                    <input type="hidden" value="setCart" name="command"/>
-                    <input type="hidden" value="<%=productID%>" name="productId"/>
-                    <input type="submit" value="Thêm vào giỏ hàng">
-                </form>	
-            </div>
-            <%} else { %>
-            <div
-                style="margin-left: auto; margin-right: auto; text-align: center; margin-top: 10px; padding: 10px; clear: both;">
-                <a
-                    href="login"><img
-                        src="images/giohang.png" /></a>
-            </div>
-            <%}%>
-            <div class="left-3">
-                <article> <input type="checkbox" id="read_more"
-                                 role="button"> <label for="read_more" onclick=""
-                                 style="width: 770px; margin-left: 150px; margin-right: auto;"><span>Xem
-                            thông tin chi tiết</span> <span>Đóng</span></label> <section>
-                        <table>
-
-                            <!-- thong tin chung -->
-                            <tr rowspan="2">
-                                <%= productDAO.getProductById(Integer.parseInt(productID)).getDescription()%>
-                            </tr>
-
-
-                        </table>
-                    </section> </article>
-            </div>
-
+            <div id="footer"><jsp:include page="footer.jsp"></jsp:include></div>
         </div>
-        <div id="footer"><jsp:include page="footer.jsp"></jsp:include></div>
-    </div>
-</body>
+    </body>
 </html>

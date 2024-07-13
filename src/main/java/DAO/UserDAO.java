@@ -94,7 +94,7 @@ public class UserDAO {
         }
     }
 
-    public static User getUser(String name) {
+    public User getUser(String name) {
         Connection con = DBConnect.getConnection();
         String sql = "SELECT * FROM [user] WHERE username = ?";
         User u = new User();
