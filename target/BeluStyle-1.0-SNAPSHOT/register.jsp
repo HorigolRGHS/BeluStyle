@@ -48,12 +48,10 @@
                     </div>
                     <!-- sex -->
                     <div class="form__field">
-                        <input type="text"  placeholder="Sex" list="exampleList"
-                               name="sex"> 
-                        <datalist id="exampleList">
-                            <option value="M">
-                            <option value="F">
-                        </datalist>
+                        <select id="sex" name="sex">
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                        </select>
                     </div>
                     <!-- password -->
                     <div class="form__field">

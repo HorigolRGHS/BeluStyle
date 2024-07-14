@@ -53,7 +53,7 @@ input::placeholder {
     margin-bottom: 1rem;
 }
 
-.form input {
+.form input,select {
     outline: 0;
     padding: .5rem 1rem;
 }
@@ -61,6 +61,7 @@ input::placeholder {
 .form input[type="email"],
 .form input[type="password"],
 .form input[type="text"],
+.form select,
 .form input[type="date"]{
     width: 100%;
 }
@@ -101,6 +102,13 @@ a {
     text-align: center;
 }
 
+.register select {
+    border: 1px solid #242c37;
+    border-radius: 999px;
+    background-color: transparent;
+    text-align: center;
+}
+
 .register input[type="email"] {
     background-repeat: no-repeat;
     background-size: 1.5rem;
@@ -120,6 +128,14 @@ a {
     background-position: 1rem 50%;
     background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="#242c37"><path d="M256.017 273.436l-205.17-170.029h410.904l-205.734 170.029zm-.034 55.462l-205.983-170.654v250.349h412v-249.94l-206.017 170.245z"/></svg>');
 }
+
+.register select {
+    background-repeat: no-repeat;
+    background-size: 1.5rem;
+    background-position: 1rem 50%;
+    background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="#242c37"><path d="M256.017 273.436l-205.17-170.029h410.904l-205.734 170.029zm-.034 55.462l-205.983-170.654v250.349h412v-249.94l-206.017 170.245z"/></svg>');
+}
+
 .register input[type="date"] {
     background-repeat: no-repeat;
     background-size: 1.5rem;

@@ -61,16 +61,11 @@
                     </div>
                     <!-- sex -->
                     <div class="form__field">
-                        <input type="text"  placeholder="<%=u.getSex()%>" list="exampleList"
-                               onfocus="this.value = '';"
-                               onblur="if (this.value == '') {
-                                           this.value = '<%=u.getSex()%>';
-                                       }"
-                               name="sex"style="width: 100%; outline: 0; padding: .5rem 1rem;"> 
-                        <datalist id="exampleList">
-                            <option value="M">
-                            <option value="F">
-                        </datalist>
+                        <select id="sex" name="sex" style="width: 100%; outline: 0; padding: .5rem 1rem;">
+                            <option value="Male" <%= "Male".equals(u.getSex()) ? "selected" : ""%>>Male</option>
+                            <option value="Female" <%= "Female".equals(u.getSex()) ? "selected" : ""%>>Female</option>
+                        </select>
+
                     </div>
                     <!-- Email -->
                     <div class="form__field">
@@ -78,7 +73,7 @@
                                onfocus="this.value = '';"
                                onblur="if (this.value == '') {
                                            this.value = '<%=u.getEmail()%>';
-                                       }" name="email"style="width: 100%; outline: 0; padding: .5rem 1rem;">
+                                       }" name="email" style="width: 100%; outline: 0; padding: .5rem 1rem;">
                     </div>
                     <!-- Phone Number -->
                     <div class="form__field">
