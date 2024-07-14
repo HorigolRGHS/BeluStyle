@@ -41,19 +41,19 @@
 
                     <!-- User Name -->
                     <div class="form__field">
-                        <input type="text" placeholder="<%=u.getUsername()%>" readonly name="username"style="width: 100%; outline: 0; padding: .5rem 1rem;">
+                        <input type="text" placeholder="<%=u.getUsername()%>" value="<%=u.getUsername()%>" readonly name="username"style="width: 100%; outline: 0; padding: .5rem 1rem;">
                     </div>
                     <!-- password -->
                     <div class="form__field">
-                        <input type="password" placeholder="••••••••••••" readonly name="password"style="width: 100%; outline: 0; padding: .5rem 1rem;">
+                        <input type="password" placeholder="••••••••••••" value="<%=u.getPassword()%>" readonly name="password"style="width: 100%; outline: 0; padding: .5rem 1rem;">
                     </div>
                     <!-- Full name -->
                     <div class="form__field">
-                        <input type="text" placeholder="<%=u.getFullName()%>" name="fullName"style="width: 100%; outline: 0; padding: .5rem 1rem;">
+                        <input type="text" placeholder="<%=u.getFullName()%>" value="<%=u.getFullName()%>" name="fullName"style="width: 100%; outline: 0; padding: .5rem 1rem;">
                     </div>
                     <!-- Birthday -->
                     <div class="form__field">
-                        <input type="date" placeholder="<%=u.getDob()%>" name="dob"
+                        <input type="date" placeholder="<%=u.getDob()%>" value="<%=u.getDob()%>" name="dob"
                                onfocus="this.value = '';"
                                onblur="if (this.value == '') {
                                            this.value = '<%=u.getDob()%>';
@@ -69,7 +69,7 @@
                     </div>
                     <!-- Email -->
                     <div class="form__field">
-                        <input type="email" placeholder="<%= u.getEmail()%>" 
+                        <input type="email" placeholder="<%= u.getEmail()%>" value="<%=u.getEmail()%>" 
                                onfocus="this.value = '';"
                                onblur="if (this.value == '') {
                                            this.value = '<%=u.getEmail()%>';
@@ -77,7 +77,7 @@
                     </div>
                     <!-- Phone Number -->
                     <div class="form__field">
-                        <input type="text" placeholder="<%=u.getPhoneNumber()%>"  
+                        <input type="text" placeholder="<%=u.getPhoneNumber()%>" value="<%=u.getPhoneNumber()%>"  
                                onfocus="this.value = '';"
                                onblur="if (this.value == '') {
                                            this.value = '<%=u.getPhoneNumber()%>';
@@ -85,7 +85,7 @@
                     </div>
                     <!-- Address -->
                     <div class="form__field">
-                        <input type="text" placeholder="<%=u.getAddress()%>"  
+                        <input type="text" placeholder="<%=u.getAddress()%>" value="<%=u.getAddress()%>"  
                                onfocus="this.value = '';"
                                onblur="if (this.value == '') {
                                            this.value = '<%=u.getAddress()%>';
