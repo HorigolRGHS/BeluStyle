@@ -137,5 +137,25 @@ public class OrderDetailDAO {
         return temp;
     }
     
+     public List<OrderDetail> getOrderDetailsListByOrderID(int orderID) {
+        List<OrderDetail> orderDetails = new ArrayList<>();
+        try (Connection con = DBConnect.getConnection()) {
+            String query = "SELECT * FROM OrderDetail WHERE OrderID = ?";
+            PreparedStatement ps = con.prepareStatement(query);
+            ps.setInt(1, orderID);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                OrderDetail orderDetail = new OrderDetail();
+                orderDetail.setOrderID(rs.getInt("OrderID"));
+                orderDetail.setProductID(rs.getInt("ProductID"));
+                orderDetail.setQuantity(rs.getInt("Quantity"));
+                orderDetail.setPrice(rs.getDouble("Price"));
+                orderDetails.add(orderDetail);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return orderDetails;
+    }
     
 }

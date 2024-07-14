@@ -57,24 +57,7 @@ public class HistoryServlet extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String username = null;
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equals("username")) {
-                    username = cookie.getValue();
-                }
-            }
-        }
-
-        if (username != null) {
-            OrderDAO orderDAO = new OrderDAO();
-            List<OrderHistory> orderHistoryList = orderDAO.getOrderHistoryByUsername(username);
-            request.setAttribute("orderHistoryList", orderHistoryList);
-            request.getRequestDispatcher("orderHistory.jsp").forward(request, response);
-        } else {
-            response.sendRedirect("login.jsp");
-        }
+        request.getRequestDispatcher("history.jsp").forward(request, response);
     }
 
     /**

@@ -1,7 +1,5 @@
 package Controller;
 
-
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,33 +33,23 @@ public class LoginServlet extends HttpServlet {
     }
 
     /**
-     * @param request
-     * @param response
-     * @throws jakarta.servlet.ServletException
-     * @throws java.io.IOException
      * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
      * response)
      */
-    @Override
     protected void doGet(HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException {
         request.getRequestDispatcher("login.jsp").forward(request, response);
     }
 
     /**
-     * @param request
-     * @param response
-     * @throws jakarta.servlet.ServletException
-     * @throws java.io.IOException
      * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
      * response)
      */
-    @Override
     protected void doPost(HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException {
-        String username = request.getParameter("username").trim();
-        String password = request.getParameter("password").trim();
-
+        HttpSession session = request.getSession();
+        String username = request.getParameter("username");
+        String password = request.getParameter("password");
         String err = "";
         if (username.equals("") || password.equals("")) {
             err += "Phải nhập đầy đủ thông tin!";
@@ -72,13 +60,12 @@ public class LoginServlet extends HttpServlet {
         }
 
         if (err.length() > 0) {
-            request.setAttribute("err", err);
+            session.setAttribute("err", err);
         }
 
-        String url = "/login";
         try {
             if (err.length() == 0) {
-                HttpSession session = request.getSession();
+
                 session.setAttribute("username", username);
                 session.setAttribute("cart", cart);
                 double wallet = userDAO.getWallet(username);
@@ -91,20 +78,20 @@ public class LoginServlet extends HttpServlet {
                 //setting cookie to expiry in 30 mins
                 loginCookie.setMaxAge(30 * 60);
                 response.addCookie(loginCookie);
-                if (!userRole.isEmpty()) {
+                System.out.println(userRole);
+                if ("Admin".equalsIgnoreCase(userRole)) {
+                    response.sendRedirect("AdminPanel");
+                } else {
                     response.sendRedirect("index");
                 }
             } else {
-                url = "/login";
-                RequestDispatcher rd = getServletContext()
-                        .getRequestDispatcher(url);
-                rd.forward(request, response);
+                response.sendRedirect("login");
             }
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
             e.printStackTrace();
-            response.sendRedirect("/login");
+            response.sendRedirect("login");
         }
     }
 

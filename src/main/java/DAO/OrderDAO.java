@@ -16,29 +16,15 @@ import model.Order;
 public class OrderDAO {
 
     public void addOrder(Order order) {
-        String sql = "INSERT INTO [Order] (Username, OrderDate) VALUES (?, ?)";
+        String sql = "INSERT INTO [Order] (OrderID, Username, OrderDate) VALUES (?, ?, ?)";
         try ( Connection con = DBConnect.getConnection();  PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setString(1, order.getUsername());
-            ps.setDate(2, new Date(order.getOrderDate().getTime()));
+            ps.setInt(1, order.getOrderID());
+            ps.setString(2, order.getUsername());
+            ps.setDate(3, new Date(order.getOrderDate().getTime()));
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    }
-
-    public static int count() {
-        DBConnect.Connect();
-        int count = 0;
-        if (DBConnect.isConnected()) {
-            try {
-                ResultSet rs = DBConnect.ExecuteQuery("select COUNT(OrderID) as count from Order");
-                rs.next();
-                count = rs.getInt("count");
-                DBConnect.Disconnect();
-            } catch (Exception e) {
-            }
-        }
-        return count;
     }
 
     public List<Order> getAllOrders() {
@@ -182,21 +168,20 @@ public class OrderDAO {
         }
         return recentOrders;
     }
-    
+
     public String getOrderStatus(int orderId) {
         String status = "pending";
         String sql = "SELECT OrderDate FROM [Order] WHERE OrderID = ?";
-        try (Connection con = DBConnect.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+        try ( Connection con = DBConnect.getConnection();  PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, orderId);
-            try (ResultSet rs = ps.executeQuery()) {
+            try ( ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     Timestamp orderDate = rs.getTimestamp("OrderDate");
                     LocalDate orderLocalDate = orderDate.toLocalDateTime().toLocalDate();
                     LocalDate currentDate = LocalDate.now();
 
                     long daysBetween = java.time.temporal.ChronoUnit.DAYS.between(orderLocalDate, currentDate);
-                    System.out.println("DayBetween:"+daysBetween);
+                    System.out.println("DayBetween:" + daysBetween);
 
                     if (daysBetween < -15) {
                         status = "delivered";
@@ -211,4 +196,23 @@ public class OrderDAO {
         return status;
     }
 
+    public List<Order> getOrdersByUsername(String username) {
+        List<Order> orders = new ArrayList<>();
+        try ( Connection con = DBConnect.getConnection()) {
+            String query = "SELECT * FROM [Order] WHERE Username = ?";
+            PreparedStatement ps = con.prepareStatement(query);
+            ps.setString(1, username);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Order order = new Order();
+                order.setOrderID(rs.getInt("OrderID"));
+                order.setUsername(rs.getString("Username"));
+                order.setOrderDate(rs.getTimestamp("OrderDate"));
+                orders.add(order);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return orders;
+    }
 }

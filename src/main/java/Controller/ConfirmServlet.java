@@ -17,6 +17,7 @@ import jakarta.mail.Transport;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -58,6 +59,19 @@ public class ConfirmServlet extends HttpServlet {
      */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String username = request.getParameter("username");
+        if (username == null) {
+            Cookie[] cookies = request.getCookies();
+            if (cookies != null) {
+                for (Cookie cookie : cookies) {
+                    if (cookie.getName().equals("username")) {
+                        username = cookie.getValue();
+                        break;
+                    }
+                }
+            }
+        }
+        
+
         User u = userDAO.getUser(username);
 
         // Get the current timestamp for database storage
@@ -79,25 +93,25 @@ public class ConfirmServlet extends HttpServlet {
         String to = u.getEmail();
         String subject = "Thank you so much for shopping with BeluStyle";
         StringBuilder text = new StringBuilder("<strong>The Orders - " + username + " - </strong><i> " + ft.format(dNow) + "</i> <ul>");
-        int orderId = orderDAO.count() + 1;
+
+        int orderId = orderDAO.getCountOrder() + 1;
         Order o = new Order(orderId, username, tdate);
         orderDAO.addOrder(o);
         if (cart != null) {
             for (Cart c : cart) {
-                total += (c.getQuantity() * productDAO.getProductbyId(c.getP().getProductID()).getPrice());
-                text.append("<li>").append(productDAO.getProductbyId(c.getP().getProductID()).getName())
-                        .append(": ").append(nf.format(productDAO.getProductbyId(c.getP().getProductID()).getPrice()))
-                        .append(" VNĐ </li>");
-                OrderDetail od = new OrderDetail(orderId, c.getP().getProductID(), c.getQuantity(), c.getQuantity() * productDAO.getProductbyId(c.getP().getProductID()).getPrice());
-                orderDetailDAO.addOrderDetail(od);
-                productDAO.subtractQuantity(productDAO.getProductbyId(c.getP().getProductID()), c.getQuantity());
-//                Order h = new Order(0, u.getUser_id(), c.getP().getProductID(), tdate, c.getQuantity(), 
-//                        (c.getQuantity() * productDAO.getProductbyId(c.getP().getProductID()).getPrice()));
-//                historyDAO.addHistory(h);
+                if (c.getUsername().equals(username)) {
+                    total += (c.getQuantity() * productDAO.getProductbyId(c.getP().getProductID()).getPrice());
+                    text.append("<li>").append(productDAO.getProductbyId(c.getP().getProductID()).getName())
+                            .append(": ").append(nf.format(productDAO.getProductbyId(c.getP().getProductID()).getPrice()))
+                            .append(" VNĐ </li>");
+                    OrderDetail od = new OrderDetail(orderId, c.getP().getProductID(), c.getQuantity(), c.getQuantity() * productDAO.getProductById(c.getP().getProductID()).getPrice());
+                    orderDetailDAO.addOrderDetail(od);
+                    productDAO.subtractQuantity(productDAO.getProductbyId(c.getP().getProductID()), c.getQuantity());
+                }
             }
         }
         text.append("Total Amount: <strong>").append(nf.format(total)).append(" VNĐ  </strong>");
-         text.append("<br><i>HOPE YOU HAVE A WONDERFUL DAY</i>");
+        text.append("<br><i>HOPE YOU HAVE A WONDERFUL DAY</i>");
 
         Properties props = new Properties();
         props.put("mail.smtp.auth", "true");

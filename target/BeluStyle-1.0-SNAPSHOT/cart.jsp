@@ -1,3 +1,4 @@
+<%@page import="model.User"%>
 <%@page import="model.Cart"%>
 <%@page import="java.util.List"%>
 <%@page import="dao.ProductDAO"%>
@@ -11,7 +12,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Cart</title>
         <!-- title of site -->
-        <title>BeluStyle</title>
+        <title> BeluStyle</title>
 
         <!-- For favicon png -->
         <link
@@ -98,13 +99,18 @@
                             cart = (ArrayList<Cart>) session
                                     .getAttribute("cart");
                         }
+
+                        UserDAO userDAO = new UserDAO();
+                        User user = userDAO.getUser(username);
+                        double walletBalance = user.getWallet();
                     %>
                     <%
-                        if (cart != null) {
+                        if (cart != null && username != null) {
                             for (Cart c : cart) {
-                                total = total
-                                        + (c.getQuantity() * productDAO.getProductbyId(
-                                        c.getP().getProductID()).getPrice());
+                                if (c.getUsername().equals(username)) {
+                                    total = total
+                                            + (c.getQuantity() * productDAO.getProductbyId(
+                                            c.getP().getProductID()).getPrice());
                     %>
                     <div class="product">
                         <div class="product-image">
@@ -114,8 +120,7 @@
                         </div>
                         <div class="product-details">
                             <div class="product-title">
-                                <%=productDAO.getProductbyId(c.getP().getProductID())
-                                        .getName()%>
+                                <%=productDAO.getProductbyId(c.getP().getProductID()).getName()%>
                             </div>
                             <p class="product-description"></p>
                         </div>
@@ -140,6 +145,7 @@
 
                     </div>
                     <%
+                                }
                             }
                         }
                     %>
@@ -153,19 +159,22 @@
                     </div>
                     <%if (cart != null && cart.size() > 0) {%>
                     <a class="checkout" href="history" style="text-decoration: none;">Lịch sử</a>
-                    <a class="checkout" href="ConfirmServlet?username=<%=username%>" style="text-decoration: none;">Thanh
-                        toán</a>
-                        <% } else {%>
-                    <!--                        <form action="history" method="get" class="checkout">
-                                            <input type="hidden" name="username" value="<%= username%>" />
-                                            <button type="submit" class="btn btn-link" style="text-decoration: none; padding: 0; border: none; background: none; color: inherit;">
-                                                Lịch sử
-                                            </button>
-                                            </form>-->
+                    <%
+                        if (total > walletBalance) {
+                    %>
+                    <p class="checkout" style="color:red;" disabled>Your wallet is not enough</p>
+
+                    <%
+                    } else {
+                    %>
+                    <a class="checkout" href="ConfirmServlet?username=<%=username%>" style="text-decoration: none;">Thanh toán</a>
+                    <%
+                        }
+                    %>
+                    <% } else { %>
                     <a class="checkout" href="history" style="text-decoration: none;">Lịch sử</a>
-                    <a class="checkout" href="product" style="text-decoration: none;">Thanh
-                        toán</a>
-                        <%}%>
+                    <a class="checkout" href="product" style="text-decoration: none;">Thanh toán</a>
+                    <% }%>
                 </div>
 
             </div>

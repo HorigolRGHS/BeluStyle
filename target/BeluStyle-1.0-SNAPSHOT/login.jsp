@@ -16,8 +16,8 @@
     <body class="align">
         <%
             String err = "";
-            if (request.getAttribute("err") != null) {
-                err = (String) request.getAttribute("err");
+            if (session.getAttribute("err") != null) {
+                err = (String) session.getAttribute("err");
             }
         %>
         <!--/start-login-one-->
@@ -30,19 +30,16 @@
                 <h1>LOGIN</h1>
 
                 <form action="login" method="post">
-                    <% String mess = "";
-                        if (request.getAttribute("mess") != null) {
-                            mess = (String) request.getAttribute("mess");%>
+       
                     <div style="color: red"><%= err%></div>
-                    <% }%>
-                    <div style="color: red"><%= err%></div>
+                    <%session.removeAttribute("err");%>
                     <!-- User Name -->
                     <div class="form__field">
-                        <input type="text" placeholder="UserName" name="username"style="width: 100%; outline: 0; padding: .5rem 1rem;">
+                        <input type="text" placeholder="UserName" name="username" style="width: 100%; outline: 0; padding: .5rem 1rem;">
                     </div>
                     <!-- password -->
                     <div class="form__field">
-                        <input type="password" placeholder="••••••••••••" name="password"style="width: 100%; outline: 0; padding: .5rem 1rem;">
+                        <input type="password" placeholder="••••••••••••" name="password" style="width: 100%; outline: 0; padding: .5rem 1rem;">
                     </div>
                     <div class="p-container">
                         <label class="checkbox"><input type="checkbox"
