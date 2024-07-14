@@ -33,7 +33,7 @@
                                 <tr>
                                     <td>${order.orderID}</td>
                                     <td>${orderDAO.getFullnameOrder(order.username)}</td>
-                                    <td>${order.orderDate}</td>
+                                    <td><fmt:formatDate value="${order.orderDate}" pattern="dd/MM/yyyy HH:mm" /></td>
                                     <td>
                                         <a href="InvoiceOrder?orderId=${order.orderID}" class="btn btn-edit">
                                             <ion-icon name="arrow-forward-circle-outline"></ion-icon>
