@@ -12,7 +12,7 @@ import java.sql.*;
  */
 public class DBConnect {
 
-    private static String cnnString = "jdbc:sqlserver://localhost:1433;databaseName=BeluStyle;user=sa;password=***;encrypt=true;trustServerCertificate=true;";
+    private static String cnnString = "jdbc:sqlserver://localhost:1433;databaseName=BeluStyle;user=sa;password=123;encrypt=true;trustServerCertificate=true;";
     private static Connection conn = null;
 
 

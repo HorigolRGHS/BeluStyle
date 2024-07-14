@@ -79,10 +79,10 @@ public class LoginServlet extends HttpServlet {
                 loginCookie.setMaxAge(30 * 60);
                 response.addCookie(loginCookie);
                 System.out.println(userRole);
-                if ("Admin".equalsIgnoreCase(userRole)) {
-                    response.sendRedirect("AdminPanel");
-                } else {
+                if (!userRole.isEmpty()) {
                     response.sendRedirect("index");
+                }else{
+                    response.sendRedirect("login");
                 }
             } else {
                 response.sendRedirect("login");
