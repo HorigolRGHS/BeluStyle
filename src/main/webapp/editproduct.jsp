@@ -50,21 +50,21 @@
                     </select><br>
 
                     Product Name:<br>
-                    <input type="text" name="productname" id="productname" value="${pro.name}"><br><br>
+                    <input type="text" name="productname" id="productname" value="${pro.name}" required=""><br><br>
 
                     Quantity:<br>
-                    <input type="number" name="quantity" id="quantity" min="0" value="${pro.quantity}"><br><br>
+                    <input type="number" name="quantity" id="quantity" min="0" value="${pro.quantity}" required=""><br><br>
 
                     Image:<br>
-                    <input onchange="previewImage(event)" type="file" id="fileInput" name="fileimage"><br>
+                    <input onchange="previewImage(event)" type="file" id="fileInput" name="fileimage" required=""><br>
                     <img id="currentImg" style="width: 300px" src="./images/product/${pro.image}" alt="${pro.image}" />
                     <img id="previewImg" style="width: 300px; display: none;" alt="Image Preview" /><br><br>
 
                     Price:<br>
-                    <input type="number" name="price" id="price" min="0" step="0.01" value="${pro.price}"><br><br>
+                    <input type="number" name="price" id="price" min="0" step="0.01" value="${pro.price}" required=""><br><br>
 
                     Description:<br>
-                    <textarea name="description" id="description" cols="40" rows="10">${pro.description}</textarea><br><br>
+                    <textarea name="description" id="description" cols="40" rows="10" required="">${pro.description}</textarea><br><br>
 
                     <div class="modal-footer">
                         <button class="btn-dialog btn-dialog-submit" type="submit">Save</button>

@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package controller;
+package Controller;
 
 import dao.ProductDAO;
 import java.io.IOException;
@@ -17,6 +17,8 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -81,29 +83,83 @@ public class AddProduct extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        int categoryID = Integer.parseInt(request.getParameter("category"));
-        int brandID = Integer.parseInt(request.getParameter("brand"));
+        // Input Validation
+        List<String> errors = new ArrayList<>();
+
+        int categoryID;
+        try {
+            categoryID = Integer.parseInt(request.getParameter("category"));
+        } catch (NumberFormatException e) {
+            categoryID = -1; // Invalid value
+            errors.add("Invalid category selection.");
+        }
+
+        int brandID;
+        try {
+            brandID = Integer.parseInt(request.getParameter("brand"));
+        } catch (NumberFormatException e) {
+            brandID = -1; // Invalid value
+            errors.add("Invalid brand selection.");
+        }
+
         String productName = request.getParameter("productname");
-        float price = Float.parseFloat(request.getParameter("price"));
-        int quantity = Integer.parseInt(request.getParameter("quantity"));
+        if (productName == null || productName.trim().isEmpty() || productName.length() < 3) {
+            errors.add("Product name must be at least 3 characters.");
+        }
+
+        float price;
+        try {
+            price = Float.parseFloat(request.getParameter("price"));
+            if (price <= 0) {
+                errors.add("Price must be a positive number.");
+            }
+        } catch (NumberFormatException e) {
+            price = -1; // Invalid value
+            errors.add("Invalid price format.");
+        }
+
+        int quantity;
+        try {
+            quantity = Integer.parseInt(request.getParameter("quantity"));
+            if (quantity <= 0) {
+                errors.add("Quantity must be a positive number.");
+            }
+        } catch (NumberFormatException e) {
+            quantity = -1; // Invalid value
+            errors.add("Invalid quantity format.");
+        }
+
         String description = request.getParameter("description");
+        if (description != null && description.length() > 255) {
+            errors.add("Description cannot exceed 255 characters.");
+        }
 
         Part filePart = request.getPart("fileimage");
-        String fileName = getFileName(filePart);
-        String uploadDir = getServletContext().getRealPath("/assets");
-
-        Files.createDirectories(Paths.get(uploadDir));
-
-        try ( InputStream fileContent = filePart.getInputStream()) {
-            Files.copy(fileContent, Paths.get(uploadDir, fileName), StandardCopyOption.REPLACE_EXISTING);
+        if (filePart == null || filePart.getSize() == 0) {
+            errors.add("Please upload an image.");
         }
-        ProductDAO proDAO = new ProductDAO();
-        boolean success = proDAO.addProduct(categoryID, brandID, productName, fileName, price, quantity, description);
 
-        if (success) {
-            response.sendRedirect("AdminPanel.jsp#products");
-        } else {
-            response.sendRedirect("AdminPanel.jsp?error=addProductFailed#products");
+        // If there are no validation errors, proceed to add product
+        if (errors.isEmpty()) {
+            String fileName = getFileName(filePart);
+            String uploadDir = getServletContext().getRealPath("/assets");
+            Files.createDirectories(Paths.get(uploadDir));
+
+            try ( InputStream fileContent = filePart.getInputStream()) {
+                Files.copy(fileContent, Paths.get(uploadDir, fileName), StandardCopyOption.REPLACE_EXISTING);
+            }
+
+            ProductDAO proDAO = new ProductDAO();
+            boolean success = proDAO.addProduct(categoryID, brandID, productName, fileName, price, quantity, description);
+
+            if (success) {
+                response.sendRedirect("AdminPanel.jsp#products");
+            } else {
+                response.sendRedirect("AdminPanel.jsp?error=addProductFailed#products");
+            }
+        } else { // Validation failed
+            request.setAttribute("errors", errors); // Store errors in request scope
+            request.getRequestDispatcher("AdminPanel.jsp#products").forward(request, response);
         }
     }
 

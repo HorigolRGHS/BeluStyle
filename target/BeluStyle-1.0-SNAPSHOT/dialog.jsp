@@ -4,6 +4,7 @@
     Author     : Duong Nhat Anh CE181079
 --%>
 
+<%@page import="dao.BrandDAO"%>
 <%@page import="dao.CategoryDAO"%>
 <%@page import="model.Product"%>
 <%@page import="model.Brand"%>
@@ -16,6 +17,8 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <link rel="stylesheet" href="./css/dialog.css"/>
+        <script src="./js/jquery.validate.min.js"></script>
+        <script src="./js/jquery.min.js"></script>
         <script type="text/javascript">
             function previewImage(event) {
                 var reader = new FileReader();
@@ -37,12 +40,14 @@
                     <h2>Add Product</h2>
                 </div>
                 <div class="modal-body">
-                    <form action="AddProduct" method="post" enctype="multipart/form-data">
+                    <form action="AddProduct" id="addProduct" method="post" enctype="multipart/form-data">
                         <label for="category">Category:</label><br>
                         <select name="category" class="drop-lists" id="category">
                             <%
                                 CategoryDAO categoryDAO = new CategoryDAO();  // Create the DAO instance
                                 request.setAttribute("categories", categoryDAO.getList()); // Store categories in request scope 
+                                BrandDAO brandDAO = new BrandDAO();
+                                request.setAttribute("brands", brandDAO.getList());
                             %>
 
                             <c:forEach items="${categories}" var="cate">
@@ -53,7 +58,7 @@
 
                         <label for="brand">Brand:</label><br>
                         <select name="brand" class="drop-lists" id="brand">
-                            <c:forEach items="${ProductDAO.allBrand}" var="brand">
+                            <c:forEach items="${brands}" var="brand">
                                 <option value="${brand.brandID}">${brand.name}</option>
                             </c:forEach>
                         </select>
@@ -61,18 +66,18 @@
 
                         Product Name: <br>
                         <div class="input-container">
-                            <input type="text" name="productname" id="productname">
+                            <input type="text" name="productname" id="productname" required="">
                         </div>
                         <br>
 
                         Quantity: <br>
                         <div class="input-container">
-                            <input type="text" name="quantity" id="quantity">
+                            <input type="text" name="quantity" id="quantity" required="">
                         </div>
                         <br><br>
 
                         Image:<br>
-                        <input onchange="previewImage(event)" type="file" id="fileInput" name="fileimage">
+                        <input onchange="previewImage(event)" type="file" id="fileInput" name="fileimage" required="">
                         <br>
                         <img id="previewImg" style="width: 100px; display: none;" alt="Image Preview"/>
                         <a id="fileName" name="fileName" style="display: none"></a>
@@ -80,22 +85,23 @@
 
                         Price: <br>
                         <div class="input-container">
-                            <input type="text" name="price" id="price">
+                            <input type="text" name="price" id="price" required="">
                         </div>
                         <br>
 
                         Description: <br>
                         <div class="input-container">
-                            <textarea name="description" id="description" cols="40" rows="10"></textarea>
+                            <textarea name="description" id="description" cols="40" rows="10" required=""></textarea>
                         </div>
-                </div>
-                <div class="modal-footer">
-                    <button class="btn-dialog btn-dialogSubmit" type="submit" id="closeModal">Add</button>
-                    <button class="btn-dialog btn-dialogCancel" type="reset" id="closeModal">Cancel</button>
+                        <div class="modal-footer">
+                            <button class="btn-dialog btn-dialogSubmit" type="submit" id="submitBtn">Add</button>
+                            <button class="btn-dialog btn-dialogCancel" type="reset" id="closeModal">Cancel</button>
+                        </div>
                     </form> 
                 </div>
+
                 <script src="./js/popup.js"></script>
             </div>
-        </div>
+        </div>               
     </body>
 </html>

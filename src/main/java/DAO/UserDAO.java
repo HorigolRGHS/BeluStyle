@@ -76,17 +76,17 @@ public class UserDAO {
 
     public void updateUser(User u) {
         Connection con = DBConnect.getConnection();
-        String sql = "UPDATE [user] SET  fullname = ?, dob = ?, sex = ?, email = ?, phoneNumber = ?, address = ? WHERE username = ?";
+        String sql = "UPDATE [user] SET password = ?, fullname = ?, dob = ?, sex = ?, email = ?, phoneNumber = ?, address = ? WHERE username = ?";
         try {
             PreparedStatement ps = con.prepareStatement(sql);
-//            ps.setString(1, u.getPassword());
-            ps.setString(1, u.getFullName());
-            ps.setDate(2, u.getDob());
-            ps.setString(3, u.getSex());
-            ps.setString(4, u.getEmail());
-            ps.setString(5, u.getPhoneNumber());
-            ps.setString(6, u.getAddress());
-            ps.setString(7, u.getUsername());
+            ps.setString(1, u.getPassword());
+            ps.setString(2, u.getFullName());
+            ps.setDate(3, u.getDob());
+            ps.setString(4, u.getSex());
+            ps.setString(5, u.getEmail());
+            ps.setString(6, u.getPhoneNumber());
+            ps.setString(7, u.getAddress());
+            ps.setString(8, u.getUsername());
             ps.executeUpdate();
             con.close();
         } catch (SQLException e) {

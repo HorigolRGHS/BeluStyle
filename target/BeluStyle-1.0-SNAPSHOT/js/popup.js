@@ -3,6 +3,7 @@ const modal = document.getElementById("myModal");
 const btn = document.getElementById("openModal");
 const closeBtn = document.getElementsByClassName("close-button")[0];
 const closeModalBtn = document.getElementById("closeModal");
+const submitBtn = document.getElementById("submitBtn");
 
 // Open the modal
 btn.onclick = function () {
@@ -23,5 +24,24 @@ function closeModal() {
 window.onclick = function (event) {
     if (event.target == modal) {
         modal.style.display = "none";
+    }
+}
+
+// Form validation
+function validateForm() {
+    const inputField = document.getElementById("inputField");
+    if (inputField.value.trim() === "") {
+        alert("Input field cannot be empty");
+        return false;
+    }
+    return true;
+}
+
+// Submit form to the modal if validation passes
+submitBtn.onclick = function () {
+    if (validateForm()) {
+        // Perform the submission logic
+        alert("Form submitted successfully");
+        closeModal(); // Close the modal after submission
     }
 }

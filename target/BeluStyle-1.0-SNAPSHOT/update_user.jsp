@@ -35,7 +35,7 @@
 
                 <img src="Banner/Beluicon.png" width="150px" height="150px" />
 
-                <h1>Sign Up</h1>
+                <h1>Update Profile</h1>
                 <form action="update-user" method="post">
                     <div style="color: red"><%=err%></div>
 
