@@ -102,7 +102,7 @@ public class UpdateUser extends HttpServlet {
             rd.forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();
-            response.sendRedirect("/register.jsp");
+            response.sendRedirect("register");
         }
     }
 

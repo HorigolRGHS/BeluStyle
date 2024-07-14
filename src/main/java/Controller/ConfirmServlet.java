@@ -110,6 +110,7 @@ public class ConfirmServlet extends HttpServlet {
                 }
             }
         }
+        
         text.append("Total Amount: <strong>").append(nf.format(total)).append(" VNĐ  </strong>");
         text.append("<br><i>HOPE YOU HAVE A WONDERFUL DAY</i>");
 

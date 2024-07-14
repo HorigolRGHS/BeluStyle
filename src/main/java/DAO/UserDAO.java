@@ -140,6 +140,18 @@ public class UserDAO {
         return temp;
     }
 
+     public void setWallet(String username, double wallet) {
+        DBConnect.Connect();
+        if (DBConnect.isConnected()) {
+            try {
+                ResultSet rs = DBConnect.ExecuteQuery("Update [User] Set Wallet = "+wallet+" where Username = '" + username + "'");
+                DBConnect.Disconnect();
+            } catch (Exception e) {
+                System.out.println("Error from getWallet: " + e.getMessage());
+            }
+        }
+    }
+     
     public static void main(String[] args) {
         UserDAO dao = new UserDAO();
         // dao.addUser(new User(0, "admin", "12345", "admin", "1"));

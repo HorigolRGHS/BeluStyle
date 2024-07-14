@@ -59,8 +59,9 @@
                                     <li class='last'><a href="index"><span>Home</span></a></li>
                                     <li class='last'><a href="product"><span>Product</span></a></li>
                                     <li class='last'><a href="search"><span>Search</span></a></li>
-                                    <li class='last'><a href="search"><span>Wallet</span></a></li>
-                                        <% if (username != null) {%>
+
+                                    <% if (username != null) {%>
+                                    <li class='last'><a href="wallet"><span>Wallet</span></a></li>
                                     <li class='last'><a href="cart"><span>Cart</span></a></li>
                                     <li class='last' style="float: right;"><a href="LogoutServlet"><span>Log out</span></a></li>
                                     <li class='last' style="float: right;"><a href="update?username=<%=username%>"><span><%=username%></span></a></li>

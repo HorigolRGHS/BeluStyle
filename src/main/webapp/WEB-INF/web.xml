@@ -5,20 +5,21 @@
         <filter-name>AdminFilter</filter-name>
         <filter-class>filter.AdminFilter</filter-class>
     </filter>
+    <filter>
+        <filter-name>LoginFilter</filter-name>
+        <filter-class>filter.LoginFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>LoginFilter</filter-name>
+        <url-pattern>/walletHome.jsp</url-pattern>
+        <url-pattern>/history</url-pattern>
+        <url-pattern>/history.jsp</url-pattern>
+        <url-pattern>/update-user</url-pattern>
+        <url-pattern>/update_user.jsp</url-pattern>
+    </filter-mapping>
     <filter-mapping>
         <filter-name>AdminFilter</filter-name>
         <url-pattern>/AdminPanel.jsp</url-pattern>
-        <url-pattern>/AdminPanel</url-pattern>
-        <url-pattern>/EditProduct</url-pattern>
-        <url-pattern>/editProduct.jsp</url-pattern>
-        <url-pattern>/dialog.jsp</url-pattern>
-        <url-pattern>/walletSection.jsp</url-pattern>
-        <url-pattern>/productSection.jsp</url-pattern>
-        <url-pattern>/ordersSection.jsp</url-pattern>
-        <url-pattern>/dashboardSection.jsp</url-pattern>
-        <url-pattern>/OrderInvoice.jsp</url-pattern>
-        <url-pattern>/DeleteProduct</url-pattern>
-        <url-pattern>/AddProduct</url-pattern>
     </filter-mapping>
     <servlet>
         <servlet-name>UpdateUser</servlet-name>
@@ -64,6 +65,14 @@
         <servlet-name>DeleteOrder</servlet-name>
         <servlet-class>Controller.DeleteOrder</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>HomeServlet</servlet-name>
+        <servlet-class>Controller.HomeServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>WalletServlet</servlet-name>
+        <servlet-class>Controller.WalletServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>UpdateUser</servlet-name>
         <url-pattern>/update-user</url-pattern>
@@ -108,10 +117,18 @@
         <servlet-name>DeleteOrder</servlet-name>
         <url-pattern>/DeleteOrder</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>HomeServlet</servlet-name>
+        <url-pattern>/home</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>WalletServlet</servlet-name>
+        <url-pattern>/wallet</url-pattern>
+    </servlet-mapping>
     <welcome-file-list>
         <!--    <welcome-file>index.html</welcome-file>
         -->
-        <welcome-file>home.jsp</welcome-file>
+        <welcome-file>home</welcome-file>
         <welcome-file>index</welcome-file>
         <welcome-file>index.jsp</welcome-file>
         <welcome-file>default.html</welcome-file>
