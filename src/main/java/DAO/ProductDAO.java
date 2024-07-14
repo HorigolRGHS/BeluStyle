@@ -78,33 +78,7 @@ public class ProductDAO {
         return list;
     }
 
-    public List<Product> getListByCategory(int id) {
-        Connection con = DBConnect.getConnection();
-        String sql = "SELECT * FROM product WHERE categoryID = ?";
-        List<Product> list = new ArrayList<>();
-        try {
-            PreparedStatement ps = con.prepareStatement(sql);
-            ps.setInt(1, id);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                int productID = rs.getInt("ProductID");
-                int categoryID = id;
-                int brandID = rs.getInt("BrandID");
-                String name = rs.getString("Name");
-                int quantity = rs.getInt("quantity");
-                String image = rs.getString("Image");
-                double price = rs.getDouble("Price");
-                String description = rs.getString("Description");
-                list.add(new Product(productID, categoryID, brandID, name, quantity, image, price, description));
-            }
-            con.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return list;
-    }
-
-    public static Product getProductbyId(int id) {
+    public Product getProductbyId(int id) {
         Connection con = DBConnect.getConnection();
         String sql = "SELECT * FROM product WHERE ProductID = ?";
         Product p = new Product();
@@ -166,68 +140,7 @@ public class ProductDAO {
         return list;
     }
 
-    public static ArrayList<Product> getAllProduct() {
-        ArrayList<Product> productList = new ArrayList<>();
-        DBConnect.Connect();
-        if (DBConnect.isConnected()) {
-            try ( PreparedStatement ptmt = DBConnect.prepareStatement("SELECT * FROM Product");  ResultSet rs = ptmt.executeQuery()) {
-
-                while (rs.next()) {
-                    int productId = rs.getInt("ProductID");
-                    int categoryId = rs.getInt("CategoryID");
-                    int brandId = rs.getInt("BrandID");
-                    String name = rs.getString("Name");
-                    int quantity = rs.getInt("Quantity");
-                    String image = rs.getString("Image");
-                    double price = rs.getDouble("Price"); // Use BigDecimal for currency
-                    String description = rs.getString("Description");
-
-                    Product product = new Product(productId, categoryId, brandId, name, quantity, image, price, description);
-                    productList.add(product);
-                }
-
-            } catch (SQLException e) {
-                System.err.println("SQLException at getAllProduct: " + e.getMessage());
-                // Consider logging the error or throwing a custom exception for better handling
-            }
-        }
-
-        return productList;
-    }
-
-    public static ArrayList<Category> getAllCategory() {
-        ArrayList<Category> temp = new ArrayList<>();
-        DBConnect.Connect();
-        if (DBConnect.isConnected()) {
-            try {
-                ResultSet rs = DBConnect.ExecuteQuery("Select * from Category");
-                while (rs.next()) {
-                    temp.add(new Category(rs.getInt("CategoryID"), rs.getString("Name")));
-                }
-            } catch (Exception e) {
-                System.out.println("EXCEPTION AT getAllCategory:" + e.getMessage());
-            }
-        }
-        return temp;
-    }
-
-    public static ArrayList<Brand> getAllBrand() {
-        ArrayList<Brand> temp = new ArrayList<>();
-        DBConnect.Connect();
-        if (DBConnect.isConnected()) {
-            try {
-                ResultSet rs = DBConnect.ExecuteQuery("Select * from Brand");
-                while (rs.next()) {
-                    temp.add(new Brand(rs.getInt("BrandID"), rs.getString("Name")));
-                }
-            } catch (Exception e) {
-                System.out.println("EXCEPTION AT getAllBrand:" + e.getMessage());
-            }
-        }
-        return temp;
-    }
-
-    public static boolean addProduct(int categoryID, int BrandID, String name, String image, float price, int quantity, String description) {
+    public boolean addProduct(int categoryID, int BrandID, String name, String image, float price, int quantity, String description) {
         DBConnect.Connect();
         if (DBConnect.isConnected()) {
             try {
@@ -242,7 +155,7 @@ public class ProductDAO {
         return true;
     }
 
-    public static Product getProductById(int productId) {
+    public Product getProductById(int productId) {
         Product product = null; // Start with null to indicate no product found
         DBConnect.Connect();
         if (DBConnect.isConnected()) {
@@ -274,7 +187,7 @@ public class ProductDAO {
         return product; // Return the product (null if not found)
     }
 
-    public static int getIdCategory(String ProductCategory) {
+    public int getIdCategory(String ProductCategory) {
         int temp = 0;
         DBConnect.Connect();
         if (DBConnect.isConnected()) {
@@ -291,62 +204,7 @@ public class ProductDAO {
         return temp;
     }
 
-    public static int getIdBrand(String ProductBrand) {
-        int temp = 0;
-        DBConnect.Connect();
-        if (DBConnect.isConnected()) {
-            try {
-                ResultSet rs = DBConnect.ExecuteQuery("SELECT BrandID FROM Brand WHERE [Name] = '" + ProductBrand + "'");
-                while (rs.next()) {
-                    temp = rs.getInt("BrandID");
-                }
-                DBConnect.Disconnect();
-            } catch (Exception e) {
-                System.out.println("EXCEPTION AT getIdBrand:" + e.getMessage());
-            }
-        }
-        return temp;
-    }
-
-    public static String getCategoryNameById(int categoryId) {
-        String categoryName = null; // Initialize to null
-        DBConnect.Connect();
-        if (DBConnect.isConnected()) {
-            try ( PreparedStatement ptmt = DBConnect.prepareStatement("SELECT Name FROM Category WHERE CategoryID = ?")) {
-                ptmt.setInt(1, categoryId);
-
-                try ( ResultSet rs = ptmt.executeQuery()) {
-                    if (rs.next()) {
-                        categoryName = rs.getString("Name");
-                    }
-                }
-            } catch (SQLException e) {
-                System.err.println("SQLException at getCategoryNameById: " + e.getMessage());
-            }
-        }
-        return categoryName; // Return the name (null if not found)
-    }
-
-    public static String getBrandNameById(int brandId) {
-        String brandName = null;
-        DBConnect.Connect();
-        if (DBConnect.isConnected()) {
-            try ( PreparedStatement ptmt = DBConnect.prepareStatement("SELECT [Name] FROM Brand WHERE BrandID = ?")) {
-                ptmt.setInt(1, brandId);
-
-                try ( ResultSet rs = ptmt.executeQuery()) {
-                    if (rs.next()) {
-                        brandName = rs.getString("Name");
-                    }
-                }
-            } catch (SQLException e) {
-                System.err.println("SQLException at getBrandNameById: " + e.getMessage());
-            }
-        }
-        return brandName;
-    }
-
-    public static boolean updateProduct(int ProductID, int CategoryID, int BrandID, String name, int quantity, String image, float price, String description) {
+    public boolean updateProduct(int ProductID, int CategoryID, int BrandID, String name, int quantity, String image, float price, String description) {
         DBConnect.Connect();
         if (DBConnect.isConnected()) {
             try {
@@ -389,7 +247,7 @@ public class ProductDAO {
         }
     }
 
-    public static void deleteProduct(int productId) {
+    public void deleteProduct(int productId) {
         String query = "DELETE FROM Product WHERE productId = ?";
         DBConnect.Connect();
         if (DBConnect.isConnected()) {
@@ -404,7 +262,7 @@ public class ProductDAO {
 
     }
 
-    public static String getProductNameById(int productId) {
+    public String getProductNameById(int productId) {
         String productName = "";
         DBConnect.Connect();
 
@@ -432,23 +290,49 @@ public class ProductDAO {
 
         return productName; // Trả về tên sản phẩm (null nếu không tìm thấy)
     }
-    
-   public int getCountProduct(){
-       int temp = 0;
-       DBConnect.Connect();
-       if (DBConnect.isConnected()) {
-           try {
-               ResultSet rs = DBConnect.ExecuteQuery("select COUNT(ProductID) as ProductNumber from Product");
-               if (rs.next()) {
-                   temp = rs.getInt("ProductNumber");
-               }
-               DBConnect.Disconnect();
-           } catch (Exception e) {
-               System.out.println(e.getMessage());
-           }
-       }
-       return temp;
-   }
+
+    public int getCountProduct() {
+        int temp = 0;
+        DBConnect.Connect();
+        if (DBConnect.isConnected()) {
+            try {
+                ResultSet rs = DBConnect.ExecuteQuery("select COUNT(ProductID) as ProductNumber from Product");
+                if (rs.next()) {
+                    temp = rs.getInt("ProductNumber");
+                }
+                DBConnect.Disconnect();
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+        }
+        return temp;
+    }
+
+    public List<Product> getListByCategory(int id) {
+        Connection con = DBConnect.getConnection();
+        String sql = "SELECT * FROM product WHERE categoryID = ?";
+        List<Product> list = new ArrayList<>();
+        try {
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                int productID = rs.getInt("ProductID");
+                int categoryID = id;
+                int brandID = rs.getInt("BrandID");
+                String name = rs.getString("Name");
+                int quantity = rs.getInt("quantity");
+                String image = rs.getString("Image");
+                double price = rs.getDouble("Price");
+                String description = rs.getString("Description");
+                list.add(new Product(productID, categoryID, brandID, name, quantity, image, price, description));
+            }
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
 
     public static void main(String[] args) {
 //        Product p = new Product(0, 1, 1, "S6", "da", 500000.0, "", "");

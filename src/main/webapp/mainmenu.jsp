@@ -48,6 +48,13 @@
                         <span class="title">Wallet</span>
                     </a>
                 </li>
+                
+                <li>
+                    <a href="index.jsp">
+                        <span class="icon"><ion-icon name="return-down-back-outline"></ion-icon></span>
+                        <span class="title">Go to home</span>
+                    </a>
+                </li>
 
                 <li>
                     <a href="LogoutServlet">
@@ -55,6 +62,7 @@
                         <span class="title">Sign Out</span>
                     </a>
                 </li>
+                
             </ul>
         </div>
     </body>

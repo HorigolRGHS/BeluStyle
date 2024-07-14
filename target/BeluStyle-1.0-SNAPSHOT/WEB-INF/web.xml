@@ -8,7 +8,17 @@
     <filter-mapping>
         <filter-name>AdminFilter</filter-name>
         <url-pattern>/AdminPanel.jsp</url-pattern>
+        <url-pattern>/AdminPanel</url-pattern>
         <url-pattern>/EditProduct</url-pattern>
+        <url-pattern>/editProduct.jsp</url-pattern>
+        <url-pattern>/dialog.jsp</url-pattern>
+        <url-pattern>/walletSection.jsp</url-pattern>
+        <url-pattern>/productSection.jsp</url-pattern>
+        <url-pattern>/ordersSection.jsp</url-pattern>
+        <url-pattern>/dashboardSection.jsp</url-pattern>
+        <url-pattern>/OrderInvoice.jsp</url-pattern>
+        <url-pattern>/DeleteProduct</url-pattern>
+        <url-pattern>/AddProduct</url-pattern>
     </filter-mapping>
     <servlet>
         <servlet-name>UpdateUser</servlet-name>

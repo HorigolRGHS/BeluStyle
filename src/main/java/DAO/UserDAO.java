@@ -123,7 +123,7 @@ public class UserDAO {
         return u;
     }
 
-    public int getWallet(String username) {
+    public double getWallet(String username) {
         int temp = 0;
         DBConnect.Connect();
         if (DBConnect.isConnected()) {

@@ -4,6 +4,14 @@
     Author     : Duong Nhat Anh CE181079
 --%>
 
+<%@page import="java.text.SimpleDateFormat"%>
+<%@page import="dao.OrderDetailDAO"%>
+<%@page import="model.OrderDetail"%>
+<%@page import="model.Order"%>
+<%@page import="java.util.List"%>
+<%@page import="dao.OrderDAO"%>
+<%@page import="dao.UserDAO"%>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
@@ -38,7 +46,21 @@
             </div>
             <div class="card">
                 <div>
-                    <div class="numbers">Infinity VND</div>
+                    <%
+                        double balance = 0.0;
+
+                        Cookie[] arr = request.getCookies();
+
+                        if (arr != null) {
+                            for (Cookie o : arr) {
+                                if (o.getName().equals("username")) {
+                                    String username = o.getValue();
+                                    balance = userDAO.getWallet(username);
+                                }
+                            }
+                        }
+                    %>
+                    <div class="numbers"><%= String.format("%,.2f", balance)%>  VND</div>
                     <div class="cardName">Wallet</div>
                 </div>
                 <div class="iconBx">
@@ -50,66 +72,80 @@
             <div class="recentOrders">
                 <div class="cardHeader">
                     <h2>Recent Orders</h2>
-                    <a href="#" class="btn">View All</a>
+                    <a href="#" class="btn" onclick="showSection('orders')" >View All</a>
                 </div>
                 <table>
                     <thead>
                         <tr>
-                            <td>Name</td>
-                            <td>Price</td>
-                            <td>Payment</td>
+                            <td>OrderID</td>
+                            <td>Total</td>
+                            <td>Order Date</td>
                             <td>Status</td>
                         </tr>
                     </thead>
+                    <%
+                        OrderDAO orDAO = new OrderDAO();
+                        OrderDetailDAO orDDao = new OrderDetailDAO();
+                        List<Order> recentOrders = orDAO.getRecentOrders(8);
+                        System.out.println("RecentOrder:" + recentOrders.size());
+                    %>
                     <tbody>
                         <tr>
-                            <td>Star Refrigerator</td>
-                            <td>$1200</td>
-                            <td>Paid</td>
-                            <td><span class="status delivered">Delivered</span></td>
-                        </tr>
+                            <% for (Order order : recentOrders) {%>
                         <tr>
-                            <td>Dell Laptop</td>
-                            <td>$110</td>
-                            <td>Due</td>
-                            <td><span class="status pending">Pending</span></td>
+                            <td><%= order.getOrderID()%></td>
+                            <td><fmt:formatNumber value="<%= orDDao.calTotalOrder(order.getOrderID())%>" type="number" maxFractionDigits="0"/></td>
+                            <%
+                                SimpleDateFormat fmt = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+                                String formattedDate = fmt.format(order.getOrderDate());
+                            %>
+                            <td><%= formattedDate %></td>
+                            <td><span class="status <%= orDAO.getOrderStatus(order.getOrderID())%>"><%= orDAO.getOrderStatus(order.getOrderID())%></span></td>  
                         </tr>
-                        <tr>
-                            <td>Apple Watch</td>
-                            <td>$1200</td>
-                            <td>Paid</td>
-                            <td><span class="status return">Return</span></td>
+                        <% }%> 
                         </tr>
-                        <tr>
-                            <td>Addidas Shoes</td>
-                            <td>$620</td>
-                            <td>Due</td>
-                            <td><span class="status inProgress">In Progress</span></td>
-                        </tr>
-                        <tr>
-                            <td>Star Refrigerator</td>
-                            <td>$1200</td>
-                            <td>Paid</td>
-                            <td><span class="status delivered">Delivered</span></td>
-                        </tr>
-                        <tr>
-                            <td>Dell Laptop</td>
-                            <td>$110</td>
-                            <td>Due</td>
-                            <td><span class="status pending">Pending</span></td>
-                        </tr>
-                        <tr>
-                            <td>Apple Watch</td>
-                            <td>$1200</td>
-                            <td>Paid</td>
-                            <td><span class="status return">Return</span></td>
-                        </tr>
-                        <tr>
-                            <td>Addidas Shoes</td>
-                            <td>$620</td>
-                            <td>Due</td>
-                            <td><span class="status inProgress">In Progress</span></td>
-                        </tr>
+                        <!--                        <tr>
+                                                    <td>Dell Laptop</td>
+                                                    <td>$110</td>
+                                                    <td>Due</td>
+                                                    <td><span class="status pending">Pending</span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Apple Watch</td>
+                                                    <td>$1200</td>
+                                                    <td>Paid</td>
+                                                    <td><span class="status return">Return</span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Addidas Shoes</td>
+                                                    <td>$620</td>
+                                                    <td>Due</td>
+                                                    <td><span class="status inProgress">In Progress</span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Star Refrigerator</td>
+                                                    <td>$1200</td>
+                                                    <td>Paid</td>
+                                                    <td><span class="status delivered">Delivered</span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Dell Laptop</td>
+                                                    <td>$110</td>
+                                                    <td>Due</td>
+                                                    <td><span class="status pending">Pending</span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Apple Watch</td>
+                                                    <td>$1200</td>
+                                                    <td>Paid</td>
+                                                    <td><span class="status return">Return</span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Addidas Shoes</td>
+                                                    <td>$620</td>
+                                                    <td>Due</td>
+                                                    <td><span class="status inProgress">In Progress</span></td>
+                                                </tr>-->
                     </tbody>
                 </table>
             </div>
@@ -135,5 +171,5 @@
                 </table>
             </div>
         </div>
-</body>
+    </body>
 </html>

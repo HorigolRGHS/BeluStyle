@@ -63,7 +63,7 @@
     <body>
 
         <%
-            // ham nay de lay ma san pham truyen qua tren thanh dia chj
+            // ham nay de lay ma san pham truyen qua tren thanh dia chi
             String productID = "";
             if (request.getParameter("productID") != null) {
                 productID = request.getParameter("productID");
@@ -77,21 +77,9 @@
             <div id="head">
                 <%@include file="banner.jsp" %>
             </div>
-            <%
-                String username = null;
-                Cookie[] cookies = request.getCookies();
-                if (cookies != null) {
-                    for (Cookie cookie : cookies) {
-                        if (cookie.getName().equals("username")) {
-                            username = cookie.getValue();
-                        }
-                    }
-                }
 
-                if (username != null) {
-            %>
             <%@include file="navbar.jsp"%>
-
+        
             <div id="content">
 
                 <div class="left-1">
@@ -106,7 +94,7 @@
                                         .getName()%></td>
                         </tr>
                         <tr class="row2">
-                            <td class="col1">Manufacturer:</td>
+                            <td class="col1">Brand:</td>
                             <td class="col2"><%= BrandDAO.getBrand(productDAO.getProductById(Integer.parseInt(productID)).getBrandID()).getName()%></td>
                         </tr>
 
@@ -130,8 +118,7 @@
                         href="#"><img
                             src="images/giohang.png" /></a>
                     <form action="cart" method="post">
-                           <input type="number" min="1" max="<%=productDAO.getProductbyId(Integer.parseInt(productID))
-                                .getQuantity()%>" value="1" name="quantity"/>
+                        <input type="number" min="1" max="<%=productDAO.getProductbyId(Integer.parseInt(productID)).getQuantity()%>" value="1" name="quantity"/>
                         <input type="hidden" value="setCart" name="command"/>
                         <input type="hidden" value="<%=productID%>" name="productId"/>
                         <input type="submit" value="Thêm vào giỏ hàng">

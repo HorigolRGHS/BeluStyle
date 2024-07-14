@@ -4,6 +4,7 @@
     Author     : Duong Nhat Anh CE181079
 --%>
 
+<%@page import="dao.UserDAO"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -14,14 +15,7 @@
     <body>
         <div class="image-container">
             <h2>Wallet Balance</h2>
-            <%
-                Object walletObj = session.getAttribute("Wallet");
-                double balance = 0.0; // Default value
-                if (walletObj != null && walletObj instanceof Double) {
-                    balance = (Double) walletObj;
-                }
-            %>
-            <h1>$<%= balance %></h1> <!-- Thay đổi từ <h2> thành <h1> -->
+            <h1><%= String.format("%,.2f", balance)%>VND</h1>
             <img src="./images/bw.jpg" alt="">
         </div>
     </body>

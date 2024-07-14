@@ -8,6 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import model.Order;
@@ -144,21 +145,70 @@ public class OrderDAO {
         }
         return fullName;
     }
-    public int getCountOrder(){
-       int temp = 0;
-       DBConnect.Connect();
-       if (DBConnect.isConnected()) {
-           try {
-               ResultSet rs = DBConnect.ExecuteQuery("select COUNT(OrderID) as OrderNumber from [Order]");
-               if (rs.next()) {
-                   temp = rs.getInt("OrderNumber");
-               }
-               DBConnect.Disconnect();
-           } catch (Exception e) {
-               System.out.println(e.getMessage());
-           }
-       }
-       return temp;
-   }
+
+    public int getCountOrder() {
+        int temp = 0;
+        DBConnect.Connect();
+        if (DBConnect.isConnected()) {
+            try {
+                ResultSet rs = DBConnect.ExecuteQuery("select COUNT(OrderID) as OrderNumber from [Order]");
+                if (rs.next()) {
+                    temp = rs.getInt("OrderNumber");
+                }
+                DBConnect.Disconnect();
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+        }
+        return temp;
+    }
+
+    public List<Order> getRecentOrders(int limit) {  // New method
+        List<Order> recentOrders = new ArrayList<>();
+        String sql = "SELECT Top(?) * FROM [Order] ORDER BY OrderDate DESC"; // Note the ORDER BY and LIMIT
+
+        try ( Connection con = DBConnect.getConnection();  PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, limit);  // Set the limit dynamically
+            try ( ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    int orderId = rs.getInt("OrderID");
+                    String username = rs.getString("Username");
+                    Timestamp orderDate = rs.getTimestamp("OrderDate");
+                    recentOrders.add(new Order(orderId, username, orderDate));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return recentOrders;
+    }
+    
+    public String getOrderStatus(int orderId) {
+        String status = "pending";
+        String sql = "SELECT OrderDate FROM [Order] WHERE OrderID = ?";
+        try (Connection con = DBConnect.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, orderId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Timestamp orderDate = rs.getTimestamp("OrderDate");
+                    LocalDate orderLocalDate = orderDate.toLocalDateTime().toLocalDate();
+                    LocalDate currentDate = LocalDate.now();
+
+                    long daysBetween = java.time.temporal.ChronoUnit.DAYS.between(orderLocalDate, currentDate);
+                    System.out.println("DayBetween:"+daysBetween);
+
+                    if (daysBetween < -15) {
+                        status = "delivered";
+                    } else if (daysBetween < -1) {
+                        status = "inProgress";
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return status;
+    }
 
 }

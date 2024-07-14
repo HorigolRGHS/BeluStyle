@@ -48,19 +48,20 @@ public class CartServlet extends HttpServlet {
     private void handleRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String command = request.getParameter("command");
         String productId = request.getParameter("productId");
+        ProductDAO proDAO = new ProductDAO();
 
         if (command != null) {
             if (command.equals("addCart")) {
-                Product p = ProductDAO.getProductbyId(Integer.parseInt(productId));
+                Product p = proDAO.getProductbyId(Integer.parseInt(productId));
                 addToCart(p);
             } else if (command.equals("deleteCart")) {
-                Product p = ProductDAO.getProductbyId(Integer.parseInt(productId));
+                Product p = proDAO.getProductbyId(Integer.parseInt(productId));
                 deleteFromCart(p);
             } else if (command.equals("removeCart")) {
-                Product p = ProductDAO.getProductbyId(Integer.parseInt(productId));
+                Product p = proDAO.getProductbyId(Integer.parseInt(productId));
                 removeFromCart(p);
             } else if (command.equals("setCart")) {
-                Product p = ProductDAO.getProductbyId(Integer.parseInt(productId));
+                Product p = proDAO.getProductbyId(Integer.parseInt(productId));
                 setCart(p, Integer.parseInt(request.getParameter("quantity")));
             }
         }

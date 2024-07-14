@@ -84,7 +84,7 @@
                         Transform your wardrobe with the latest trends from BeluStyle, where
                         fashion meets affordability and style is just a click away.
                     </p>
-                    <button class="welcome-btn" onclick="window.location.href = 'index.jsp'">
+                    <button class="welcome-btn" onclick="window.location.href = 'index'">
                         Shop now
                     </button>
                 </div>

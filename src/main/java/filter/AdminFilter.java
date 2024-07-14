@@ -4,9 +4,9 @@
  */
 package filter;
 
+import dao.UserDAO;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
@@ -17,6 +17,7 @@ import jakarta.servlet.FilterConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.Cookie;
 
 /**
  *
@@ -103,14 +104,33 @@ public class AdminFilter implements Filter {
 
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
-        HttpSession session = httpRequest.getSession(false);
 
-        if (session != null && "Admin".equals(session.getAttribute("role"))) {
-            // User is an admin, allow the request to proceed
+        Cookie[] cookies = httpRequest.getCookies();
+        String username = null;
+
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("username".equals(cookie.getName())) { // Assuming the cookie stores username
+                    username = cookie.getValue();
+                    break;
+                }
+            }
+        }
+
+        boolean isAdmin = false;
+
+        if (username != null) {
+            UserDAO userDAO = new UserDAO(); // Create your UserDAO instance
+            String role = userDAO.getUserRole(username); // Fetch role from database
+            isAdmin = "Admin".equals(role);
+        }
+
+        if (isAdmin) {
+            // User is an admin based on the retrieved role, allow the request
             chain.doFilter(request, response);
         } else {
-            // User is not an admin, redirect to login page
-            httpResponse.sendRedirect(httpRequest.getContextPath() + "/login.jsp");
+            // User is not an admin or not logged in, redirect to login
+            httpResponse.sendRedirect(httpRequest.getContextPath() + "/login");
         }
     }
 

@@ -36,7 +36,7 @@
                     <% if (username != null) {
                     %>
                 <li class='last'><a href="cart"><span>Cart</span></a></li>
-                <li class='last'><a href="search"><span>Wallet</span></a></li>
+                <li class='last'><a href="walletHome.jsp"><span>Wallet</span></a></li>
                     <%
                         UserDAO userDAO = new UserDAO();
                         if (userDAO.getUser(username).getRole().equalsIgnoreCase("admin")) {

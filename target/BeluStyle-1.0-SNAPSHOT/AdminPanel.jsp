@@ -22,6 +22,9 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     </head>
     <body>
+        <div id="preloader">
+            <div class="spinner"></div>
+        </div>
         <div class="container">
             <jsp:include page="mainmenu.jsp" />
             <div class="main">
@@ -31,7 +34,7 @@
                     </div>
                     <div class="search">
                         <label>
-                            <input type="text" placeholder="Dùng Ctrl + F đi tui mệt r">
+                            <input type="text" placeholder="Comming soon">
                             <ion-icon name="search-outline"></ion-icon>
                         </label>
                     </div>
@@ -55,6 +58,12 @@
         </div>
         <jsp:include page="dialog.jsp" />
         <script src="./js/main.js"></script>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const preloader = document.getElementById('preloader');
+                preloader.style.display = 'none';
+            });
+        </script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
         <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
         <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>

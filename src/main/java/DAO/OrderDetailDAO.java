@@ -117,5 +117,25 @@ public class OrderDetailDAO {
         return orderDetails;
     }
     
+    public double calTotalOrder(int orderId){
+        double temp = 0.0;
+        DBConnect.Connect();
+        if (DBConnect.isConnected()) {
+            try {
+                PreparedStatement ptmt = DBConnect.prepareStatement("SELECT SUM(od.Quantity * od.Price) AS TotalMoney FROM OrderDetail od GROUP BY od.OrderID HAVING OrderID = ?");
+                ptmt.setInt(1, orderId);
+                ResultSet rs = ptmt.executeQuery();
+                if (rs.next()) {
+                    temp = rs.getDouble("TotalMoney");
+                }
+                return temp;
+            } catch (Exception e) {
+                e.getStackTrace();
+                
+            }
+        }
+        return temp;
+    }
+    
     
 }

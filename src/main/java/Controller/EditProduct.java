@@ -63,6 +63,9 @@ public class EditProduct extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        int pro_id = Integer.parseInt(request.getParameter("productId"));
+        ProductDAO proDAO = new ProductDAO();
+        request.setAttribute("pro", proDAO.getProductById(pro_id));
         request.getRequestDispatcher("editproduct.jsp").forward(request, response);
 
     }
@@ -88,7 +91,8 @@ public class EditProduct extends HttpServlet {
 
         Part filePart = request.getPart("fileimage");
         String fileName = getFileName(filePart);
-        String oldFileName = ProductDAO.getProductById(productID).getImage();
+        ProductDAO proDAO = new ProductDAO();
+        String oldFileName = proDAO.getProductById(productID).getImage();
 
         String uploadDirectory = getServletContext().getRealPath("/") + "images/product/";
 
@@ -106,7 +110,7 @@ public class EditProduct extends HttpServlet {
         }
 
         // Add the product using DAO
-        boolean success = ProductDAO.updateProduct(productID, categoryID, brandID, productName, quantity, fileName, price, description);
+        boolean success = proDAO.updateProduct(productID, categoryID, brandID, productName, quantity, fileName, price, description);
 
         if (success) {
             response.sendRedirect("AdminPanel.jsp");

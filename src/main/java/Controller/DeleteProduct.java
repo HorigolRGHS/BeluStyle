@@ -3,13 +3,12 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
 
-package controller;
+package Controller;
 
 import dao.ProductDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -55,7 +54,14 @@ public class DeleteProduct extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        processRequest(request, response);
+        int productId = Integer.parseInt(request.getParameter("productId"));
+        ProductDAO proDAO = new ProductDAO();
+
+        // Delete product using DAO
+        proDAO.deleteProduct(productId);
+
+        // Redirect back to the product list (index.jsp)
+        response.sendRedirect("AdminPanel.jsp");
     } 
 
     /** 
@@ -68,13 +74,7 @@ public class DeleteProduct extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        int productId = Integer.parseInt(request.getParameter("productId"));
-
-        // Delete product using DAO
-        ProductDAO.deleteProduct(productId);
-
-        // Redirect back to the product list (index.jsp)
-        response.sendRedirect("AdminPanel.jsp");
+        processRequest(request, response);
     }
 
     /** 

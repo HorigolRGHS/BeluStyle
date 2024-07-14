@@ -74,6 +74,7 @@ body{
 
 .modal-body input[type="text"],
 .modal-body input[type="file"],
+.modal-body input[type="number"],
 .modal-body select,
 .modal-body textarea {
   width: 100%;
@@ -161,4 +162,6 @@ body{
   background-position: right .7em top 50%, 0 0; 
   background-size: .65em auto, 100%; 
 }
-
+a{
+    text-decoration: none;
+}

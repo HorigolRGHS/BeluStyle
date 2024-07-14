@@ -90,4 +90,40 @@ public class BrandDAO {
             e.printStackTrace();
         }
     }
+
+    public String getBrandNameById(int brandId) {
+        String brandName = null;
+        DBConnect.Connect();
+        if (DBConnect.isConnected()) {
+            try ( PreparedStatement ptmt = DBConnect.prepareStatement("SELECT [Name] FROM Brand WHERE BrandID = ?")) {
+                ptmt.setInt(1, brandId);
+
+                try ( ResultSet rs = ptmt.executeQuery()) {
+                    if (rs.next()) {
+                        brandName = rs.getString("Name");
+                    }
+                }
+            } catch (SQLException e) {
+                System.err.println("SQLException at getBrandNameById: " + e.getMessage());
+            }
+        }
+        return brandName;
+    }
+    
+    public int getIdBrand(String ProductBrand) {
+        int temp = 0;
+        DBConnect.Connect();
+        if (DBConnect.isConnected()) {
+            try {
+                ResultSet rs = DBConnect.ExecuteQuery("SELECT BrandID FROM Brand WHERE [Name] = '" + ProductBrand + "'");
+                while (rs.next()) {
+                    temp = rs.getInt("BrandID");
+                }
+                DBConnect.Disconnect();
+            } catch (Exception e) {
+                System.out.println("EXCEPTION AT getIdBrand:" + e.getMessage());
+            }
+        }
+        return temp;
+    }
 }

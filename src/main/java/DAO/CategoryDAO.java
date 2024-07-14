@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import model.Category;
+import model.Product;
 
 public class CategoryDAO {
 
@@ -94,4 +95,24 @@ public class CategoryDAO {
             e.printStackTrace();
         }
     }
+    
+    public String getCategoryNameById(int categoryId) {
+        String categoryName = null; // Initialize to null
+        DBConnect.Connect();
+        if (DBConnect.isConnected()) {
+            try ( PreparedStatement ptmt = DBConnect.prepareStatement("SELECT Name FROM Category WHERE CategoryID = ?")) {
+                ptmt.setInt(1, categoryId);
+
+                try ( ResultSet rs = ptmt.executeQuery()) {
+                    if (rs.next()) {
+                        categoryName = rs.getString("Name");
+                    }
+                }
+            } catch (SQLException e) {
+                System.err.println("SQLException at getCategoryNameById: " + e.getMessage());
+            }
+        }
+        return categoryName; // Return the name (null if not found)
+    }
+    
 }

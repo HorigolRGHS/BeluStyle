@@ -4,11 +4,12 @@
     Author     : Duong Nhat Anh CE181079
 --%>
 
-<%@page import="dao.ProductDAO"%>
+<%@page import="dao.CategoryDAO"%>
 <%@page import="model.Product"%>
 <%@page import="model.Brand"%>
 <%@page import="model.Category"%>
 <%@page import="java.util.ArrayList"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -29,65 +30,61 @@
         </script>
     </head>
     <body>
-        <!--Add Product Dialog-->
-        <div id="myModal" class="modal" >
+        <div id="myModal" class="modal">
             <div class="modal-content">
                 <div class="modal-header">
                     <span class="close-button">&times;</span>
                     <h2>Add Product</h2>
                 </div>
                 <div class="modal-body">
-                    <form action="AddProduct" method="post" enctype="multipart/form-data" >
+                    <form action="AddProduct" method="post" enctype="multipart/form-data">
                         <label for="category">Category:</label><br>
                         <select name="category" class="drop-lists" id="category">
                             <%
-                                ArrayList<Category> listCate = ProductDAO.getAllCategory();
-                                for (Category cate : listCate) {
+                                CategoryDAO categoryDAO = new CategoryDAO();  // Create the DAO instance
+                                request.setAttribute("categories", categoryDAO.getList()); // Store categories in request scope 
                             %>
-                            <option value="<%= cate.getCategoryID()%>"><%= cate.getName()%></option>
-                            <%
-                                }
-                            %>
+
+                            <c:forEach items="${categories}" var="cate">
+                                <option value="${cate.categoryID}">${cate.name}</option>
+                            </c:forEach>
                         </select>
                         <br>
+
                         <label for="brand">Brand:</label><br>
                         <select name="brand" class="drop-lists" id="brand">
-                            <%
-                                ArrayList<Brand> listBrand = ProductDAO.getAllBrand();
-                                for (Brand brand : listBrand) {
-                            %>
-                            <option value="<%= brand.getBrandID()%>"><%= brand.getName()%></option>
-                            <%
-                                }
-                            %>
+                            <c:forEach items="${ProductDAO.allBrand}" var="brand">
+                                <option value="${brand.brandID}">${brand.name}</option>
+                            </c:forEach>
                         </select>
                         <br>
+
                         Product Name: <br>
                         <div class="input-container">
                             <input type="text" name="productname" id="productname">
                         </div>
                         <br>
-                        Quantity:
-                        <br>
+
+                        Quantity: <br>
                         <div class="input-container">
                             <input type="text" name="quantity" id="quantity">
                         </div>
-                        <br>
-                        <br>Image:<br>
+                        <br><br>
+
+                        Image:<br>
                         <input onchange="previewImage(event)" type="file" id="fileInput" name="fileimage">
                         <br>
-                        <!-- Preview new image -->
                         <img id="previewImg" style="width: 100px; display: none;" alt="Image Preview"/>
                         <a id="fileName" name="fileName" style="display: none"></a>
                         <br>
-                        Price:
-                        <br>
+
+                        Price: <br>
                         <div class="input-container">
                             <input type="text" name="price" id="price">
                         </div>
                         <br>
-                        Description:
-                        <br>
+
+                        Description: <br>
                         <div class="input-container">
                             <textarea name="description" id="description" cols="40" rows="10"></textarea>
                         </div>
@@ -95,7 +92,7 @@
                 <div class="modal-footer">
                     <button class="btn-dialog btn-dialogSubmit" type="submit" id="closeModal">Add</button>
                     <button class="btn-dialog btn-dialogCancel" type="reset" id="closeModal">Cancel</button>
-                    </form>
+                    </form> 
                 </div>
                 <script src="./js/popup.js"></script>
             </div>

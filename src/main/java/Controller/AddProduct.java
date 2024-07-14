@@ -97,8 +97,8 @@ public class AddProduct extends HttpServlet {
         try ( InputStream fileContent = filePart.getInputStream()) {
             Files.copy(fileContent, Paths.get(uploadDir, fileName), StandardCopyOption.REPLACE_EXISTING);
         }
-
-        boolean success = ProductDAO.addProduct(categoryID, brandID, productName, fileName, price, quantity, description);
+        ProductDAO proDAO = new ProductDAO();
+        boolean success = proDAO.addProduct(categoryID, brandID, productName, fileName, price, quantity, description);
 
         if (success) {
             response.sendRedirect("AdminPanel.jsp#products");

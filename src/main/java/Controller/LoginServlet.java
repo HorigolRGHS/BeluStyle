@@ -35,22 +35,32 @@ public class LoginServlet extends HttpServlet {
     }
 
     /**
+     * @param request
+     * @param response
+     * @throws jakarta.servlet.ServletException
+     * @throws java.io.IOException
      * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
      * response)
      */
+    @Override
     protected void doGet(HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException {
         request.getRequestDispatcher("login.jsp").forward(request, response);
     }
 
     /**
+     * @param request
+     * @param response
+     * @throws jakarta.servlet.ServletException
+     * @throws java.io.IOException
      * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
      * response)
      */
+    @Override
     protected void doPost(HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException {
-        String username = request.getParameter("username");
-        String password = request.getParameter("password");
+        String username = request.getParameter("username").trim();
+        String password = request.getParameter("password").trim();
 
         String err = "";
         if (username.equals("") || password.equals("")) {
@@ -81,10 +91,7 @@ public class LoginServlet extends HttpServlet {
                 //setting cookie to expiry in 30 mins
                 loginCookie.setMaxAge(30 * 60);
                 response.addCookie(loginCookie);
-                System.out.println(userRole);
-                if ("Admin".equalsIgnoreCase(userRole)) {
-                    response.sendRedirect("AdminPanel");
-                } else {
+                if (!userRole.isEmpty()) {
                     response.sendRedirect("index");
                 }
             } else {
