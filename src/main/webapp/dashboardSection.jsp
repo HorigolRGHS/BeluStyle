@@ -90,62 +90,18 @@
                         System.out.println("RecentOrder:" + recentOrders.size());
                     %>
                     <tbody>
-                        <tr>
                             <% for (Order order : recentOrders) {%>
                         <tr>
                             <td><%= order.getOrderID()%></td>
                             <td><fmt:formatNumber value="<%= orDDao.calTotalOrder(order.getOrderID())%>" type="number" maxFractionDigits="0"/></td>
                             <%
-                                SimpleDateFormat fmt = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+                                SimpleDateFormat fmt = new SimpleDateFormat("dd/MM/yyyy");
                                 String formattedDate = fmt.format(order.getOrderDate());
                             %>
                             <td><%= formattedDate %></td>
-                            <td><span class="status <%= orDAO.getOrderStatus(order.getOrderID())%>"><%= orDAO.getOrderStatus(order.getOrderID())%></span></td>  
+                            <td><span class="status <%= orDAO.getOrderStatus(order.getOrderID())%>"><%= orDAO.getOrderStatusText(order.getOrderID())%></span></td>  
                         </tr>
                         <% }%> 
-                        </tr>
-                        <!--                        <tr>
-                                                    <td>Dell Laptop</td>
-                                                    <td>$110</td>
-                                                    <td>Due</td>
-                                                    <td><span class="status pending">Pending</span></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Apple Watch</td>
-                                                    <td>$1200</td>
-                                                    <td>Paid</td>
-                                                    <td><span class="status return">Return</span></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Addidas Shoes</td>
-                                                    <td>$620</td>
-                                                    <td>Due</td>
-                                                    <td><span class="status inProgress">In Progress</span></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Star Refrigerator</td>
-                                                    <td>$1200</td>
-                                                    <td>Paid</td>
-                                                    <td><span class="status delivered">Delivered</span></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Dell Laptop</td>
-                                                    <td>$110</td>
-                                                    <td>Due</td>
-                                                    <td><span class="status pending">Pending</span></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Apple Watch</td>
-                                                    <td>$1200</td>
-                                                    <td>Paid</td>
-                                                    <td><span class="status return">Return</span></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Addidas Shoes</td>
-                                                    <td>$620</td>
-                                                    <td>Due</td>
-                                                    <td><span class="status inProgress">In Progress</span></td>
-                                                </tr>-->
                     </tbody>
                 </table>
             </div>

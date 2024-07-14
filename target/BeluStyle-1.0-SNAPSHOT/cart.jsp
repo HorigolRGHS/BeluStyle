@@ -82,11 +82,11 @@
                 <div class="shopping-cart">
 
                     <div class="column-labels">
-                        <label class="product-image">Hình ảnh</label> <label
+                        <label class="product-image">Image</label> <label
                             class="product-details">Product</label> <label
-                            class="product-price">Giá bán</label> <label
-                            class="product-quantity">Số lượng</label><label
-                            class="product-line-price">Tổng tiền</label>
+                            class="product-price">Price</label> <label
+                            class="product-quantity">Quantity</label><label
+                            class="product-line-price">Total</label>
                     </div>
                     <%
                         ProductDAO productDAO = new ProductDAO();
@@ -151,14 +151,14 @@
                     %>
                     <div class="totals">
                         <div class="totals-item">
-                            <label>Tổng hóa đơn</label>
+                            <label>Total invoice</label>
                             <div class="totals-value" id="cart-subtotal"><%=nf.format(total)%>
                                 VNĐ
                             </div>
                         </div>
                     </div>
                     <%if (cart != null && cart.size() > 0) {%>
-                    <a class="checkout" href="history" style="text-decoration: none;">Lịch sử</a>
+                    <a class="checkout" href="history" style="text-decoration: none;">History</a>
                     <%
                         if (total > walletBalance) {
                     %>
@@ -167,13 +167,13 @@
                     <%
                     } else {
                     %>
-                    <a class="checkout" href="ConfirmServlet?username=<%=username%>" style="text-decoration: none;">Thanh toán</a>
+                    <a class="checkout" href="ConfirmServlet?username=<%=username%>" style="text-decoration: none;">Purchase</a>
                     <%
                         }
                     %>
                     <% } else { %>
-                    <a class="checkout" href="history" style="text-decoration: none;">Lịch sử</a>
-                    <a class="checkout" href="product" style="text-decoration: none;">Thanh toán</a>
+                    <a class="checkout" href="history" style="text-decoration: none;">History</a>
+                    <a class="checkout" href="product" style="text-decoration: none;">Purchase</a>
                     <% }%>
                 </div>
 

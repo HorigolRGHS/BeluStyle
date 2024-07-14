@@ -195,6 +195,33 @@ public class OrderDAO {
         }
         return status;
     }
+    
+    public String getOrderStatusText(int orderId) {
+        String status = "Pending";
+        String sql = "SELECT OrderDate FROM [Order] WHERE OrderID = ?";
+        try ( Connection con = DBConnect.getConnection();  PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, orderId);
+            try ( ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Timestamp orderDate = rs.getTimestamp("OrderDate");
+                    LocalDate orderLocalDate = orderDate.toLocalDateTime().toLocalDate();
+                    LocalDate currentDate = LocalDate.now();
+
+                    long daysBetween = java.time.temporal.ChronoUnit.DAYS.between(orderLocalDate, currentDate);
+                    System.out.println("DayBetween:" + daysBetween);
+
+                    if (daysBetween < -15) {
+                        status = "Delivered";
+                    } else if (daysBetween < -1) {
+                        status = "In progress";
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return status;
+    }
 
     public List<Order> getOrdersByUsername(String username) {
         List<Order> orders = new ArrayList<>();
