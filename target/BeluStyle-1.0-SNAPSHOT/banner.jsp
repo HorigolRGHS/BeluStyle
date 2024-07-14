@@ -13,6 +13,6 @@
         <title>JSP Page</title>
     </head>
     <body>
-                <img src="Banner/BeluBuyBan.png" width="1057px" height="200px" />
+                <img src="Banner/BeluBuyBan.png" width="1060px" height="200px" />
     </body>
 </html>

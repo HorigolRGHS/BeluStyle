@@ -115,8 +115,7 @@
                             %>
                             <li>
                                 <img src="./images/product/<%=product.getImage()%>" alt="Product's image"/>
-                            </li>
-                            <li>
+                            
                                 <%=product.getName()%> - Quantity: <%=detail.getQuantity()%> - Price: <%=nf.format(detail.getPrice())%> VNĐ
                             </li>
                             <%

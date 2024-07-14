@@ -21,6 +21,7 @@
         <link rel="stylesheet" href="css/style.css" />
         <link rel="stylesheet" href="css/menu.css" />
         <link rel="stylesheet" href="css/product.css" />
+        <link rel="stylesheet" href="./css/wallet2.css"/>
     </head>
     <body>
 
@@ -30,7 +31,7 @@
             </div>
             <%@include file="navbar.jsp" %>
 
-            <div id="content">
+            <div class="image-container">
                 <%
                     double balance = 0.0;
                     UserDAO uDAO = new UserDAO();
@@ -46,7 +47,9 @@
                         }
                     }
                 %>
-                <p>Wallet: <%= String.format("%,.2f", balance)%>  VND</p>
+                <h2>Wallet Balance</h2>
+                <h1><span class="balance"><%= String.format("%,.2f", balance)%></span> <span class="currency">VND</span></h1>
+                <img src="./images/wallHome.jpg" alt="">
             </div>
             <div id="footer"><jsp:include page="footer.jsp"></jsp:include></div>
         </div>
