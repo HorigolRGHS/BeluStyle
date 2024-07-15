@@ -89,7 +89,7 @@ public class ConfirmServlet extends HttpServlet {
 
         // Confirm order via email
         final String username_mail = "Belucom204@outlook.com";
-        final String appPassword = "qtczpxptboiiyhtu"; // Use the app password generated from Google
+        final String appPassword = "pcegtyokgvrqcmoc"; // Use the app password generated from Google
         String to = u.getEmail();
         String subject = "Thank you so much for shopping with BeluStyle";
         StringBuilder text = new StringBuilder("<strong>The Orders - " + username + " - </strong><i> " + ft.format(dNow) + "</i> <ul>");

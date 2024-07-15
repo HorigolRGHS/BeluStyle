@@ -85,7 +85,7 @@ public class ResetPassword extends HttpServlet {
 
                 //gửi mật khẩu mới qua email.
                 final String username_mail = "Belucom204@outlook.com";
-                final String password = "qtczpxptboiiyhtu";
+                final String password = "pcegtyokgvrqcmoc";
                 String to = u.getEmail();
                 String subject = "Reset Password";
                 String text = "<i>Reset Password</i><br/>";

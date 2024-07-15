@@ -36,19 +36,19 @@
                                onblur="if (this.value == '') {
                                            this.value = 'Username';
                                        }"
-                               name="username">
+                               name="username"style="width: 100%; outline: 0; padding: .5rem 1rem; color: #7e8ba3;">
                         <input type="text" class="text" value="Your account's email"
                                onfocus="this.value = '';"
                                onblur="if (this.value == '') {
                                            this.value = 'Email';
                                        }"
-                               name="email">
+                               name="email"style="width: 100%; outline: 0; padding: .5rem 1rem; color: #7e8ba3;">
                         <input type="text" class="text" value="New Password"
                                onfocus="this.value = '';"
                                onblur="if (this.value == '') {
                                            this.value = 'newpass';
                                        }"
-                               name="newpass">
+                               name="newpass"style="width: 100%; outline: 0; padding: .5rem 1rem; color: #7e8ba3;">
 
 
                         <div class="p-container">
@@ -57,7 +57,7 @@
                         </div>
                         <h1></h1>
                         <div class="submit">
-                            <input type="submit" value="RESTORE">
+                            <input type="submit" value="RESTORE" style="width: 100%; outline: 0; padding: .5rem 1rem;">
                         </div>
 
                     </form>
