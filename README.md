@@ -2,7 +2,7 @@
 A minor project of the EMC Team
 
 ## Overview
-This project is a Java web application using JSP (JavaServer Pages) and Servlets. It demonstrates basic web application functionalities like handling user requests, rendering views with JSP, and interacting with a database.
+This project is a Java web application using JSP (JavaServer Pages) and Servlets. It demonstrates basic web application functionalities like handling user requests, rendering views with JSP, and interacting with a database. 
 
 ## Prerequisites
 - **Java Development Kit (JDK):** Make sure you have JDK 8 or later installed.
@@ -10,11 +10,14 @@ This project is a Java web application using JSP (JavaServer Pages) and Servlets
 - **Maven:** This project uses Maven for dependency management and build processes.
 - **IDE:** An IDE like IntelliJ IDEA, Eclipse, or NetBeans is recommended.
 
+## Note
+The project is currently undergoing an update process. The previous complete version has been moved to the master branch for reference. Please clone from it, thanks!
+
 ## Setup
 
 ### Step 1: Clone the Repository
 ```bash
-git clone https://github.com/HorigolRGHS/BeluStyle.git
+git clone -b master https://github.com/HorigolRGHS/BeluStyle.git
 cd BeluStyle
 ```
 
