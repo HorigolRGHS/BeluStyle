@@ -20,4 +20,11 @@ The project is currently undergoing an update process. The previous complete ver
 git clone -b master https://github.com/HorigolRGHS/BeluStyle.git
 cd BeluStyle
 ```
+### Step 2: Create database
+Open file `BeluStyleV2MySQL` in Mysql Workbench or Dbeaver.
+
+Run this.
+### Step 3: Open Project
+Open in Netbean 13.
+
 
