@@ -14,7 +14,7 @@ This project is a Java web application using JSP (JavaServer Pages) and Servlets
 
 ### Step 1: Clone the Repository
 ```bash
-git clone https://github.com/HorigolRGHS/BeluStyle.git
+git clone -b master https://github.com/HorigolRGHS/BeluStyle.git
 cd BeluStyle
 ```
 
