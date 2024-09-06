@@ -5,10 +5,10 @@ A minor project of the EMC Team
 This project is a Java web application using JSP (JavaServer Pages) and Servlets. It demonstrates basic web application functionalities like handling user requests, rendering views with JSP, and interacting with a database. 
 
 ## Prerequisites
-- **Java Development Kit (JDK):** Make sure you have JDK 8 or later installed.
+- **Java Development Kit (JDK):** Make sure you have JDK 17 or later installed.
 - **Apache Tomcat:** A servlet container like Apache Tomcat 9.x or later is required to run the application.
 - **Maven:** This project uses Maven for dependency management and build processes.
-- **IDE:** An IDE like IntelliJ IDEA, Eclipse, or NetBeans is recommended.
+- **IDE:** An IDE like IntelliJ IDEA, Eclipse, or NetBeans 13 is recommended.
 
 ## Note
 The project is currently undergoing an update process. The previous complete version has been moved to the master branch for reference. Please clone from it, thanks!
