@@ -11,11 +11,14 @@ The project is currently undergoing an update process. For reference, the previo
 git clone -b main https://github.com/HorigolRGHS/BeluStyle.git
 cd BeluStyle
 ```
-### Step 2: Create database
+### Step 2: Create a database
 Open file `BeluStyleMySQL` in Mysql Workbench or Dbeaver.
 
+### Step 3: Add application files
+Contact My Highness to receive application files (or guess and create them by yourself 😅), then add them to src\main\resources
+
 Run this.
-### Step 3: Open Project
+### Step 4: Open Project
 Open in IntelliJ
 
 
