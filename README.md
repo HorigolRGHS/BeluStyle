@@ -17,8 +17,8 @@ Open file `BeluStyleMySQL` in Mysql Workbench or Dbeaver.
 ### Step 3: Add application files
 Contact My Highness to receive application files (or guess and create them by yourself 😅), then add them to src\main\resources
 
-Run this.
-### Step 4: Open Project
+
+### Step 4: Open and run the project.
 Open in IntelliJ
 
 
