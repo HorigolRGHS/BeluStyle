@@ -30,5 +30,10 @@ public class LoginController {
         return "home-page";
     }
 
+    @GetMapping("/reset-password")
+    public String resetPassword() {
+        return "reset-password";
+    }
+
 
 }

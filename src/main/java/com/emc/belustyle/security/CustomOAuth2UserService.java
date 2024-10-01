@@ -1,8 +1,8 @@
 package com.emc.belustyle.security;
 
-import com.emc.belustyle.dao.UserRepository;
-import com.emc.belustyle.dao.UserRoleRepository;
 import com.emc.belustyle.entity.User;
+import com.emc.belustyle.service.UserRoleService;
+import com.emc.belustyle.service.UserService;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -18,12 +18,12 @@ import java.util.Set;
 @Service
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
-    private final UserRepository userRepository;
-    private final UserRoleRepository userRoleRepository;
+    private final UserService userService;
+    private final UserRoleService userRoleService;
 
-    public CustomOAuth2UserService(UserRepository userRepository, UserRoleRepository userRoleRepository) {
-        this.userRepository = userRepository;
-        this.userRoleRepository = userRoleRepository;
+    public CustomOAuth2UserService(UserService userService, UserRoleService userRoleService) {
+        this.userService = userService;
+        this.userRoleService = userRoleService;
     }
 
     @Override
@@ -33,7 +33,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         String email = oAuth2User.getAttribute("email");
 
-        User user = userRepository.findByEmail(email);
+        User user = userService.findByEmail(email);
         if (user == null) {
             user = new User();
             user.setEmail(email);
@@ -41,9 +41,9 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             user.setFullName(oAuth2User.getAttribute("name"));
             user.setUserImage(oAuth2User.getAttribute("picture"));
             user.setEnable(true);
-            user.setRole(userRoleRepository.findById(2)
-                    .orElseThrow(() -> new RuntimeException("Default role not found")));
-            userRepository.save(user);
+            user.setRole(userRoleService.findById(2));
+
+            userService.createUser(user);
         }
 
         // Get user's role and add authorities for Spring Security
