@@ -50,6 +50,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         Set<GrantedAuthority> authorities = new HashSet<>();
         authorities.add(new SimpleGrantedAuthority("ROLE_" + user.getRole().getRoleName()));
 
+
         // Return a new DefaultOAuth2User with roles and attributes
         return new DefaultOAuth2User(authorities, oAuth2User.getAttributes(), "email");
     }

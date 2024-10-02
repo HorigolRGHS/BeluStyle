@@ -37,7 +37,6 @@ public class SecurityConfig {
                                 .requestMatchers("/login", "/register").permitAll()
                                 .requestMatchers("/home").hasRole("CUSTOMER")
                                 .requestMatchers("/api/**").permitAll()
-                                .requestMatchers("/api/auth/forgot-password").permitAll()
                                 .anyRequest().authenticated())
                 .formLogin(form -> form
                         .loginPage("/login")
@@ -51,6 +50,7 @@ public class SecurityConfig {
                         .loginPage("/login")
                         .defaultSuccessUrl("/home")
                         .failureUrl("/login?error=true"))
+
                 .exceptionHandling(configurer ->
                         configurer.accessDeniedPage("/access-denied"));
 
