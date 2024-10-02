@@ -26,11 +26,21 @@ public class AdminRestController {
     }
     @GetMapping("/users/{userId}")
     public ResponseEntity<?> getUserById(@PathVariable String userId) {
-        User user = userService.findByUserId(userId);
+        User user = userService.findById(userId);
         if (user != null) {
             return ResponseEntity.ok(user);
         } else {
             return ResponseEntity.notFound().build();
+        }
+    }
+    @DeleteMapping("/users/{userId}")
+    public ResponseEntity<?> deleteUser(@PathVariable String userId) {
+        User user = userService.findById(userId);
+        if (user != null) {
+            userService.deleteUser(userId);
+            return ResponseEntity.ok().build(); // Trả về mã 200 OK
+        } else {
+            return ResponseEntity.notFound().build(); // Trả về mã 404 Not Found
         }
     }
 }
