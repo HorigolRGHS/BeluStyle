@@ -1,5 +1,6 @@
 package com.emc.belustyle.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -42,6 +43,7 @@ public class User {
 
     @ManyToOne
     @JoinColumn(name = "role_id")
+    @JsonManagedReference
     private UserRole role;
 
     @Column(name = "current_payment_method")

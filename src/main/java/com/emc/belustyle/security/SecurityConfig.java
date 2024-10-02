@@ -35,9 +35,10 @@ public class SecurityConfig {
                         configurer
                                 .requestMatchers("/css/**", "/js/**").permitAll()
                                 .requestMatchers("/login", "/register").permitAll()
-                                .requestMatchers("/home").hasRole("CUSTOMER")
+                                .requestMatchers("/home").hasAnyRole("CUSTOMER","ADMIN","STAFF")
                                 .requestMatchers("/api/**").permitAll()
                                 .requestMatchers("/api/auth/forgot-password").permitAll()
+                                .requestMatchers("/admin/**").hasRole("ADMIN")
                                 .anyRequest().authenticated())
                 .formLogin(form -> form
                         .loginPage("/login")

@@ -1,4 +1,6 @@
 package com.emc.belustyle.entity;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -23,6 +25,8 @@ public class UserRole {
     private RoleName roleName;
 
     @OneToMany(mappedBy = "role", cascade = CascadeType.ALL)
+    @JsonBackReference // Thêm annotation này để ngăn lặp
+    @JsonIgnore
     private List<User> users;
 
     public enum RoleName {

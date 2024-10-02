@@ -37,7 +37,9 @@ public class UserService {
     public User findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
-
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
     @Transactional
     public User createUser(User user) {
         return userRepository.save(user);
