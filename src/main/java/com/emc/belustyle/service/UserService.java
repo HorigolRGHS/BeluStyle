@@ -114,31 +114,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public User handleGoogleLogin(String googleId, String email, String fullName, String userImage) {
-        User user = findbyGoogleId(googleId);
-        String password = email + email.length(); // Generate a password
-
-        if (user == null) {
-            user = new User();
-            user.setGoogleId(googleId);
-            user.setUsername(email.substring(0, email.indexOf("@")));
-            PasswordEncoder encoder = new BCryptPasswordEncoder(BCryptPasswordEncoder.BCryptVersion.$2A, 10);
-            user.setPasswordHash(encoder.encode(password));
-            user.setEmail(email);
-            user.setFullName(fullName);
-            user.setUserImage(userImage);
-            user.setRole(userRoleService.findById(2)); // Assuming role ID 2 is for users
-            user.setEnable(true);
-            create(user); // Save user
-        }
-
-        // Authenticate user
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(user.getUsername(), password));
-
-
-        return user; // Return the authenticated user
-    }
+  
 }
 
 

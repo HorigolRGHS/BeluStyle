@@ -57,36 +57,6 @@ public class AuthRestController {
         return ResponseEntity.status(responseDTO.getStatusCode()).body(responseDTO);
     }
 
-    @GetMapping("googleLogin")
-    public void googleLogin(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        response.sendRedirect(new GoogleUtil().getGoogleOAuthLoginURL());
-    }
-
-    @GetMapping("/googleCallback")
-    public ResponseEntity<ResponseDTO> handleGoogleLoginSuccess(HttpServletRequest httpServletRequest) {
-        String code = httpServletRequest.getParameter("code");
-        Map<String, String> googleInfo = new GoogleUtil().getGoogleIdAndEmailFromCode(code);
-
-        String email = googleInfo.get("email");
-        String googleId = googleInfo.get("google_id");
-        String fullName = googleInfo.get("name");
-        String userImage = googleInfo.get("picture");
-
-        // Call the service method
-        User user = userService.handleGoogleLogin(googleId, email, fullName, userImage);
-
-        // Generate JWT token
-        String token = jwtUtil.generateUserToken(user);
-
-        ResponseDTO responseDTO = new ResponseDTO();
-        responseDTO.setMessage("Success");
-        responseDTO.setStatusCode(200);
-        responseDTO.setToken(token);
-        responseDTO.setExpirationTime("1 day");
-
-        return ResponseEntity.status(responseDTO.getStatusCode()).body(responseDTO);
-    }
-
 
 
 }
