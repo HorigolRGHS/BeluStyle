@@ -1,5 +1,8 @@
 package com.emc.belustyle.rest;
 
+import com.emc.belustyle.dto.UserDTO;
+import com.emc.belustyle.dto.UserIdNameDTO;
+import com.emc.belustyle.dto.ViewUserDTO;
 import com.emc.belustyle.entity.User;
 import com.emc.belustyle.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +24,9 @@ public class AdminRestController {
 
     // Endpoint to view all user details
     @GetMapping("/users")
-    public List<User> getAllUsers() {
-        return userService.getAllUsers();
+    public ResponseEntity<List<ViewUserDTO>> getAllUsers() {
+        List<ViewUserDTO> users = userService.getAllUsers();
+        return ResponseEntity.ok(users);
     }
     @GetMapping("/users/{userId}")
     public ResponseEntity<?> getUserById(@PathVariable String userId) {
@@ -42,5 +46,10 @@ public class AdminRestController {
         } else {
             return ResponseEntity.notFound().build(); // Trả về mã 404 Not Found
         }
+    }
+    @GetMapping("/users/search/fullname")
+    public ResponseEntity<List<UserIdNameDTO>> searchUsersByFullName(@RequestParam String fullName) {
+        List<UserIdNameDTO> users = userService.searchUsersByFullName(fullName);
+        return ResponseEntity.ok(users);
     }
 }

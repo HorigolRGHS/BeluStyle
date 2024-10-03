@@ -3,13 +3,15 @@ package com.emc.belustyle.service;
 
 import com.emc.belustyle.dao.UserRepository;
 import com.emc.belustyle.dao.UserRoleRepository;
+import com.emc.belustyle.dto.UserIdNameDTO;
+import com.emc.belustyle.dto.ViewUserDTO;
 import com.emc.belustyle.entity.User;
 import com.emc.belustyle.entity.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import java.util.stream.Collectors;
 import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
@@ -25,7 +27,6 @@ public class UserService {
         this.userRepository = userRepository;
         this.userRoleRepository = userRoleRepository;
     }
-
     public List<User> findAll() {
         return userRepository.findAll();
     }
@@ -33,12 +34,25 @@ public class UserService {
     public User findById(String id) {
         return userRepository.findById(id).orElse(null);
     }
-
+    public List<UserIdNameDTO> searchUsersByFullName(String fullName) {
+        List<User> users = userRepository.findByFullNameContainingIgnoreCase(fullName);
+        return users.stream()
+                .map(user -> new UserIdNameDTO(user.getUserId(), user.getFullName()))
+                .collect(Collectors.toList());
+    }
     public User findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    public List<ViewUserDTO> getAllUsers() {
+        List<User> users = userRepository.findAll();
+        return users.stream()
+                .map(user -> new ViewUserDTO(
+                        user.getUsername(),
+                        user.getEmail(),
+                        user.getEnable(),
+                        user.getCreatedAt(),
+                        user.getUpdatedAt()))
+                .collect(Collectors.toList()); // Sử dụng Collectors.toList() ở đây
     }
     @Transactional
     public User createUser(User user) {
