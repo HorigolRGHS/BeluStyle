@@ -21,10 +21,7 @@ import org.apache.http.util.EntityUtils;
  */
 public class GoogleUtil {
 
-    private final String GOOGLE_CLIENT_ID = "300845919892-bbvpmkgcep2j7jl8dfk09spmf4lf95sv.apps.googleusercontent.com";
-    private final String GOOGLE_CLIENT_SECRET = "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";
-    private final String GOOGLE_REDIRECT_URI = "http://localhost:8080/api/auth/googleCallback";
-    private final String GOOGLE_GRANT_TYPE = "authorization_code";
+    
 
     // Generate Google OAuth login URL
     public String getGoogleOAuthLoginURL() {
