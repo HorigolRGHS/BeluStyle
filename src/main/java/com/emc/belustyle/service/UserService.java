@@ -8,9 +8,13 @@ import com.emc.belustyle.dto.ViewUserDTO;
 import com.emc.belustyle.entity.User;
 import com.emc.belustyle.entity.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.stream.Collectors;
 import javax.swing.text.html.Option;
 import java.util.List;
@@ -43,17 +47,17 @@ public class UserService {
     public User findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
-    public List<ViewUserDTO> getAllUsers() {
-        List<User> users = userRepository.findAll();
-        return users.stream()
-                .map(user -> new ViewUserDTO(
-                        user.getUsername(),
-                        user.getEmail(),
-                        user.getEnable(),
-                        user.getCreatedAt(),
-                        user.getUpdatedAt()))
-                .collect(Collectors.toList()); // Sử dụng Collectors.toList() ở đây
+    public Page<ViewUserDTO> getAllUsers(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<User> userPage = userRepository.findAll(pageable);
+        return userPage.map(user -> new ViewUserDTO(
+                user.getUsername(),
+                user.getEmail(),
+                user.getEnable(),
+                user.getCreatedAt(),
+                user.getUpdatedAt()));
     }
+
     @Transactional
     public User createUser(User user) {
         return userRepository.save(user);

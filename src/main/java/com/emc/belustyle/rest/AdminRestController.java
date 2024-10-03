@@ -6,11 +6,12 @@ import com.emc.belustyle.dto.ViewUserDTO;
 import com.emc.belustyle.entity.User;
 import com.emc.belustyle.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/admin")
@@ -24,15 +25,24 @@ public class AdminRestController {
 
     // Endpoint to view all user details
     @GetMapping("/users")
-    public ResponseEntity<List<ViewUserDTO>> getAllUsers() {
-        List<ViewUserDTO> users = userService.getAllUsers();
+    public ResponseEntity<Page<ViewUserDTO>> getAllUsers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Page<ViewUserDTO> users = userService.getAllUsers(page, size);
         return ResponseEntity.ok(users);
     }
     @GetMapping("/users/{userId}")
-    public ResponseEntity<?> getUserById(@PathVariable String userId) {
+    public ResponseEntity<ViewUserDTO> getUserById(@PathVariable String userId) {
         User user = userService.findById(userId);
         if (user != null) {
-            return ResponseEntity.ok(user);
+            ViewUserDTO viewUserDTO = new ViewUserDTO(
+                    user.getUsername(),
+                    user.getEmail(),
+                    user.getEnable(),
+                    user.getCreatedAt(),
+                    user.getUpdatedAt()
+            );
+            return ResponseEntity.ok(viewUserDTO);
         } else {
             return ResponseEntity.notFound().build();
         }
@@ -42,9 +52,9 @@ public class AdminRestController {
         User user = userService.findById(userId);
         if (user != null) {
             userService.deleteUser(userId);
-            return ResponseEntity.ok().build(); // Trả về mã 200 OK
+            return ResponseEntity.ok().build();
         } else {
-            return ResponseEntity.notFound().build(); // Trả về mã 404 Not Found
+            return ResponseEntity.notFound().build();
         }
     }
     @GetMapping("/users/search/fullname")
