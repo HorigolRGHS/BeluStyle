@@ -33,6 +33,7 @@ public class UserService {
         this.userRepository = userRepository;
         this.userRoleRepository = userRoleRepository;
     }
+
     public List<User> findAll() {
         return userRepository.findAll();
     }
@@ -40,15 +41,18 @@ public class UserService {
     public User findById(String id) {
         return userRepository.findById(id).orElse(null);
     }
+
     public List<UserIdNameDTO> searchUsersByFullName(String fullName) {
         List<User> users = userRepository.findByFullNameContainingIgnoreCase(fullName);
         return users.stream()
                 .map(user -> new UserIdNameDTO(user.getUserId(), user.getFullName()))
                 .collect(Collectors.toList());
     }
+
     public User findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
+
     public Page<ViewUserDTO> getAllUsers(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<User> userPage = userRepository.findAll(pageable);
@@ -59,6 +63,7 @@ public class UserService {
                 user.getCreatedAt(),
                 user.getUpdatedAt()));
     }
+
     @Transactional
     public User createUser(User user) {
         return userRepository.save(user);
@@ -73,7 +78,7 @@ public class UserService {
 
         User user = userRepository.findByEmail(email);
         // Check if user already exists
-        if (user==null) {
+        if (user == null) {
             user = new User();
             user.setUserId(googleId);
             user.setEmail(email);
@@ -108,7 +113,6 @@ public class UserService {
             return null;
         }
     }
-
 
 
     public void deleteUser(String id) {

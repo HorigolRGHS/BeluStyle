@@ -77,7 +77,7 @@ public class AdminRestController {
     public ResponseEntity<String> createUser(@RequestBody UserDTO userDTO) {
         try {
             if (userService.findByEmail(userDTO.getEmail()) != null) {
-                return ResponseEntity.badRequest().body(null);
+                return ResponseEntity.badRequest().body("Email already exists!");
             }
             User user = new User();
             user.setEmail(userDTO.getEmail());
@@ -88,7 +88,7 @@ public class AdminRestController {
             user.setPasswordHash(encoder.encode(userDTO.getPasswordHash()));
 
             user.setUserImage(userDTO.getUserImage());
-            user.setEnable(userDTO.getEnable());
+            user.setEnable(true);
 
             UserRole role = userRoleService.findById(3);
             user.setRole(role);

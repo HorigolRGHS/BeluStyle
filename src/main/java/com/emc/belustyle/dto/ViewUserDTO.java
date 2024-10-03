@@ -1,4 +1,5 @@
 package com.emc.belustyle.dto;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
