@@ -44,9 +44,9 @@ public class UserRestController {
         user.setPasswordHash(encoder.encode(userDTO.getPasswordHash()));
 
         user.setUserImage(userDTO.getUserImage());
-        user.setEnable(userDTO.getEnable());
+        user.setEnable(true);
 
-        UserRole role = userRoleService.findById(userDTO.getRoleId());
+        UserRole role = userRoleService.findById(2);
         user.setRole(role);
 
         user.setCurrentPaymentMethod(userDTO.getCurrentPaymentMethod());

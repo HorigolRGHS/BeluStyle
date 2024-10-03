@@ -25,7 +25,6 @@ public class EmailService {
             helper.setText(text, true); // Set to true to indicate that the text is HTML
             mailSender.send(message);
         } catch (MessagingException e) {
-            // Handle the exception (e.g., log it)
             e.printStackTrace();
         }
     }

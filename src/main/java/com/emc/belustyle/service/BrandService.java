@@ -35,8 +35,8 @@ public class BrandService {
     }
 
     @Transactional
-    public Brand updateBrand(Integer id, Brand updatedBrand) {
-        Optional<Brand> existingBrand = brandRepository.findById(id);
+    public Brand updateBrand(Brand updatedBrand) {
+        Optional<Brand> existingBrand = brandRepository.findById(updatedBrand.getBrandId());
 
         if (existingBrand.isPresent()) {
             Brand brand = existingBrand.get();

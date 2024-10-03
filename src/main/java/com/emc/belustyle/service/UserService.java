@@ -53,6 +53,7 @@ public class UserService {
         return userRepository.findByEmail(email);
     }
 
+
     public Page<ViewUserDTO> getAllUsers(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<User> userPage = userRepository.findAll(pageable);
@@ -62,6 +63,7 @@ public class UserService {
                 user.getEnable(),
                 user.getCreatedAt(),
                 user.getUpdatedAt()));
+
     }
 
     @Transactional

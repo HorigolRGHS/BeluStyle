@@ -20,10 +20,12 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private final UserService userService;
     private final UserRoleService userRoleService;
+    private final JwtUtil jwtUtil;
 
-    public CustomOAuth2UserService(UserService userService, UserRoleService userRoleService) {
+    public CustomOAuth2UserService(UserService userService, UserRoleService userRoleService, JwtUtil jwtUtil) {
         this.userService = userService;
         this.userRoleService = userRoleService;
+        this.jwtUtil = jwtUtil;
     }
 
     @Override
@@ -42,9 +44,10 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             user.setUserImage(oAuth2User.getAttribute("picture"));
             user.setEnable(true);
             user.setRole(userRoleService.findById(2));
-
             userService.createUser(user);
         }
+
+        jwtUtil.generateUserToken(user);
 
         // Get user's role and add authorities for Spring Security
         Set<GrantedAuthority> authorities = new HashSet<>();
