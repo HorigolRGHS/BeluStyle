@@ -3,6 +3,7 @@ package com.emc.belustyle.service;
 
 import com.emc.belustyle.dao.UserRepository;
 import com.emc.belustyle.dao.UserRoleRepository;
+import com.emc.belustyle.dto.UserDTO;
 import com.emc.belustyle.dto.UserIdNameDTO;
 import com.emc.belustyle.dto.ViewUserDTO;
 import com.emc.belustyle.entity.User;
@@ -15,6 +16,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.stream.Collectors;
 import javax.swing.text.html.Option;
 import java.util.List;
@@ -57,7 +59,6 @@ public class UserService {
                 user.getCreatedAt(),
                 user.getUpdatedAt()));
     }
-
     @Transactional
     public User createUser(User user) {
         return userRepository.save(user);
