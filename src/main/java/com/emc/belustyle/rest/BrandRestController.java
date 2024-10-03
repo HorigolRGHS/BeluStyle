@@ -35,8 +35,8 @@ public class BrandRestController {
 
 
     @PutMapping("/{id}")
-    public Brand updateBrand(@PathVariable Integer id, @RequestBody Brand updatedBrand) {
-            return brandService.updateBrand(id, updatedBrand);
+    public Brand updateBrand( @RequestBody Brand updatedBrand) {
+            return brandService.updateBrand(updatedBrand);
 
     }
 

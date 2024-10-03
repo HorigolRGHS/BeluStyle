@@ -35,7 +35,7 @@ public class SecurityConfig {
                         configurer
                                 .requestMatchers("/css/**", "/js/**").permitAll()
                                 .requestMatchers("/login", "/register").permitAll()
-                                .requestMatchers("/home").hasRole("CUSTOMER")
+                                .requestMatchers("/home").hasAnyRole("CUSTOMER", "ADMIN", "STAFF")
                                 .requestMatchers("/api/**").permitAll()
                                 .anyRequest().authenticated())
                 .formLogin(form -> form
@@ -50,7 +50,6 @@ public class SecurityConfig {
                         .loginPage("/login")
                         .defaultSuccessUrl("/home")
                         .failureUrl("/login?error=true"))
-
                 .exceptionHandling(configurer ->
                         configurer.accessDeniedPage("/access-denied"));
 
