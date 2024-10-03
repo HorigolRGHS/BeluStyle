@@ -1,6 +1,6 @@
 package com.emc.belustyle.service;
 
-import com.emc.belustyle.dao.UserRoleRepository;
+import com.emc.belustyle.repo.UserRoleRepository;
 import com.emc.belustyle.entity.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

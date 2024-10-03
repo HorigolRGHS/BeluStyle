@@ -8,11 +8,12 @@ import com.emc.belustyle.service.UserRoleService;
 import com.emc.belustyle.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
@@ -28,32 +29,13 @@ public class UserRestController {
     }
 
 
-    @PostMapping
-    public ResponseEntity<String> createUser(@RequestBody UserDTO userDTO) {
-        if (userService.findByEmail(userDTO.getEmail()) != null) {
-            return ResponseEntity.badRequest().body("Email đã tồn tại!");
-        }
+//    @PreAuthorize("hasAuthority('ADMIN')")
+//    @GetMapping
+//    public ResponseEntity<List<User>> getAllUsers() {
+//        List<User> users = userService.findAll();
+//        return ResponseEntity.ok(users);
+//    }
 
-        User user = new User();
-        user.setEmail(userDTO.getEmail());
-        user.setUsername(userDTO.getUsername());
-        user.setFullName(userDTO.getFullName());
 
-        // Hashing password
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(BCryptPasswordEncoder.BCryptVersion.$2A, 10);
-        user.setPasswordHash(encoder.encode(userDTO.getPasswordHash()));
 
-        user.setUserImage(userDTO.getUserImage());
-        user.setEnable(true);
-
-        UserRole role = userRoleService.findById(2);
-        user.setRole(role);
-
-        user.setCurrentPaymentMethod(userDTO.getCurrentPaymentMethod());
-        user.setUserAddress(userDTO.getUserAddress());
-
-        userService.createUser(user);
-
-        return ResponseEntity.ok("Register successfully!");
-    }
 }
