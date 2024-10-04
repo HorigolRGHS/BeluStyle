@@ -48,19 +48,20 @@ public class UserService {
     }
 
 
-    public ResponseDTO login(UserDTO userDTO){
+    public ResponseDTO login(UserDTO userDTO) {
         ResponseDTO responseDTO = new ResponseDTO();
 
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userDTO.getUsername(), userDTO.getPasswordHash()));
             var user = userRepository.findByUsername(userDTO.getUsername()).orElseThrow(() -> new CustomException("User not found"));
+            if(user.getGoogleId() != null) {throw new CustomException("Please login with Google account");}
             var token = jwtUtil.generateUserToken(user);
             responseDTO.setStatusCode(200);
             responseDTO.setToken(token);
             responseDTO.setExpirationTime("1 Day");
             responseDTO.setMessage("Successful");
 
-        }catch (CustomException e) {
+        } catch (CustomException e) {
             responseDTO.setStatusCode(400);
             responseDTO.setMessage(e.getMessage());
         } catch (Exception e) {
@@ -69,7 +70,6 @@ public class UserService {
         }
         return responseDTO;
     }
-
 
 
     public ResponseDTO register(UserDTO userDTO) {
@@ -106,15 +106,50 @@ public class UserService {
         return responseDTO;
     }
 
-    public User findbyGoogleId(String googleId){
+    public User findbyGoogleId(String googleId) {
         return userRepository.findByGoogleId(googleId).orElse(null);
     }
 
-    public User create(User user){
+    public User create(User user) {
         return userRepository.save(user);
     }
 
-  
+    public ResponseDTO handleGoogleLogin(String googleId, String email, String fullName, String userImage) {
+        User user = findbyGoogleId(googleId);
+        String password = email + email.length(); // Generate a password
+
+        if (user == null) {
+            user = new User();
+            user.setGoogleId(googleId);
+            user.setUsername(email.substring(0, email.indexOf("@")));
+            PasswordEncoder encoder = new BCryptPasswordEncoder(BCryptPasswordEncoder.BCryptVersion.$2A, 10);
+            user.setPasswordHash(encoder.encode(password));
+            user.setEmail(email);
+            user.setFullName(fullName);
+            user.setUserImage(userImage);
+            user.setRole(userRoleService.findById(2)); // Assuming role ID 2 is for users
+            user.setEnable(true);
+            create(user); // Save user
+        }
+        ResponseDTO responseDTO = new ResponseDTO();
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(user.getUsername(), password));
+            var userCheck = userRepository.findByUsername(email.substring(0, email.indexOf("@"))).orElseThrow(() -> new CustomException("User not found"));
+            var token = jwtUtil.generateUserToken(userCheck);
+            responseDTO.setStatusCode(200);
+            responseDTO.setToken(token);
+            responseDTO.setExpirationTime("1 Day");
+            responseDTO.setMessage("Successful");
+        } catch (CustomException e) {
+            responseDTO.setStatusCode(400);
+            responseDTO.setMessage(e.getMessage());
+        } catch (Exception e) {
+            responseDTO.setStatusCode(500);
+            responseDTO.setMessage("Error Occurred During USer Registration " + e.getMessage());
+        }
+        return responseDTO;
+    }
 }
 
 

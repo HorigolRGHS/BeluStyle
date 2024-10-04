@@ -18,6 +18,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -55,6 +57,36 @@ public class AuthRestController {
     public ResponseEntity<ResponseDTO> register(@RequestBody UserDTO userDTO) {
         ResponseDTO responseDTO = userService.register(userDTO);
         return ResponseEntity.status(responseDTO.getStatusCode()).body(responseDTO);
+    }
+
+    @GetMapping("googleLogin")
+    public void googleLogin(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        response.sendRedirect(new GoogleUtil().getGoogleOAuthLoginURL());
+    }
+
+    @GetMapping("/googleCallback")
+    public ResponseEntity<ResponseDTO> handleGoogleLoginSuccess(HttpServletRequest httpServletRequest) {
+        String code = httpServletRequest.getParameter("code");
+        Map<String, String> googleInfo = new GoogleUtil().getGoogleIdAndEmailFromCode(code);
+
+        String email = googleInfo.get("email");
+        String googleId = googleInfo.get("google_id");
+        String fullName = googleInfo.get("name");
+        String userImage = googleInfo.get("picture");
+
+        // Call the service method
+        ResponseDTO responseDTO = userService.handleGoogleLogin(googleId, email, fullName, userImage);
+
+
+        return ResponseEntity.status(responseDTO.getStatusCode()).body(responseDTO);
+    }
+
+
+    @GetMapping("/loginSuccess")
+    public ResponseEntity<?> loginSuccess(OAuth2AuthenticationToken authentication) {
+        OAuth2User oAuth2User = authentication.getPrincipal();
+        String jwtToken = oAuth2User.getAttribute("jwtToken"); // Lấy JWT token từ OAuth2User
+        return ResponseEntity.ok(Map.of("token", jwtToken));  // Trả JWT token về client
     }
 
 

@@ -14,6 +14,8 @@ import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Function;
 
 @Component
@@ -42,6 +44,21 @@ public class JwtUtil {
                 .signWith(SECRET_KEY)
                 .compact();
     }
+
+//    public String generateToken(UserDetails userDetails) {
+//        Map<String, Object> claims = new HashMap<>();
+//        return createToken(claims, userDetails.getUsername());
+//    }
+//
+//    private String createToken(Map<String, Object> claims, String subject) {
+//        return Jwts.builder()
+//                .setClaims(claims)
+//                .setSubject(subject)
+//                .setIssuedAt(new Date(System.currentTimeMillis()))
+//                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))  // 10 giờ
+//                .signWith(SECRET_KEY)
+//                .compact();
+//    }
 
     public String extractUsername(String token) {
         return extractClaims(token, Claims::getSubject);

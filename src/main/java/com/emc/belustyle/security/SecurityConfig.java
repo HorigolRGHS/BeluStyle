@@ -30,10 +30,12 @@ public class SecurityConfig {
     private final JwtAuthFilter jwtAuthFilter;
 
 
+
     @Autowired
     public SecurityConfig(CustomUserDetailsService customUserDetailsService, JwtAuthFilter jwtAuthFilter) {
         this.customUserDetailsService = customUserDetailsService;
         this.jwtAuthFilter = jwtAuthFilter;
+
     }
 
     @Bean
@@ -42,7 +44,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/test").authenticated()
+                        .requestMatchers("/test").hasAuthority("CUSTOMER")
                         .anyRequest().permitAll())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())
@@ -50,6 +52,7 @@ public class SecurityConfig {
         ;
         return http.build();
     }
+
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
