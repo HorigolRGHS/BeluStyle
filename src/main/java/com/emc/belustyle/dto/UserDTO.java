@@ -1,21 +1,25 @@
 package com.emc.belustyle.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
-@Getter
-@Setter
+import java.util.Date;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserDTO {
-
-    private String email;
+    private String userId;
     private String username;
+    private String passwordHash;
+    private String email;
     private String fullName;
-    private String passwordHash; // or password in plain text
     private String userImage;
     private Boolean enable;
-    private Integer roleId;
+    private String role; // You may want to keep this as a simple String or create a RoleDTO
     private String currentPaymentMethod;
     private String userAddress;
+    private Date createdAt;
+    private Date updatedAt;
 
 }
 

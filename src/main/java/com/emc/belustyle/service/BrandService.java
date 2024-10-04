@@ -1,12 +1,11 @@
 package com.emc.belustyle.service;
 
-import com.emc.belustyle.dao.BrandRepository;
+import com.emc.belustyle.repo.BrandRepository;
 import com.emc.belustyle.entity.Brand;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 import java.util.Optional;
@@ -35,8 +34,8 @@ public class BrandService {
     }
 
     @Transactional
-    public Brand updateBrand(Integer id, Brand updatedBrand) {
-        Optional<Brand> existingBrand = brandRepository.findById(id);
+    public Brand updateBrand(Brand updatedBrand) {
+        Optional<Brand> existingBrand = brandRepository.findById(updatedBrand.getBrandId());
 
         if (existingBrand.isPresent()) {
             Brand brand = existingBrand.get();

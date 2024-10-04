@@ -1,100 +1,170 @@
 package com.emc.belustyle.service;
 
 
-import com.emc.belustyle.dao.UserRepository;
-import com.emc.belustyle.dao.UserRoleRepository;
+import com.emc.belustyle.repo.UserRepository;
+import com.emc.belustyle.repo.UserRoleRepository;
+import com.emc.belustyle.dto.ResponseDTO;
+import com.emc.belustyle.dto.UserDTO;
+import com.emc.belustyle.dto.mapper.UserMapper;
 import com.emc.belustyle.entity.User;
-import com.emc.belustyle.entity.UserRole;
+import com.emc.belustyle.exception.CustomException;
+import com.emc.belustyle.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.oauth2.core.user.OAuth2User;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
-import javax.swing.text.html.Option;
-import java.util.List;
-import java.util.Optional;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+import org.springframework.stereotype.Service;
 
 @Service
 public class UserService {
 
-    private UserRepository userRepository;
-    private UserRoleRepository userRoleRepository;
+
+    private final UserRepository userRepository;
+
+    private final UserRoleRepository userRoleRepository;
+
+    private final PasswordEncoder passwordEncoder;
+
+    private final JwtUtil jwtUtil;
+
+    private final AuthenticationManager authenticationManager;
+
+    private final UserMapper userMapper;
+    private final UserRoleService userRoleService;
 
     @Autowired
-    public UserService(UserRepository userRepository, UserRoleRepository userRoleRepository) {
+    public UserService(UserRepository userRepository, UserRoleRepository userRoleRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil, AuthenticationManager authenticationManager, UserMapper userMapper, UserRoleService userRoleService) {
         this.userRepository = userRepository;
         this.userRoleRepository = userRoleRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtUtil = jwtUtil;
+        this.authenticationManager = authenticationManager;
+        this.userMapper = userMapper;
+        this.userRoleService = userRoleService;
     }
 
-    public List<User> findAll() {
-        return userRepository.findAll();
+
+    public ResponseDTO login(UserDTO userDTO) {
+        ResponseDTO responseDTO = new ResponseDTO();
+
+        try {
+            var user = userRepository.findByUsername(userDTO.getUsername()).orElseThrow(() -> new CustomException("User not found"));
+
+            if (!user.isEnabled()) {
+                throw new CustomException("User account is disabled. Please contact Belucom204@outlook.com for support.");
+            }
+
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userDTO.getUsername(), userDTO.getPasswordHash()));
+
+            if(user.getGoogleId() != null) {throw new CustomException("Please login with Google account");}
+
+            var token = jwtUtil.generateUserToken(user);
+            responseDTO.setStatusCode(200);
+            responseDTO.setToken(token);
+            responseDTO.setExpirationTime("1 Day");
+            responseDTO.setMessage("Successful");
+
+        } catch (CustomException e) {
+            responseDTO.setStatusCode(400);
+            responseDTO.setMessage(e.getMessage());
+        } catch (Exception e) {
+            responseDTO.setStatusCode(500);
+            responseDTO.setMessage("Your password is incorrect");
+        }
+        return responseDTO;
     }
 
-    public User findById(String id) {
-        return userRepository.findById(id).orElse(null);
+
+    public ResponseDTO register(UserDTO userDTO) {
+        ResponseDTO responseDTO = new ResponseDTO();
+        try {
+            if (userRepository.existsByUsername(userDTO.getUsername())) {
+                throw new CustomException(userDTO.getUsername() + " already exists");
+            }
+            if (userRepository.existsByEmail(userDTO.getEmail())) {
+                throw new CustomException(userDTO.getEmail() + " already exists");
+            }
+            userDTO.setPasswordHash(passwordEncoder.encode(userDTO.getPasswordHash()));
+            userDTO.setEnable(true);
+
+            User savedUser = userMapper.toEntity(userDTO);
+            savedUser.setRole(userRoleRepository.findById(2).orElse(null));
+            userRepository.save(savedUser);
+
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userDTO.getUsername(), userDTO.getPasswordHash()));
+            var user = userRepository.findByUsername(userDTO.getUsername()).orElse(null);
+            var token = jwtUtil.generateUserToken(user);
+
+            responseDTO.setStatusCode(200);
+            responseDTO.setToken(token);
+            responseDTO.setExpirationTime("1 Day");
+            responseDTO.setMessage("Successful");
+        } catch (CustomException e) {
+            responseDTO.setStatusCode(400);
+            responseDTO.setMessage(e.getMessage());
+        } catch (Exception e) {
+            responseDTO.setStatusCode(500);
+            responseDTO.setMessage("Error Occurred During USer Registration " + e.getMessage());
+        }
+        return responseDTO;
     }
 
-    public User findByEmail(String email) {
-        return userRepository.findByEmail(email);
+    public User findbyGoogleId(String googleId) {
+        return userRepository.findByGoogleId(googleId).orElse(null);
     }
 
-    public User findByUsername(String username) {
-        return userRepository.findByUsername(username);
-    }
-
-    @Transactional
-    public User createUser(User user) {
+    public User create(User user) {
         return userRepository.save(user);
     }
 
-    @Transactional
-    public void createUser(OAuth2User oauth2User) {
-        String googleId = oauth2User.getAttribute("sub");
-        String email = oauth2User.getAttribute("email");
-        String fullName = oauth2User.getAttribute("name");
-        String userImage = oauth2User.getAttribute("picture");
+    public ResponseDTO handleGoogleLogin(String googleId, String email, String fullName, String userImage) {
+        User user = findbyGoogleId(googleId);
+        String password = email + email.length(); // Generate a password
 
-        User user = userRepository.findByEmail(email);
-        // Check if user already exists
-        if (user==null) {
+        if (user == null) {
             user = new User();
-            user.setUserId(googleId);
+            user.setGoogleId(googleId);
+            user.setUsername(email.substring(0, email.indexOf("@")));
+            PasswordEncoder encoder = new BCryptPasswordEncoder(BCryptPasswordEncoder.BCryptVersion.$2A, 10);
+            user.setPasswordHash(encoder.encode(password));
             user.setEmail(email);
             user.setFullName(fullName);
             user.setUserImage(userImage);
-            UserRole role = userRoleRepository.findById(2)
-                    .orElseThrow(() -> new RuntimeException("Role not found"));
-            user.setRole(role);
-            userRepository.save(user);
+            user.setRole(userRoleService.findById(2)); // Assuming role ID 2 is for users
+            user.setEnable(true);
+            create(user); // Save user
         }
-    }
-
-    @Transactional
-    public User updateUser(User updatedUser) {
-        Optional<User> existingUser = userRepository.findById(updatedUser.getUserId());
-
-        if (existingUser.isPresent()) {
-            User user = existingUser.get();
-            user.setUsername(updatedUser.getUsername());
-            user.setEmail(updatedUser.getEmail());
-            user.setFullName(updatedUser.getFullName());
-            user.setUserImage(updatedUser.getUserImage());
-            user.setEnable(updatedUser.getEnable());
-            UserRole role = userRoleRepository.findById(2)
-                    .orElseThrow(() -> new RuntimeException("Role not found"));
-            user.setRole(role);
-            user.setCurrentPaymentMethod(updatedUser.getCurrentPaymentMethod());
-            user.setUserAddress(updatedUser.getUserAddress());
-            user.setUpdatedAt(updatedUser.getUpdatedAt());
-            return userRepository.save(user);
-        } else {
-            return null;
+        ResponseDTO responseDTO = new ResponseDTO();
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(user.getUsername(), password));
+            var userCheck = userRepository.findByUsername(email.substring(0, email.indexOf("@"))).orElseThrow(() -> new CustomException("User not found"));
+            var token = jwtUtil.generateUserToken(userCheck);
+            responseDTO.setStatusCode(200);
+            responseDTO.setToken(token);
+            responseDTO.setExpirationTime("1 Day");
+            responseDTO.setMessage("Successful");
+        } catch (CustomException e) {
+            responseDTO.setStatusCode(400);
+            responseDTO.setMessage(e.getMessage());
+        } catch (Exception e) {
+            responseDTO.setStatusCode(500);
+            responseDTO.setMessage("Error Occurred During USer Registration " + e.getMessage());
         }
-    }
-
-
-
-    public void deleteUser(String id) {
-        userRepository.deleteById(id);
+        return responseDTO;
     }
 }
+
+
+
+
+
+
+
+
+
+
