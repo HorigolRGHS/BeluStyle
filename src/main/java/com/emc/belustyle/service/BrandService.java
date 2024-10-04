@@ -52,7 +52,7 @@ public class BrandService {
     }
 
     @Transactional
-    public void deleteBrand(@PathVariable Integer id) {
+    public void deleteBrand(Integer id) {
         brandRepository.deleteById(id);
     }
 
