@@ -52,9 +52,16 @@ public class UserService {
         ResponseDTO responseDTO = new ResponseDTO();
 
         try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userDTO.getUsername(), userDTO.getPasswordHash()));
             var user = userRepository.findByUsername(userDTO.getUsername()).orElseThrow(() -> new CustomException("User not found"));
+
+            if (!user.isEnabled()) {
+                throw new CustomException("User account is disabled. Please contact Belucom204@outlook.com for support.");
+            }
+
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userDTO.getUsername(), userDTO.getPasswordHash()));
+
             if(user.getGoogleId() != null) {throw new CustomException("Please login with Google account");}
+
             var token = jwtUtil.generateUserToken(user);
             responseDTO.setStatusCode(200);
             responseDTO.setToken(token);
@@ -66,7 +73,7 @@ public class UserService {
             responseDTO.setMessage(e.getMessage());
         } catch (Exception e) {
             responseDTO.setStatusCode(500);
-            responseDTO.setMessage("Error Occurred During USer Registration " + e.getMessage());
+            responseDTO.setMessage("Your password is incorrect");
         }
         return responseDTO;
     }
