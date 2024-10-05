@@ -18,11 +18,10 @@ import org.apache.http.util.EntityUtils;
 
 public class GoogleUtil {
 
-    GoogleConstant googleConstant = new GoogleConstant();
-    private final String GOOGLE_CLIENT_ID = googleConstant.getGOOGLE_CLIENT_ID();
-    private final String GOOGLE_CLIENT_SECRET = googleConstant.getGOOGLE_CLIENT_SECRET();
-    private final String GOOGLE_REDIRECT_URI = googleConstant.getGOOGLE_REDIRECT_URI();
-    private final String GOOGLE_GRANT_TYPE = googleConstant.getGOOGLE_GRANT_TYPE();
+    private final String GOOGLE_CLIENT_ID = "300845919892-bbvpmkgcep2j7jl8dfk09spmf4lf95sv.apps.googleusercontent.com";
+    private final String GOOGLE_CLIENT_SECRET = "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";
+    private final String GOOGLE_REDIRECT_URI = "http://localhost:8080/api/auth/googleCallback";
+    private final String GOOGLE_GRANT_TYPE = "authorization_code";
 
     // Generate Google OAuth login URL
     public String getGoogleOAuthLoginURL() {
