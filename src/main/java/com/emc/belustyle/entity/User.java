@@ -104,6 +104,20 @@ public class User implements UserDetails {
         updatedAt = new Date();
     }
 
+//    public User(Date updatedAt, Date createdAt, String userAddress, String currentPaymentMethod, UserRole role, Boolean enable, String userImage, String fullName, String passwordHash, String email, String googleId, String username) {
+//        this.updatedAt = updatedAt;
+//        this.createdAt = createdAt;
+//        this.userAddress = userAddress;
+//        this.currentPaymentMethod = currentPaymentMethod;
+//        this.role = role;
+//        this.enable = enable;
+//        this.userImage = userImage;
+//        this.fullName = fullName;
+//        this.passwordHash = passwordHash;
+//        this.email = email;
+//        this.googleId = googleId;
+//        this.username = username;
+//    }
 
 }
 

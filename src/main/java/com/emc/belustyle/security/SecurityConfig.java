@@ -44,8 +44,11 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/test").hasAuthority("CUSTOMER")
-                        .anyRequest().permitAll())
+                        .requestMatchers("/test").authenticated()
+                        .requestMatchers("/api/admin/**").authenticated()
+                        .requestMatchers("/api/brands/**").authenticated()
+                        .requestMatchers("/api/customer/info/**").authenticated()
+                        .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)

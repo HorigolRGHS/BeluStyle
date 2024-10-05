@@ -1,16 +1,24 @@
 package com.emc.belustyle.service;
 
 
+
 import com.emc.belustyle.entity.Brand;
+
+import com.emc.belustyle.dto.UserIdNameDTO;
+
 import com.emc.belustyle.repo.UserRepository;
 import com.emc.belustyle.repo.UserRoleRepository;
 import com.emc.belustyle.dto.ResponseDTO;
 import com.emc.belustyle.dto.UserDTO;
+import com.emc.belustyle.dto.ViewUserDTO;
 import com.emc.belustyle.dto.mapper.UserMapper;
 import com.emc.belustyle.entity.User;
 import com.emc.belustyle.exception.CustomException;
 import com.emc.belustyle.security.TokenGenerator;
 import com.emc.belustyle.util.JwtUtil;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +26,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -30,6 +37,10 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Optional;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -139,6 +150,7 @@ public class UserService {
         return responseDTO;
     }
 
+
     public User findByEmail(String email) {
         return userRepository.findByEmail(email).orElse(null);
     }
@@ -177,6 +189,46 @@ public class UserService {
 
 
 
+
+    public List<User> findAll() {
+        return userRepository.findAll();
+    }
+
+    public User findById(String id) {
+        return userRepository.findById(id).orElse(null);
+    }
+    public Optional<User> findByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
+
+    public List<UserIdNameDTO> getAllUsers() {
+        List<User> users = userRepository.findAll();
+        return users.stream()
+                .map(user -> new UserIdNameDTO(user.getUserId(), user.getFullName()))
+                .collect(Collectors.toList());
+    }
+
+    public Optional<User> findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    public Page<ViewUserDTO> getAllUser(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<User> userPage = userRepository.findAll(pageable);
+        return userPage.map(user -> new ViewUserDTO(
+                user.getUsername(),
+                user.getEmail(),
+                user.getEnable(),
+                user.getCreatedAt(),
+                user.getUpdatedAt()));
+    }
+    public void deleteUser(String id) {
+        userRepository.deleteById(id);
+    }
+
+    public User createUser(User user) {
+        return userRepository.save(user);
+    }
 }
 
 
