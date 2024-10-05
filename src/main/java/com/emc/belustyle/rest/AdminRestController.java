@@ -34,10 +34,10 @@ public class AdminRestController {
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/users")
-    public ResponseEntity<Page<ViewUserDTO>> getAllUsers(
+    public ResponseEntity<Page<ViewUserDTO>> getAllUser(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-        Page<ViewUserDTO> users = userService.getAllUsers(page, size);
+        Page<ViewUserDTO> users = userService.getAllUser(page, size);
         return ResponseEntity.ok(users);
     }
 
@@ -73,9 +73,9 @@ public class AdminRestController {
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
-    @GetMapping("/users/search/fullname")
-    public ResponseEntity<List<UserIdNameDTO>> searchUsersByFullName(@RequestParam String fullName) {
-        List<UserIdNameDTO> users = userService.searchUsersByFullName(fullName);
+    @GetMapping("/users/search")
+    public ResponseEntity<List<UserIdNameDTO>> getAllUsers() {
+        List<UserIdNameDTO> users = userService.getAllUsers();
         return ResponseEntity.ok(users);
     }
 

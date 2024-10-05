@@ -176,8 +176,8 @@ public class UserService {
         return userRepository.findByUsername(username);
     }
 
-    public List<UserIdNameDTO> searchUsersByFullName(String fullName) {
-        List<User> users = userRepository.findByFullNameContainingIgnoreCase(fullName);
+    public List<UserIdNameDTO> getAllUsers() {
+        List<User> users = userRepository.findAll();
         return users.stream()
                 .map(user -> new UserIdNameDTO(user.getUserId(), user.getFullName()))
                 .collect(Collectors.toList());
@@ -187,7 +187,7 @@ public class UserService {
         return userRepository.findByEmail(email);
     }
 
-    public Page<ViewUserDTO> getAllUsers(int page, int size) {
+    public Page<ViewUserDTO> getAllUser(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<User> userPage = userRepository.findAll(pageable);
         return userPage.map(user -> new ViewUserDTO(
