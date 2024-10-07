@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class TestController {
 
-    @PreAuthorize("hasAnyAuthority('CUSTOMER','ADMIN','STAFF')")
+    @PreAuthorize("hasAuthority('CUSTOMER')")
     @GetMapping("/test")
     public String test() {
         return "test";

@@ -13,26 +13,18 @@ import com.emc.belustyle.service.UserRoleService;
 import com.emc.belustyle.service.UserService;
 import com.emc.belustyle.util.GoogleUtil;
 import com.emc.belustyle.util.JwtUtil;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import org.apache.http.protocol.HTTP;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.security.SecureRandom;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
@@ -62,6 +54,12 @@ public class AuthRestController {
     @PostMapping("/login")
     public ResponseEntity<ResponseDTO> login(@RequestBody UserDTO userDTO) {
         ResponseDTO responseDTO = userService.login(userDTO);
+        return ResponseEntity.status(responseDTO.getStatusCode()).body(responseDTO);
+    }
+
+    @PostMapping("/login-for-staff-and-admin")
+    public ResponseEntity<ResponseDTO> loginForStaffAndAdmin(@RequestBody UserDTO userDTO) {
+        ResponseDTO responseDTO = userService.loginForStaffAndAdmin(userDTO);
         return ResponseEntity.status(responseDTO.getStatusCode()).body(responseDTO);
     }
 
@@ -144,15 +142,10 @@ public class AuthRestController {
     }
 
 
-    @GetMapping("/google-login")
-    public void googleLogin(HttpServletResponse response) throws IOException {
-        response.sendRedirect(new GoogleUtil().getGoogleOAuthLoginURL());
-    }
-
     @GetMapping("/google-callback")
     public ResponseEntity<ResponseDTO> handleGoogleLoginSuccess(HttpServletRequest httpServletRequest) {
-        String code = httpServletRequest.getParameter("code");
-        Map<String, String> googleInfo = new GoogleUtil().getGoogleIdAndEmailFromCode(code);
+        String token = httpServletRequest.getParameter("token");
+        Map<String, String> googleInfo = new GoogleUtil().getGoogleInfoFromToken(token);
 
         String email = googleInfo.get("email");
         String googleId = googleInfo.get("google_id");
@@ -267,6 +260,8 @@ public class AuthRestController {
 
         return ResponseEntity.ok("Password reset successful");
     }
+
+
 
 
 }
