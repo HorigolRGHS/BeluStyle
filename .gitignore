@@ -35,5 +35,3 @@ build/
 ### application ###
 application.yaml
 application.properties
-GoogleConstant.java
-GoogleUtil.java
