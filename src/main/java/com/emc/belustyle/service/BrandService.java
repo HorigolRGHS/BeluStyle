@@ -13,7 +13,7 @@ import java.util.Optional;
 @Service
 public class BrandService {
 
-    private BrandRepository brandRepository;
+    private final BrandRepository brandRepository;
 
     @Autowired
     public BrandService(BrandRepository brandRepository) {

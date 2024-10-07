@@ -12,8 +12,12 @@ import jakarta.mail.internet.MimeMessage;
 @Service
 public class EmailService {
 
-    @Autowired
     private JavaMailSender mailSender;
+
+    @Autowired
+    public EmailService(JavaMailSender mailSender) {
+        this.mailSender = mailSender;
+    }
 
     @Async
     public void sendHtmlMessage(String to, String subject, String text) {
