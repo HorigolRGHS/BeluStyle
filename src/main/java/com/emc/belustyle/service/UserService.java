@@ -1,11 +1,6 @@
 package com.emc.belustyle.service;
 
-
-
-import com.emc.belustyle.entity.Brand;
-
 import com.emc.belustyle.dto.UserIdNameDTO;
-
 import com.emc.belustyle.repo.UserRepository;
 import com.emc.belustyle.repo.UserRoleRepository;
 import com.emc.belustyle.dto.ResponseDTO;
@@ -14,32 +9,22 @@ import com.emc.belustyle.dto.ViewUserDTO;
 import com.emc.belustyle.dto.mapper.UserMapper;
 import com.emc.belustyle.entity.User;
 import com.emc.belustyle.exception.CustomException;
-import com.emc.belustyle.security.TokenGenerator;
 import com.emc.belustyle.util.JwtUtil;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
 
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Optional;
-
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -78,7 +63,9 @@ public class UserService {
 
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userDTO.getUsername(), userDTO.getPasswordHash()));
 
-            if(user.getGoogleId() != null) {throw new CustomException("Please login with Google account", HttpStatus.FORBIDDEN);}
+            if (user.getGoogleId() != null) {
+                throw new CustomException("Please login with Google account", HttpStatus.FORBIDDEN);
+            }
 
             var token = jwtUtil.generateUserToken(user);
             responseDTO.setStatusCode(HttpStatus.OK.value());
@@ -98,7 +85,6 @@ public class UserService {
         }
         return responseDTO;
     }
-
 
 
     public User findByGoogleId(String googleId) {
@@ -155,15 +141,15 @@ public class UserService {
         return userRepository.findByEmail(email).orElse(null);
     }
 
-    public boolean existsByUsername(String username){
+    public boolean existsByUsername(String username) {
         return userRepository.existsByUsername(username);
     }
 
-    public boolean existsByEmail(String email){
+    public boolean existsByEmail(String email) {
         return userRepository.existsByEmail(email);
     }
 
-    public User findById(String userId){
+    public User findById(String userId) {
         return userRepository.findById(userId).orElse(null);
     }
 
@@ -187,18 +173,13 @@ public class UserService {
     }
 
 
-
-
-
     public List<User> findAll() {
         return userRepository.findAll();
     }
 
-    public User findById(String id) {
-        return userRepository.findById(id).orElse(null);
-    }
-    public Optional<User> findByUsername(String username) {
-        return userRepository.findByUsername(username);
+    public User findByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElse(null);
     }
 
     public List<UserIdNameDTO> getAllUsers() {
@@ -208,9 +189,6 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
-    public Optional<User> findByEmail(String email) {
-        return userRepository.findByEmail(email);
-    }
 
     public Page<ViewUserDTO> getAllUser(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -222,6 +200,7 @@ public class UserService {
                 user.getCreatedAt(),
                 user.getUpdatedAt()));
     }
+
     public void deleteUser(String id) {
         userRepository.deleteById(id);
     }

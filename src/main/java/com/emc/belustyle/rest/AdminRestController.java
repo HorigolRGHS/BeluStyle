@@ -3,7 +3,6 @@ package com.emc.belustyle.rest;
 import com.emc.belustyle.dto.UserDTO;
 import com.emc.belustyle.dto.UserIdNameDTO;
 import com.emc.belustyle.dto.ViewUserDTO;
-import com.emc.belustyle.entity.Brand;
 import com.emc.belustyle.entity.User;
 import com.emc.belustyle.entity.UserRole;
 import com.emc.belustyle.service.UserRoleService;
@@ -17,7 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
+
 
 
 @RestController
@@ -33,7 +32,7 @@ public class AdminRestController {
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
-    @GetMapping("/users")
+    @GetMapping
     public ResponseEntity<Page<ViewUserDTO>> getAllUser(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
@@ -60,7 +59,7 @@ public class AdminRestController {
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
-    @DeleteMapping("/users/{userId}")
+    @DeleteMapping
     public ResponseEntity<?> deleteUser(@PathVariable String userId) {
         User user = userService.findById(userId);
         if (user != null) {
@@ -80,12 +79,12 @@ public class AdminRestController {
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
-    @PostMapping("/users/create")
+    @PostMapping
     public ResponseEntity<String> createUser(@RequestBody UserDTO userDTO) {
         try {
-            Optional<User> existingUser = userService.findByEmail(userDTO.getEmail());
+            User existingUser = userService.findByEmail(userDTO.getEmail());
 
-            if (existingUser.isPresent()) {
+            if (existingUser != null) {
                 return ResponseEntity.badRequest().body("Email already exists!");
             }
 

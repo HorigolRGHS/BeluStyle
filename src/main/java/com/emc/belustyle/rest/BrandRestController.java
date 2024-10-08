@@ -9,10 +9,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
+
 
 @RestController
 @RequestMapping("/api/brands")
@@ -35,8 +34,8 @@ public class BrandRestController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Brand with ID " + brandId + " not found.");
         }
     }
-    @PreAuthorize("hasAnyAuthority('ADMIN','STAFF')")
-    @GetMapping("/all")
+    @PreAuthorize("permitAll()")
+    @GetMapping
     public ResponseEntity<List<Brand>> getAllBrands() {
         List<Brand> brands = brandService.findAll();
         return ResponseEntity.ok(brands);
@@ -61,14 +60,19 @@ public class BrandRestController {
     @PostMapping
     public Brand createBrand(@RequestBody Brand brand) {
         brand.setBrandId(0);
-        brand.setCreatedAt(new Date());
-        brand.setUpdatedAt(new Date());
         return brandService.createBrand(brand);
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN','STAFF')")
-    @PutMapping("/{brandId}")
-    public Brand updateBrand( @RequestBody Brand updatedBrand) {
-            return brandService.updateBrand(updatedBrand);
+    @PutMapping
+    public ResponseEntity<?> updateBrand(@RequestBody Brand updatedBrand) {
+        Brand existingBrand = brandService.findById(updatedBrand.getBrandId());
+        if (existingBrand == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Brand with ID " + updatedBrand.getBrandId() + " not found.");
+        }
+        Brand savedBrand = brandService.updateBrand(updatedBrand);
+        return ResponseEntity.ok(savedBrand);
     }
+
 }

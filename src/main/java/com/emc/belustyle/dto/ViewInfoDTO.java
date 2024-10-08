@@ -1,20 +1,20 @@
 package com.emc.belustyle.dto;
 
 import com.emc.belustyle.entity.UserRole;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.Date;
 
-@Getter
-@Setter
+@Data
+@NoArgsConstructor
 @AllArgsConstructor
 public class ViewInfoDTO {
     private String username;
     private String email;
     private String fullName;
     private String userImage;
+    private Boolean enable;
+    private String role;
     private String currentPaymentMethod;
     private String userAddress;
     private Date createdAt;

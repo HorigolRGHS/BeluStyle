@@ -1,0 +1,23 @@
+{
+  "name": "GET /api/brands (200) - 22:58:18.937",
+  "app": "BeluStyle",
+  "language": {
+    "name": "java",
+    "version": "17.0.12+8-LTS-286",
+    "engine": "Java HotSpot(TM) 64-Bit Server VM"
+  },
+  "client": {
+    "name": "appmap-java",
+    "url": "https://github.com/appland/appmap-java"
+  },
+  "recorder": {
+    "name": "request_recording",
+    "type": "requests"
+  },
+  "recording": {},
+  "git": {
+    "repository": "https://github.com/HorigolRGHS/BeluStyle.git",
+    "branch": "account1",
+    "commit": "a5be5567956dadecf158075e15d8dc8dd04b845a"
+  }
+}

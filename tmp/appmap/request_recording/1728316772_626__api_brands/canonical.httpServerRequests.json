@@ -1,0 +1,7 @@
+[
+  {
+    "route": "GET /error",
+    "parameters": "()",
+    "status": 403
+  }
+]

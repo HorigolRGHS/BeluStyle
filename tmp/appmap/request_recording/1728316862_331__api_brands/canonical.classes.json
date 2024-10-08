@@ -1,0 +1,4 @@
+[
+  "com/emc/belustyle/rest/BrandRestController",
+  "com/emc/belustyle/service/BrandService"
+]

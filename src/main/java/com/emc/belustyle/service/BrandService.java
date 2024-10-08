@@ -6,7 +6,6 @@ import com.emc.belustyle.entity.Brand;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 import java.util.Optional;
@@ -52,7 +51,6 @@ public class BrandService {
             brand.setBrandDescription(updatedBrand.getBrandDescription());
             brand.setLogoUrl(updatedBrand.getLogoUrl());
             brand.setWebsiteUrl(updatedBrand.getWebsiteUrl());
-            brand.setUpdatedAt(updatedBrand.getUpdatedAt());
             return brandRepository.save(brand);
         } else {
             return null;

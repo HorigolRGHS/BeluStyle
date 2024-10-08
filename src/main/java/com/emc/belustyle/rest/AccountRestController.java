@@ -6,53 +6,48 @@ import com.emc.belustyle.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import com.emc.belustyle.util.JwtUtil;
-
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/customer/info")
 public class AccountRestController {
 
     private final UserService userService;
-    private final JwtUtil jwtUtil;
 
     public AccountRestController(UserService userService, JwtUtil jwtUtil) {
         this.userService = userService;
-        this.jwtUtil = jwtUtil;
     }
 
     @PreAuthorize("hasAuthority('CUSTOMER')")
-    @GetMapping("/{userId}")
-    public ResponseEntity<ViewInfoDTO> getUserById(@PathVariable String userId, @RequestHeader("Authorization") String tokenHeader){
-
-        final String token = tokenHeader.replace("Bearer ", "");
-        String currentUsername = jwtUtil.extractUsername(token);
-
-        Optional<User> currentUser = userService.findByUsername(currentUsername);
-        if (currentUser.isEmpty()) {
-            return ResponseEntity.notFound().build();
+    @GetMapping("/me")
+    public ResponseEntity<?> getCustomerInfo() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUsername = null;
+        if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
+            currentUsername = ((UserDetails) authentication.getPrincipal()).getUsername();
         }
+        if (currentUsername != null) {
+            User user = userService.findByUsername(currentUsername);
+            if (user != null) {
+                ViewInfoDTO viewInfoDTO = new ViewInfoDTO();
+                viewInfoDTO.setUsername(user.getUsername());
+                viewInfoDTO.setEmail(user.getEmail());
+                viewInfoDTO.setFullName(user.getFullName());
+                viewInfoDTO.setUserImage(user.getUserImage());
+                viewInfoDTO.setEnable(user.getEnable());
+                viewInfoDTO.setRole(String.valueOf(user.getRole().getRoleName()));
+                viewInfoDTO.setCurrentPaymentMethod(user.getCurrentPaymentMethod());
+                viewInfoDTO.setUserAddress(user.getUserAddress());
+                viewInfoDTO.setCreatedAt(user.getCreatedAt());
+                viewInfoDTO.setUpdatedAt(user.getUpdatedAt());
 
-        if (!currentUser.get().getUserId().equals(userId)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+                return ResponseEntity.ok(viewInfoDTO);
+            }
         }
-        if (!currentUser.get().getRole().getRoleName().equals("CUSTOMER")) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
-        }
-
-        ViewInfoDTO userDTO = new ViewInfoDTO(
-                currentUser.get().getUsername(),
-                currentUser.get().getEmail(),
-                currentUser.get().getFullName(),
-                currentUser.get().getUserImage(),
-                currentUser.get().getCurrentPaymentMethod(),
-                currentUser.get().getUserAddress(),
-                currentUser.get().getCreatedAt(),
-                currentUser.get().getUpdatedAt()
-        );
-
-        return ResponseEntity.ok(userDTO);
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You are not authorized to view this information.");
     }
 }

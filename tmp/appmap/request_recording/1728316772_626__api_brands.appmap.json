@@ -1,0 +1,166 @@
+{
+  "events": [
+    {
+      "defined_class": "com.emc.belustyle.security.JwtAuthFilter",
+      "event": "call",
+      "id": 1,
+      "lineno": 38,
+      "method_id": "doFilterInternal",
+      "parameters": [
+        {
+          "class": "org.springframework.security.web.header.HeaderWriterFilter$HeaderWriterRequest",
+          "kind": "req",
+          "name": "request",
+          "object_id": 2052531329,
+          "value": "org.springframework.security.web.header.HeaderWriterFilter$HeaderWriterRequest@7a572481"
+        },
+        {
+          "class": "org.springframework.security.web.header.HeaderWriterFilter$HeaderWriterResponse",
+          "kind": "req",
+          "name": "response",
+          "object_id": 2120789779,
+          "value": "org.springframework.security.web.header.HeaderWriterFilter$HeaderWriterResponse@7e68af13"
+        },
+        {
+          "class": "org.springframework.security.web.FilterChainProxy$VirtualFilterChain",
+          "kind": "req",
+          "name": "filterChain",
+          "object_id": 996814522,
+          "value": "org.springframework.security.web.FilterChainProxy$VirtualFilterChain@3b6a2eba"
+        }
+      ],
+      "path": "src/main/java/com/emc/belustyle/security/JwtAuthFilter.java",
+      "receiver": {
+        "class": "com.emc.belustyle.security.JwtAuthFilter",
+        "object_id": 455168009,
+        "value": "com.emc.belustyle.security.JwtAuthFilter@1b215009"
+      },
+      "static": false,
+      "thread_id": 42
+    },
+    {
+      "elapsed": 0.00050272,
+      "event": "return",
+      "id": 2,
+      "parent_id": 1,
+      "thread_id": 42
+    },
+    {
+      "event": "call",
+      "http_server_request": {
+        "headers": {
+          "content-length": "168",
+          "postman-token": "b0d763d7-e524-40f8-8bbd-46922415e3b7",
+          "host": "localhost:8080",
+          "content-type": "application/json",
+          "connection": "keep-alive",
+          "accept-encoding": "gzip, deflate, br",
+          "user-agent": "PostmanRuntime/7.42.0",
+          "accept": "*/*"
+        },
+        "normalized_path_info": "/error",
+        "path_info": "/error",
+        "protocol": "HTTP/1.1",
+        "request_method": "GET"
+      },
+      "id": 3,
+      "thread_id": 42
+    },
+    {
+      "elapsed": 0.00613965,
+      "event": "return",
+      "http_server_response": {
+        "headers": {
+          "X-Frame-Options": "DENY",
+          "Transfer-Encoding": "chunked",
+          "Keep-Alive": "timeout=60",
+          "Cache-Control": "no-cache, no-store, max-age=0, must-revalidate",
+          "X-Content-Type-Options": "nosniff",
+          "Connection": "keep-alive",
+          "Vary": "Origin",
+          "Pragma": "no-cache",
+          "Expires": "0",
+          "X-XSS-Protection": "0",
+          "Date": "Mon, 07 Oct 2024 15:59:32 GMT",
+          "Content-Type": "application/json"
+        },
+        "status": 403
+      },
+      "id": 4,
+      "parent_id": 3,
+      "thread_id": 42
+    }
+  ],
+  "version": "1.2",
+  "metadata": {
+    "name": "GET /api/brands (403) - 22:59:32.626",
+    "app": "BeluStyle",
+    "language": {
+      "name": "java",
+      "version": "17.0.12+8-LTS-286",
+      "engine": "Java HotSpot(TM) 64-Bit Server VM"
+    },
+    "client": {
+      "name": "appmap-java",
+      "url": "https://github.com/appland/appmap-java"
+    },
+    "recorder": {
+      "name": "request_recording",
+      "type": "requests"
+    },
+    "recording": {},
+    "git": {
+      "repository": "https://github.com/HorigolRGHS/BeluStyle.git",
+      "branch": "account1",
+      "commit": "a5be5567956dadecf158075e15d8dc8dd04b845a"
+    }
+  },
+  "classMap": [
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [
+                    {
+                      "children": [
+                        {
+                          "name": "doFilterInternal",
+                          "type": "function",
+                          "static": false,
+                          "location": "src/main/java/com/emc/belustyle/security/JwtAuthFilter.java:38"
+                        }
+                      ],
+                      "name": "JwtAuthFilter",
+                      "type": "class"
+                    }
+                  ],
+                  "name": "security",
+                  "type": "package"
+                }
+              ],
+              "name": "belustyle",
+              "type": "package"
+            }
+          ],
+          "name": "emc",
+          "type": "package"
+        }
+      ],
+      "name": "com",
+      "type": "package"
+    },
+    {
+      "type": "http",
+      "name": "HTTP server requests",
+      "children": [
+        {
+          "type": "route",
+          "name": "GET /error"
+        }
+      ]
+    }
+  ]
+}
