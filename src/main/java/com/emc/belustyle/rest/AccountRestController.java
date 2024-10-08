@@ -10,15 +10,14 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-import com.emc.belustyle.util.JwtUtil;
 
 @RestController
-@RequestMapping("/api/customer/info")
+@RequestMapping("/api/account")
 public class AccountRestController {
 
     private final UserService userService;
 
-    public AccountRestController(UserService userService, JwtUtil jwtUtil) {
+    public AccountRestController(UserService userService) {
         this.userService = userService;
     }
 

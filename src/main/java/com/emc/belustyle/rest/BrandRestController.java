@@ -10,8 +10,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
-
 
 @RestController
 @RequestMapping("/api/brands")
@@ -23,6 +21,7 @@ public class BrandRestController {
     public BrandRestController(BrandService brandService) {
         this.brandService = brandService;
     }
+
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("{brandId}")
     public ResponseEntity<?> deleteBrand(@PathVariable int brandId) {
@@ -34,12 +33,14 @@ public class BrandRestController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Brand with ID " + brandId + " not found.");
         }
     }
+
     @PreAuthorize("permitAll()")
     @GetMapping
     public ResponseEntity<List<Brand>> getAllBrands() {
         List<Brand> brands = brandService.findAll();
         return ResponseEntity.ok(brands);
     }
+
     @PreAuthorize("hasAnyAuthority('ADMIN','STAFF')")
     @GetMapping("/{brandId}")
     public ResponseEntity<Brand> getBrandById(@PathVariable int brandId) {
@@ -50,12 +51,14 @@ public class BrandRestController {
             return ResponseEntity.notFound().build();
         }
     }
+
     @PreAuthorize("hasAnyAuthority('ADMIN','STAFF')")
     @GetMapping("/search")
     public ResponseEntity<List<SearchBrandDTO>> getAllBrand() {
         List<SearchBrandDTO> result = brandService.getAllBrands();
         return ResponseEntity.ok(result);
     }
+
     @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping
     public Brand createBrand(@RequestBody Brand brand) {

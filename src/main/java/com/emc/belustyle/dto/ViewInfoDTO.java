@@ -1,8 +1,6 @@
 package com.emc.belustyle.dto;
 
-import com.emc.belustyle.entity.UserRole;
 import lombok.*;
-
 import java.util.Date;
 
 @Data

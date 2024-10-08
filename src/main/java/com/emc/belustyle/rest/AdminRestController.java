@@ -2,6 +2,7 @@ package com.emc.belustyle.rest;
 
 import com.emc.belustyle.dto.UserDTO;
 import com.emc.belustyle.dto.UserIdNameDTO;
+import com.emc.belustyle.dto.ViewInfoDTO;
 import com.emc.belustyle.dto.ViewUserDTO;
 import com.emc.belustyle.entity.User;
 import com.emc.belustyle.entity.UserRole;
@@ -12,12 +13,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
-
 
 @RestController
 @RequestMapping("/api/admin")
@@ -41,7 +43,7 @@ public class AdminRestController {
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
-    @GetMapping("/users/{userId}")
+    @GetMapping("/{userId}")
     public ResponseEntity<ViewUserDTO> getUserById(@PathVariable String userId) {
         User user = userService.findById(userId);
         if (user != null) {
@@ -111,5 +113,34 @@ public class AdminRestController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("An error occurred while creating a staff account.");
         }
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @GetMapping("/me")
+    public ResponseEntity<?> getAdminInfo() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUsername = null;
+        if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
+            currentUsername = ((UserDetails) authentication.getPrincipal()).getUsername();
+        }
+        if (currentUsername != null) {
+            User user = userService.findByUsername(currentUsername);
+            if (user != null) {
+                ViewInfoDTO viewInfoDTO = new ViewInfoDTO();
+                viewInfoDTO.setUsername(user.getUsername());
+                viewInfoDTO.setEmail(user.getEmail());
+                viewInfoDTO.setFullName(user.getFullName());
+                viewInfoDTO.setUserImage(user.getUserImage());
+                viewInfoDTO.setEnable(user.getEnable());
+                viewInfoDTO.setRole(String.valueOf(user.getRole().getRoleName()));
+                viewInfoDTO.setCurrentPaymentMethod(user.getCurrentPaymentMethod());
+                viewInfoDTO.setUserAddress(user.getUserAddress());
+                viewInfoDTO.setCreatedAt(user.getCreatedAt());
+                viewInfoDTO.setUpdatedAt(user.getUpdatedAt());
+
+                return ResponseEntity.ok(viewInfoDTO);
+            }
+        }
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You are not authorized to view this information.");
     }
 }
