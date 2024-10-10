@@ -3,7 +3,6 @@ package com.emc.belustyle.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import javax.management.relation.Role;
 import java.util.Date;
 
 @Entity
@@ -25,14 +24,12 @@ public class Notification {
     @Column(name = "message", nullable = false, columnDefinition = "TEXT CHARACTER SET UTF8MB4")
     private String message;
 
+    @Column(name = "target_role_id")
+    private Integer targetRoleId;
 
     @Column(name = "created_at", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
-
-    @ManyToOne
-    @JoinColumn(name = "target_role_id", referencedColumnName = "role_id")
-    private UserRole role;
 
 }
 

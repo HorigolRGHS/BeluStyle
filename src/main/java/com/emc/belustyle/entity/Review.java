@@ -17,8 +17,10 @@ public class Review {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "review_id")
     private Integer reviewId;
+
+    @Column(name = "order_detail_id")
+    private Integer orderDetailId;
 
     @Column(name = "product_id")
     private String productId;
@@ -32,10 +34,6 @@ public class Review {
     @Column(name = "created_at", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
-
-    @ManyToOne
-    @JoinColumn(name = "order_detail_id")
-    private OrderDetail orderDetail;
 
 }
 

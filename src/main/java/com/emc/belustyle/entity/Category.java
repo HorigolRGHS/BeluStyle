@@ -1,11 +1,9 @@
 package com.emc.belustyle.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Date;
-import java.util.List;
 
 @Entity
 @Getter
@@ -49,7 +47,5 @@ public class Category {
         updatedAt = new Date();
     }
 
-//    @OneToMany(mappedBy = "category", orphanRemoval = false)
-//    private List<Product> products;
-
 }
+

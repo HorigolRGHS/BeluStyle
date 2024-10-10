@@ -3,8 +3,6 @@ package com.emc.belustyle.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.List;
-
 @Entity
 @Getter
 @Setter
@@ -24,8 +22,5 @@ public class Color {
 
     @Column(name = "hex_code")
     private String hexCode;
-
-    @OneToMany(mappedBy = "color", cascade = CascadeType.ALL)
-    private List<ProductVariation> variations;
 
 }

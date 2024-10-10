@@ -2,8 +2,6 @@ package com.emc.belustyle.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.Fetch;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -11,7 +9,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Getter
@@ -96,7 +93,6 @@ public class User implements UserDetails {
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
 
-
     @PrePersist
     protected void onCreate() {
         createdAt = new Date();
@@ -108,13 +104,6 @@ public class User implements UserDetails {
         updatedAt = new Date();
     }
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<UserDiscount> userDiscounts;
 
-    @OneToMany(mappedBy = "user") // mappedBy chỉ định trường nào trong Order giữ liên kết
-    private List<Order> orders; // Danh sách các đơn hàng mà người dùng đã đặt
-
-    @OneToMany(mappedBy = "staff") // Đơn hàng mà nhân viên xử lý
-    private List<Order> processedOrders;
 }
 

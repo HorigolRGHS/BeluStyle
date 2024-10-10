@@ -29,7 +29,7 @@ public class ProductService {
     }
 
     @Transactional
-    public void deleteProduct(@PathVariable String id) {
+    public void deleteProduct( String id) {
         productRepository.deleteById(id);
     }
 

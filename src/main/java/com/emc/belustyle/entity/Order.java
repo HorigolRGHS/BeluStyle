@@ -6,7 +6,6 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
 
 @Entity
 @Getter
@@ -18,13 +17,10 @@ import java.util.List;
 public class Order {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "order_id")
     private String orderId;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user; // Người dùng đã đặt hàng
+    @Column(name = "user_id")
+    private String userId;
 
     @Column(name = "order_date")
     @Temporal(TemporalType.TIMESTAMP)
@@ -66,6 +62,8 @@ public class Order {
     @Column(name = "transaction_reference", length = 255)
     private String transactionReference;
 
+    @Column(name = "staff_id")
+    private String staffId;
 
     public enum OrderStatus {
         PENDING, PROCESSING, SHIPPED, DELIVERED, CANCELLED
@@ -74,12 +72,4 @@ public class Order {
     public enum PaymentMethod {
         COD, VNPAY, PAYOS, TRANSFER
     }
-
-    @ManyToOne
-    @JoinColumn(name = "staff_id")
-    private User staff; // Nhân viên xác nhận đơn hàng
-
-    @OneToMany(mappedBy = "order")
-    List<OrderDetail> orderDetails;
-
 }

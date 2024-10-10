@@ -1,16 +1,18 @@
 package com.emc.belustyle.service;
 
-
-
 import com.emc.belustyle.dto.UserIdNameDTO;
 import com.emc.belustyle.repo.UserRepository;
 import com.emc.belustyle.repo.UserRoleRepository;
 import com.emc.belustyle.dto.ResponseDTO;
 import com.emc.belustyle.dto.UserDTO;
+import com.emc.belustyle.dto.ViewUserDTO;
 import com.emc.belustyle.dto.mapper.UserMapper;
 import com.emc.belustyle.entity.User;
 import com.emc.belustyle.exception.CustomException;
 import com.emc.belustyle.util.JwtUtil;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -24,8 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.Optional;
-
 @Service
 public class UserService {
 

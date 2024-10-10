@@ -5,7 +5,6 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.Set;
 
 
 @Entity
@@ -68,8 +67,5 @@ public class Discount {
     public enum DiscountStatus {
         ACTIVE, EXPIRED, USED
     }
-
-    @OneToMany(mappedBy = "discount", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<UserDiscount> userDiscounts;
 
 }

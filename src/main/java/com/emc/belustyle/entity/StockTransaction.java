@@ -13,6 +13,12 @@ public class StockTransaction {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer transactionId;
 
+    @Column(name = "stock_id", nullable = false)
+    private Integer stockId;
+
+    @Column(name = "variation_id", nullable = false)
+    private Integer variationId;
+
     @Column(name = "transaction_type", nullable = false)
     @Enumerated(EnumType.STRING)
     private TransactionType transactionType;
@@ -28,11 +34,4 @@ public class StockTransaction {
         IN, OUT
     }
 
-    @ManyToOne
-    @JoinColumn(name = "variation_id")
-    private ProductVariation productVariation;
-
-    @ManyToOne
-    @JoinColumn(name = "stock_id")
-    private Stock stock;
 }

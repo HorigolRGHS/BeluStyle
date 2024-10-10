@@ -1,14 +1,11 @@
 package com.emc.belustyle.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 @Entity
 @Getter
@@ -27,11 +24,11 @@ public class Product {
     @Column(name = "product_name", nullable = false)
     private String productName;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id", nullable = true)
+    @ManyToOne
+    @JoinColumn(name = "category_id")
     private Category category;
 
-    @ManyToOne
+    @ManyToOne()
     @JoinColumn(name = "brand_id")
     private Brand brand;
 
@@ -46,25 +43,6 @@ public class Product {
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
 
-    @PrePersist
-    protected void onCreate() {
-        createdAt = new Date();
-        updatedAt = new Date();
-    }
 
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = new Date();
-    }
-    @OneToMany(mappedBy = "product")
-    private List<ProductVariation> productVariations;
-
-    @ManyToMany
-    @JoinTable(
-            name = "sale_product",
-            joinColumns = @JoinColumn(name = "product_id"),
-            inverseJoinColumns = @JoinColumn(name = "sale_id")
-    )
-    private Set<Sale> sales = new HashSet<>();
 }
 
