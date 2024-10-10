@@ -1,9 +1,14 @@
 package com.emc.belustyle.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -22,8 +27,8 @@ public class Product {
     @Column(name = "product_name", nullable = false)
     private String productName;
 
-    @ManyToOne
-    @JoinColumn(name = "category_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id", nullable = true)
     private Category category;
 
     @ManyToOne
@@ -41,6 +46,15 @@ public class Product {
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
 
+    @OneToMany(mappedBy = "product")
+    private List<ProductVariation> productVariations;
 
+    @ManyToMany
+    @JoinTable(
+            name = "sale_product",
+            joinColumns = @JoinColumn(name = "product_id"),
+            inverseJoinColumns = @JoinColumn(name = "sale_id")
+    )
+    private Set<Sale> sales = new HashSet<>();
 }
 

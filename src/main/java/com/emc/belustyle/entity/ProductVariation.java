@@ -1,9 +1,13 @@
 package com.emc.belustyle.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -19,7 +23,7 @@ public class ProductVariation {
     @Column(name = "variation_id")
     private int variationId;
 
-    @ManyToOne
+    @ManyToOne()
     @JoinColumn(name = "product_id")
     private Product product;
 
@@ -36,5 +40,14 @@ public class ProductVariation {
 
     @Column(name = "product_price", precision = 10, scale = 2)
     private BigDecimal productPrice;
+
+    @OneToMany(mappedBy = "productVariation")
+    private List<OrderDetail> orderDetails;
+
+    @OneToMany(mappedBy = "productVariation")
+    private List<StockTransaction> stockTransactions;
+
+    @OneToMany(mappedBy = "productVariation")
+    private Set<StockProduct> stockProducts = new HashSet<>();
 }
 

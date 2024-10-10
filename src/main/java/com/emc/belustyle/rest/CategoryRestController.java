@@ -1,8 +1,11 @@
 package com.emc.belustyle.rest;
 
+import com.emc.belustyle.dto.ResponseDTO;
 import com.emc.belustyle.entity.Category;
 import com.emc.belustyle.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,20 +24,45 @@ public class CategoryRestController {
 
     @PreAuthorize("permitAll()")
     @GetMapping
-    public List<Category> getCategories() {
-        return categoryService.findAll();
+    public ResponseEntity<?> getCategories() {
+        ResponseDTO responseDTO = new ResponseDTO();
+        List<Category> list = categoryService.findAll();
+        if (list.isEmpty()) {
+            responseDTO.setStatusCode(HttpStatus.NOT_FOUND.value());
+            responseDTO.setMessage("No categories found");
+            return ResponseEntity.status(responseDTO.getStatusCode()).body(responseDTO);
+        } else {
+            return ResponseEntity.status(HttpStatus.OK).body(list);
+        }
     }
 
     @PreAuthorize("hasAnyAuthority('STAFF', 'ADMIN')")
     @GetMapping("/{id}")
-    public Category getCategoryById(@PathVariable int id) {
-        return categoryService.findById(id);
+    public ResponseEntity<?> getCategoryById(@PathVariable int id) {
+        ResponseDTO responseDTO = new ResponseDTO();
+        Category category = categoryService.findById(id);
+        if (category == null) {
+            responseDTO.setStatusCode(HttpStatus.NO_CONTENT.value());
+            responseDTO.setMessage("No category found");
+            return ResponseEntity.status(responseDTO.getStatusCode()).body(responseDTO);
+        } else {
+            return ResponseEntity.status(HttpStatus.OK).body(category);
+        }
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{id}")
-    public void deleteCategoryById(int id) {
-         categoryService.deleteCategory(id);
+    public ResponseEntity<ResponseDTO> deleteCategoryById(@PathVariable int id) {
+        ResponseDTO responseDTO = new ResponseDTO();
+        if(categoryService.deleteCategory(id)){
+            responseDTO.setMessage("Category deleted successfully");
+            responseDTO.setStatusCode(200);
+            return ResponseEntity.status(200).body(responseDTO);
+        } else {
+            responseDTO.setStatusCode(404);
+            responseDTO.setMessage("Category not found");
+            return ResponseEntity.status(404).body(responseDTO);
+        }
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN')")
@@ -45,8 +73,16 @@ public class CategoryRestController {
 
     @PreAuthorize("hasAnyAuthority('STAFF', 'ADMIN')")
     @PutMapping
-    public Category updateCategory(@RequestBody Category category) {
-        return categoryService.updateCategory(category);
+    public ResponseEntity<?> updateCategory(@RequestBody Category category) {
+        ResponseDTO responseDTO = new ResponseDTO();
+        Category updatedCategory = categoryService.updateCategory(category);
+        if (updatedCategory == null){
+            responseDTO.setStatusCode(HttpStatus.NOT_FOUND.value());
+            responseDTO.setMessage("No category found");
+            return ResponseEntity.status(responseDTO.getStatusCode()).body(responseDTO);
+        } else {
+            return ResponseEntity.status(HttpStatus.OK).body(updatedCategory);
+        }
     }
 
 }

@@ -14,28 +14,18 @@ import java.io.Serializable;
 @Table(name = "stock_product")
 public class StockProduct {
 
-    @EmbeddedId
-    private StockProductId id;
-
+    @Id
     @ManyToOne
-    @MapsId("variationId")
-    @JoinColumn(name = "variation_id")
-    private ProductVariation variation;
+    @JoinColumn(name = "variation_id", nullable = false)
+    private ProductVariation productVariation;
 
+    @Id
     @ManyToOne
-    @MapsId("stockId")
-    @JoinColumn(name = "stock_id")
+    @JoinColumn(name = "stock_id", nullable = false)
     private Stock stock;
 
     @Column(name = "quantity")
-    private int quantity;
-
-    // Embedded ID Class
-    @Embeddable
-    public static class StockProductId implements Serializable {
-        private int variationId;
-        private int stockId;
-    }
+    private Integer quantity;
 
 }
 

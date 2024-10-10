@@ -17,16 +17,20 @@ public class UserDiscount {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_discount_id")
     private Integer userDiscountId;
 
-    @Column(name = "user_id")
-    private String userId;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
-    @Column(name = "discount_id", nullable = false)
-    private Integer discountId;
+    @ManyToOne
+    @JoinColumn(name = "discount_id", nullable = false)
+    private Discount discount;
 
-    @Column(name = "usage_count", nullable = false)
+    @Column(name = "usage_count", columnDefinition = "int default 0")
     private Integer usageCount;
+
 
     @Column(name = "used_at")
     @Temporal(TemporalType.TIMESTAMP)

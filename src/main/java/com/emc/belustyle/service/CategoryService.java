@@ -1,7 +1,10 @@
 package com.emc.belustyle.service;
 
 import com.emc.belustyle.entity.Category;
+import com.emc.belustyle.entity.Product;
 import com.emc.belustyle.repo.CategoryRepository;
+import com.emc.belustyle.repo.ProductRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,10 +16,12 @@ import java.util.Optional;
 public class CategoryService {
 
     private final CategoryRepository categoryRepository;
+    private final ProductRepository productRepository;
 
     @Autowired
-    public CategoryService(CategoryRepository categoryRepository) {
+    public CategoryService(CategoryRepository categoryRepository, ProductRepository productRepository) {
         this.categoryRepository = categoryRepository;
+        this.productRepository = productRepository;
     }
 
     public List<Category> findAll() {
@@ -28,9 +33,14 @@ public class CategoryService {
     }
 
     @Transactional
-    public void deleteCategory(int id) {
-        categoryRepository.deleteById(id);
+    public boolean deleteCategory(int id) {
+        if (categoryRepository.existsById(id)) {
+            categoryRepository.deleteById(id);
+            return true;
+        }
+        return false;
     }
+
 
     @Transactional
     public Category createCategory(Category category) {

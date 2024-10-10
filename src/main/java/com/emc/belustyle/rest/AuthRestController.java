@@ -86,6 +86,8 @@ public class AuthRestController {
             // Set the token in a cookie instead of session
             HttpSession session = request.getSession(true);
             session.setAttribute("sessionRegistrationToken", sessionToken);
+            session.setMaxInactiveInterval(7 * 24 * 60 * 60); //
+
 
             // Generate confirmation link
             String confirmationLink = "http://localhost:8080/api/auth/confirm-registration/" + savedUser.getUserId() + "?token=" + token;
@@ -136,9 +138,12 @@ public class AuthRestController {
             user.setEnable(true);
             userService.updateUser(user);
             session.removeAttribute("sessionRegistrationToken");
-            response.sendRedirect("http://localhost:3000/confirm-registration");
+            response.sendRedirect("http://localhost:3000/confirm-registration/success");
+//            return ResponseEntity.ok().body("Okay");
         }
-        response.sendRedirect("http://localhost:3000/confirm-registration");
+        response.sendRedirect("http://localhost:3000/confirm-registration/error");
+//        return ResponseEntity.badRequest().body("NOT OKAY ------- ");
+
     }
 
 

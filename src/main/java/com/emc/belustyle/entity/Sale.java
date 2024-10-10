@@ -5,6 +5,8 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -51,4 +53,7 @@ public class Sale {
     public enum SaleStatus {
         ACTIVE, INACTIVE, EXPIRE
     }
+
+    @ManyToMany(mappedBy = "sales")
+    private Set<Product> products = new HashSet<>();
 }

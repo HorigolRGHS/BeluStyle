@@ -28,4 +28,7 @@ public class UserRole {
     public enum RoleName {
         ADMIN, CUSTOMER, STAFF
     }
+
+    @OneToMany(mappedBy = "role")
+    private List<Notification> notifications;
 }

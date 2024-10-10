@@ -1,0 +1,524 @@
+{
+  "events": [
+    {
+      "defined_class": "com.emc.belustyle.security.JwtAuthFilter",
+      "event": "call",
+      "id": 1,
+      "lineno": 36,
+      "method_id": "doFilterInternal",
+      "parameters": [
+        {
+          "class": "org.springframework.security.web.header.HeaderWriterFilter$HeaderWriterRequest",
+          "kind": "req",
+          "name": "request",
+          "object_id": 167169672,
+          "value": "org.springframework.security.web.header.HeaderWriterFilter$HeaderWriterRequest@9f6ce88"
+        },
+        {
+          "class": "org.springframework.security.web.header.HeaderWriterFilter$HeaderWriterResponse",
+          "kind": "req",
+          "name": "response",
+          "object_id": 231295854,
+          "value": "org.springframework.security.web.header.HeaderWriterFilter$HeaderWriterResponse@dc94b6e"
+        },
+        {
+          "class": "org.springframework.security.web.FilterChainProxy$VirtualFilterChain",
+          "kind": "req",
+          "name": "filterChain",
+          "object_id": 1221313715,
+          "value": "org.springframework.security.web.FilterChainProxy$VirtualFilterChain@48cbc4b3"
+        }
+      ],
+      "path": "com/emc/belustyle/security/JwtAuthFilter.java",
+      "receiver": {
+        "class": "com.emc.belustyle.security.JwtAuthFilter",
+        "object_id": 1106566939,
+        "value": "com.emc.belustyle.security.JwtAuthFilter@41f4df1b"
+      },
+      "static": false,
+      "thread_id": 46
+    },
+    {
+      "event": "call",
+      "http_server_request": {
+        "headers": {
+          "content-length": "69",
+          "cookie": "sessionToken=ef0df9a08d663cc3a936a679b84bf272",
+          "postman-token": "6920ea28-f053-4f95-870a-cda408a9422c",
+          "host": "localhost:8080",
+          "content-type": "application/json",
+          "connection": "keep-alive",
+          "accept-encoding": "gzip, deflate, br",
+          "user-agent": "PostmanRuntime/7.42.0",
+          "accept": "*/*"
+        },
+        "normalized_path_info": "/api/auth/login",
+        "path_info": "/api/auth/login",
+        "protocol": "HTTP/1.1",
+        "request_method": "POST"
+      },
+      "id": 2,
+      "thread_id": 46
+    },
+    {
+      "defined_class": "com.emc.belustyle.rest.AuthRestController",
+      "event": "call",
+      "id": 3,
+      "lineno": 56,
+      "method_id": "login",
+      "parameters": [
+        {
+          "class": "com.emc.belustyle.dto.UserDTO",
+          "kind": "req",
+          "name": "userDTO",
+          "object_id": 2043226300,
+          "value": "UserDTO(userId=null, username=khachuy, passwordHash=password12345, email=null, fullName=null, userImage=null, enable=null, role=null, currentPaymentMethod=null, userAddress=null, createdAt=null, updatedAt=null)"
+        }
+      ],
+      "path": "com/emc/belustyle/rest/AuthRestController.java",
+      "receiver": {
+        "class": "com.emc.belustyle.rest.AuthRestController",
+        "object_id": 770536275,
+        "value": "com.emc.belustyle.rest.AuthRestController@2ded7353"
+      },
+      "static": false,
+      "thread_id": 46
+    },
+    {
+      "defined_class": "com.emc.belustyle.service.UserService",
+      "event": "call",
+      "id": 4,
+      "lineno": 50,
+      "method_id": "login",
+      "parameters": [
+        {
+          "class": "com.emc.belustyle.dto.UserDTO",
+          "kind": "req",
+          "name": "userDTO",
+          "object_id": 2043226300,
+          "value": "UserDTO(userId=null, username=khachuy, passwordHash=password12345, email=null, fullName=null, userImage=null, enable=null, role=null, currentPaymentMethod=null, userAddress=null, createdAt=null, updatedAt=null)"
+        }
+      ],
+      "path": "com/emc/belustyle/service/UserService.java",
+      "receiver": {
+        "class": "com.emc.belustyle.service.UserService",
+        "object_id": 766366289,
+        "value": "com.emc.belustyle.service.UserService@2dadd251"
+      },
+      "static": false,
+      "thread_id": 46
+    },
+    {
+      "defined_class": "com.emc.belustyle.repo.UserRepository",
+      "event": "call",
+      "id": 5,
+      "lineno": -1,
+      "method_id": "findByUsername",
+      "parameters": [
+        {
+          "class": "java.lang.String",
+          "kind": "req",
+          "name": "p0",
+          "object_id": 1042063056,
+          "value": "khachuy"
+        }
+      ],
+      "path": "com/emc/belustyle/repo/UserRepository.java",
+      "receiver": {
+        "class": "jdk.proxy3.$Proxy214",
+        "object_id": 1647829915,
+        "value": "org.springframework.data.jpa.repository.support.SimpleJpaRepository@1907a286"
+      },
+      "static": false,
+      "thread_id": 46
+    },
+    {
+      "event": "call",
+      "id": 6,
+      "sql_query": {
+        "database_type": "MySQL",
+        "sql": "select u1_0.user_id,u1_0.created_at,u1_0.current_payment_method,u1_0.email,u1_0.enable,u1_0.full_name,u1_0.google_id,u1_0.password_hash,u1_0.role_id,u1_0.updated_at,u1_0.user_address,u1_0.user_image,u1_0.username from user u1_0 where u1_0.username=?"
+      },
+      "thread_id": 46
+    },
+    {
+      "elapsed": 0.00022008,
+      "event": "return",
+      "id": 7,
+      "parent_id": 6,
+      "thread_id": 46
+    },
+    {
+      "event": "call",
+      "id": 8,
+      "sql_query": {
+        "database_type": "MySQL",
+        "sql": "select ur1_0.role_id,ur1_0.role_name from user_role ur1_0 where ur1_0.role_id=?"
+      },
+      "thread_id": 46
+    },
+    {
+      "elapsed": 0.00009992,
+      "event": "return",
+      "id": 9,
+      "parent_id": 8,
+      "thread_id": 46
+    },
+    {
+      "elapsed": 0.00322217,
+      "event": "return",
+      "id": 10,
+      "parent_id": 5,
+      "return_value": {
+        "class": "java.util.Optional",
+        "object_id": 1134610069,
+        "value": "< invalid >"
+      },
+      "thread_id": 46
+    },
+    {
+      "defined_class": "com.emc.belustyle.service.CustomUserDetailsService",
+      "event": "call",
+      "id": 11,
+      "lineno": 21,
+      "method_id": "loadUserByUsername",
+      "parameters": [
+        {
+          "class": "java.lang.String",
+          "kind": "req",
+          "name": "username",
+          "object_id": 1042063056,
+          "value": "khachuy"
+        }
+      ],
+      "path": "com/emc/belustyle/service/CustomUserDetailsService.java",
+      "receiver": {
+        "class": "com.emc.belustyle.service.CustomUserDetailsService",
+        "object_id": 1614104440,
+        "value": "com.emc.belustyle.service.CustomUserDetailsService@60354778"
+      },
+      "static": false,
+      "thread_id": 46
+    },
+    {
+      "defined_class": "com.emc.belustyle.repo.UserRepository",
+      "event": "call",
+      "id": 12,
+      "lineno": -1,
+      "method_id": "findByUsername",
+      "parameters": [
+        {
+          "class": "java.lang.String",
+          "kind": "req",
+          "name": "p0",
+          "object_id": 1042063056,
+          "value": "khachuy"
+        }
+      ],
+      "path": "com/emc/belustyle/repo/UserRepository.java",
+      "receiver": {
+        "class": "jdk.proxy3.$Proxy214",
+        "object_id": 1647829915,
+        "value": "org.springframework.data.jpa.repository.support.SimpleJpaRepository@1907a286"
+      },
+      "static": false,
+      "thread_id": 46
+    },
+    {
+      "event": "call",
+      "id": 13,
+      "sql_query": {
+        "database_type": "MySQL",
+        "sql": "select u1_0.user_id,u1_0.created_at,u1_0.current_payment_method,u1_0.email,u1_0.enable,u1_0.full_name,u1_0.google_id,u1_0.password_hash,u1_0.role_id,u1_0.updated_at,u1_0.user_address,u1_0.user_image,u1_0.username from user u1_0 where u1_0.username=?"
+      },
+      "thread_id": 46
+    },
+    {
+      "elapsed": 0.00020004,
+      "event": "return",
+      "id": 14,
+      "parent_id": 13,
+      "thread_id": 46
+    },
+    {
+      "elapsed": 0.00102986,
+      "event": "return",
+      "id": 15,
+      "parent_id": 12,
+      "return_value": {
+        "class": "java.util.Optional",
+        "object_id": 983343351,
+        "value": "< invalid >"
+      },
+      "thread_id": 46
+    },
+    {
+      "elapsed": 0.00280621,
+      "event": "return",
+      "id": 16,
+      "parent_id": 11,
+      "return_value": {
+        "class": "com.emc.belustyle.entity.User",
+        "object_id": 1603124197,
+        "value": "< invalid >"
+      },
+      "thread_id": 46
+    },
+    {
+      "defined_class": "com.emc.belustyle.util.JwtUtil",
+      "event": "call",
+      "id": 17,
+      "lineno": 32,
+      "method_id": "generateUserToken",
+      "parameters": [
+        {
+          "class": "com.emc.belustyle.entity.User",
+          "kind": "req",
+          "name": "user",
+          "object_id": 1603124197,
+          "value": "< invalid >"
+        }
+      ],
+      "path": "com/emc/belustyle/util/JwtUtil.java",
+      "receiver": {
+        "class": "com.emc.belustyle.util.JwtUtil",
+        "object_id": 1805886767,
+        "value": "com.emc.belustyle.util.JwtUtil@6ba3a52f"
+      },
+      "static": false,
+      "thread_id": 46
+    },
+    {
+      "elapsed": 0.00110048,
+      "event": "return",
+      "id": 18,
+      "parent_id": 17,
+      "return_value": {
+        "class": "java.lang.String",
+        "object_id": 1432834825,
+        "value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJraGFjaHV5Iiwicm9sZSI6W3siYXV0aG9yaXR5IjoiQ1VTVE9NRVIifV0sImZ1bGxOYW1lIjoiS2hhYyBIdXkgRGUgVGh1b25nIiwiZW1haWwiOiJodXlsa2NlMTgwMzExQGZwdC5lZHUudm4iLCJpbWFnZSI6InBhdGgvdG8vaW1hZ2UuanBnIiwiaWF0IjoxNzI4MzAyNjE3LCJleHAiOjE3MjgzODkwMTd9.jqrjxvwjWw8LKcnvj7IoNPiHisRjd_kCqbpR3s0fHz-VDqCQtqnxiRl_Y4NdLMtO"
+      },
+      "thread_id": 46
+    },
+    {
+      "elapsed": 0.03394696,
+      "event": "return",
+      "id": 19,
+      "parent_id": 4,
+      "return_value": {
+        "class": "com.emc.belustyle.dto.ResponseDTO",
+        "object_id": 305892255,
+        "value": "ResponseDTO(statusCode=200, message=Successful, token=eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJraGFjaHV5Iiwicm9sZSI6W3siYXV0aG9yaXR5IjoiQ1VTVE9NRVIifV0sImZ1bGxOYW1lIjoiS2hhYyBIdXkgRGUgVGh1b25nIiwiZW1haWwiOiJodXlsa2NlMTgwMzExQGZwdC5lZHUudm4iLCJpbWFnZSI6InBhdGgvdG8vaW1hZ2UuanBnIiwiaWF0IjoxNzI4MzAyNjE3LCJleHAiOjE3MjgzODkwMTd9.jqrjxvwjWw8LKcnvj7IoNPiHisRjd_kCqbpR3s0fHz-VDqCQtqnxiRl_Y4NdLMtO, expirationTime=1 Day, user=null)"
+      },
+      "thread_id": 46
+    },
+    {
+      "elapsed": 0.03404731,
+      "event": "return",
+      "id": 20,
+      "parent_id": 3,
+      "return_value": {
+        "class": "org.springframework.http.ResponseEntity",
+        "object_id": 780579532,
+        "value": "<200 OK OK,ResponseDTO(statusCode=200, message=Successful, token=eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJraGFjaHV5Iiwicm9sZSI6W3siYXV0aG9yaXR5IjoiQ1VTVE9NRVIifV0sImZ1bGxOYW1lIjoiS2hhYyBIdXkgRGUgVGh1b25nIiwiZW1haWwiOiJodXlsa2NlMTgwMzExQGZwdC5lZHUudm4iLCJpbWFnZSI6InBhdGgvdG8vaW1hZ2UuanBnIiwiaWF0IjoxNzI4MzAyNjE3LCJleHAiOjE3MjgzODkwMTd9.jqrjxvwjWw8LKcnvj7IoNPiHisRjd_kCqbpR3s0fHz-VDqCQtqnxiRl_Y4NdLMtO, expirationTime=1 Day, user=null),[]>"
+      },
+      "thread_id": 46
+    },
+    {
+      "elapsed": 0.03597886,
+      "event": "return",
+      "http_server_response": {
+        "headers": {
+          "X-Frame-Options": "DENY",
+          "Transfer-Encoding": "chunked",
+          "Keep-Alive": "timeout=60",
+          "Cache-Control": "no-cache, no-store, max-age=0, must-revalidate",
+          "X-Content-Type-Options": "nosniff",
+          "Connection": "keep-alive",
+          "Vary": "Origin",
+          "Pragma": "no-cache",
+          "Expires": "0",
+          "X-XSS-Protection": "0",
+          "Date": "Mon, 07 Oct 2024 12:03:37 GMT",
+          "Content-Type": "application/json"
+        },
+        "status": 200
+      },
+      "id": 21,
+      "parent_id": 2,
+      "thread_id": 46
+    },
+    {
+      "elapsed": 0.03618874,
+      "event": "return",
+      "id": 22,
+      "parent_id": 1,
+      "thread_id": 46
+    }
+  ],
+  "version": "1.2",
+  "metadata": {
+    "name": "POST /api/auth/login (200) - 19:03:37.606",
+    "app": "belustyle",
+    "language": {
+      "name": "java",
+      "version": "17.0.12+8-LTS-286",
+      "engine": "Java HotSpot(TM) 64-Bit Server VM"
+    },
+    "client": {
+      "name": "appmap-java",
+      "url": "https://github.com/appland/appmap-java"
+    },
+    "recorder": {
+      "name": "request_recording",
+      "type": "requests"
+    },
+    "recording": {}
+  },
+  "classMap": [
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [
+                    {
+                      "children": [
+                        {
+                          "name": "login",
+                          "type": "function",
+                          "static": false,
+                          "location": "com/emc/belustyle/service/UserService.java:50"
+                        }
+                      ],
+                      "name": "UserService",
+                      "type": "class"
+                    },
+                    {
+                      "children": [
+                        {
+                          "name": "loadUserByUsername",
+                          "type": "function",
+                          "static": false,
+                          "location": "com/emc/belustyle/service/CustomUserDetailsService.java:21"
+                        }
+                      ],
+                      "name": "CustomUserDetailsService",
+                      "type": "class"
+                    }
+                  ],
+                  "name": "service",
+                  "type": "package"
+                },
+                {
+                  "children": [
+                    {
+                      "children": [
+                        {
+                          "name": "findByUsername",
+                          "type": "function",
+                          "static": false,
+                          "location": "com/emc/belustyle/repo/UserRepository.java:-1"
+                        }
+                      ],
+                      "name": "UserRepository",
+                      "type": "class"
+                    }
+                  ],
+                  "name": "repo",
+                  "type": "package"
+                },
+                {
+                  "children": [
+                    {
+                      "children": [
+                        {
+                          "name": "doFilterInternal",
+                          "type": "function",
+                          "static": false,
+                          "location": "com/emc/belustyle/security/JwtAuthFilter.java:36"
+                        }
+                      ],
+                      "name": "JwtAuthFilter",
+                      "type": "class"
+                    }
+                  ],
+                  "name": "security",
+                  "type": "package"
+                },
+                {
+                  "children": [
+                    {
+                      "children": [
+                        {
+                          "name": "login",
+                          "type": "function",
+                          "static": false,
+                          "location": "com/emc/belustyle/rest/AuthRestController.java:56"
+                        }
+                      ],
+                      "name": "AuthRestController",
+                      "type": "class"
+                    }
+                  ],
+                  "name": "rest",
+                  "type": "package"
+                },
+                {
+                  "children": [
+                    {
+                      "children": [
+                        {
+                          "name": "generateUserToken",
+                          "type": "function",
+                          "static": false,
+                          "location": "com/emc/belustyle/util/JwtUtil.java:32"
+                        }
+                      ],
+                      "name": "JwtUtil",
+                      "type": "class"
+                    }
+                  ],
+                  "name": "util",
+                  "type": "package"
+                }
+              ],
+              "name": "belustyle",
+              "type": "package"
+            }
+          ],
+          "name": "emc",
+          "type": "package"
+        }
+      ],
+      "name": "com",
+      "type": "package"
+    },
+    {
+      "type": "http",
+      "name": "HTTP server requests",
+      "children": [
+        {
+          "type": "route",
+          "name": "POST /api/auth/login"
+        }
+      ]
+    },
+    {
+      "type": "database",
+      "name": "Database",
+      "children": [
+        {
+          "type": "query",
+          "name": "select u1_0.user_id,u1_0.created_at,u1_0.current_payment_method,u1_0.email,u1_0.enable,u1_0.full_name,u1_0.google_id,u1_0.password_hash,u1_0.role_id,u1_0.updated_at,u1_0.user_address,u1_0.user_image,u1_0.username from user u1_0 where u1_0.username=?"
+        },
+        {
+          "type": "query",
+          "name": "select ur1_0.role_id,ur1_0.role_name from user_role ur1_0 where ur1_0.role_id=?"
+        }
+      ]
+    }
+  ]
+}
