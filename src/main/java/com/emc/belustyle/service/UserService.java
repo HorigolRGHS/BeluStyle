@@ -238,8 +238,12 @@ public class UserService {
                 user.getUpdatedAt()));
     }
 
-    public void deleteUser(String id) {
-        userRepository.deleteById(id);
+    public boolean deleteUser(String id) {
+        if (userRepository.existsById(id)) {
+            userRepository.deleteById(id);
+            return true;
+        }
+        return false;
     }
 
     public User createUser(User user) {

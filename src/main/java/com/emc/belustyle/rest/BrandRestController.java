@@ -25,12 +25,12 @@ public class BrandRestController {
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("{brandId}")
     public ResponseEntity<?> deleteBrand(@PathVariable int brandId) {
-        Brand brand = brandService.findById(brandId);
-        if (brand != null) {
-            brandService.deleteBrand(brandId);
+        boolean isDeleted = brandService.deleteBrand(brandId);
+        if (isDeleted) {
             return ResponseEntity.ok("Brand with ID " + brandId + " has been successfully deleted.");
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Brand with ID " + brandId + " not found.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Brand with ID " + brandId + " not found.");
         }
     }
 

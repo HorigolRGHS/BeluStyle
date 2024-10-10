@@ -61,11 +61,10 @@ public class AdminRestController {
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
-    @DeleteMapping
+    @DeleteMapping("/{userId}")
     public ResponseEntity<?> deleteUser(@PathVariable String userId) {
-        User user = userService.findById(userId);
-        if (user != null) {
-            userService.deleteUser(userId);
+        boolean isDeleted = userService.deleteUser(userId);
+        if (isDeleted) {
             return ResponseEntity.ok("User has been deleted successfully.");
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
