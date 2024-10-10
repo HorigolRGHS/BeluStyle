@@ -1,5 +1,5 @@
 language: "java"
-name: "belustyle"
+name: "BeluStyle"
 appmap_dir: "tmp/appmap"
 packages:
 - path: "com.emc.belustyle"

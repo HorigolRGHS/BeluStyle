@@ -2,6 +2,7 @@ package com.emc.belustyle.service;
 
 
 
+import com.emc.belustyle.dto.UserIdNameDTO;
 import com.emc.belustyle.repo.UserRepository;
 import com.emc.belustyle.repo.UserRoleRepository;
 import com.emc.belustyle.dto.ResponseDTO;
@@ -17,9 +18,12 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
+import java.util.List;
+import java.util.stream.Collectors;
 import java.util.Optional;
 
 @Service
@@ -58,7 +62,9 @@ public class UserService {
 
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userDTO.getUsername(), userDTO.getPasswordHash()));
 
-            if(user.getGoogleId() != null) {throw new CustomException("Please login with Google account", HttpStatus.FORBIDDEN);}
+            if (user.getGoogleId() != null) {
+                throw new CustomException("Please login with Google account", HttpStatus.FORBIDDEN);
+            }
 
             var token = jwtUtil.generateUserToken(user);
             responseDTO.setStatusCode(HttpStatus.OK.value());
@@ -172,15 +178,15 @@ public class UserService {
         return userRepository.findByEmail(email).orElse(null);
     }
 
-    public boolean existsByUsername(String username){
+    public boolean existsByUsername(String username) {
         return userRepository.existsByUsername(username);
     }
 
-    public boolean existsByEmail(String email){
+    public boolean existsByEmail(String email) {
         return userRepository.existsByEmail(email);
     }
 
-    public User findById(String userId){
+    public User findById(String userId) {
         return userRepository.findById(userId).orElse(null);
     }
 
@@ -204,8 +210,41 @@ public class UserService {
     }
 
 
+    public List<User> findAll() {
+        return userRepository.findAll();
+    }
+
+    public User findByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElse(null);
+    }
+
+    public List<UserIdNameDTO> getAllUsers() {
+        List<User> users = userRepository.findAll();
+        return users.stream()
+                .map(user -> new UserIdNameDTO(user.getUserId(), user.getFullName()))
+                .collect(Collectors.toList());
+    }
 
 
+    public Page<ViewUserDTO> getAllUser(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<User> userPage = userRepository.findAll(pageable);
+        return userPage.map(user -> new ViewUserDTO(
+                user.getUsername(),
+                user.getEmail(),
+                user.getEnable(),
+                user.getCreatedAt(),
+                user.getUpdatedAt()));
+    }
+
+    public void deleteUser(String id) {
+        userRepository.deleteById(id);
+    }
+
+    public User createUser(User user) {
+        return userRepository.save(user);
+    }
 }
 
 

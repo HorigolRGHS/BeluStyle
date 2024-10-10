@@ -1,0 +1,6 @@
+[
+  "com/emc/belustyle/repo/UserRepository",
+  "com/emc/belustyle/rest/AuthRestController",
+  "com/emc/belustyle/service/CustomUserDetailsService",
+  "com/emc/belustyle/service/UserService"
+]

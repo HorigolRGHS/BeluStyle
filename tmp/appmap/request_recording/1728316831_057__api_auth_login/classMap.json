@@ -1,0 +1,146 @@
+[
+  {
+    "children": [
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "name": "login",
+                        "type": "function",
+                        "static": false,
+                        "location": "src/main/java/com/emc/belustyle/rest/AuthRestController.java:64"
+                      }
+                    ],
+                    "name": "AuthRestController",
+                    "type": "class"
+                  }
+                ],
+                "name": "rest",
+                "type": "package"
+              },
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "name": "login",
+                        "type": "function",
+                        "static": false,
+                        "location": "src/main/java/com/emc/belustyle/service/UserService.java:70"
+                      }
+                    ],
+                    "name": "UserService",
+                    "type": "class"
+                  },
+                  {
+                    "children": [
+                      {
+                        "name": "loadUserByUsername",
+                        "type": "function",
+                        "static": false,
+                        "location": "src/main/java/com/emc/belustyle/service/CustomUserDetailsService.java:21"
+                      }
+                    ],
+                    "name": "CustomUserDetailsService",
+                    "type": "class"
+                  }
+                ],
+                "name": "service",
+                "type": "package"
+              },
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "name": "doFilterInternal",
+                        "type": "function",
+                        "static": false,
+                        "location": "src/main/java/com/emc/belustyle/security/JwtAuthFilter.java:38"
+                      }
+                    ],
+                    "name": "JwtAuthFilter",
+                    "type": "class"
+                  }
+                ],
+                "name": "security",
+                "type": "package"
+              },
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "name": "findByUsername",
+                        "type": "function",
+                        "static": false,
+                        "location": "src/main/java/com/emc/belustyle/repo/UserRepository.java:-1"
+                      }
+                    ],
+                    "name": "UserRepository",
+                    "type": "class"
+                  }
+                ],
+                "name": "repo",
+                "type": "package"
+              },
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "name": "generateUserToken",
+                        "type": "function",
+                        "static": false,
+                        "location": "src/main/java/com/emc/belustyle/util/JwtUtil.java:36"
+                      }
+                    ],
+                    "name": "JwtUtil",
+                    "type": "class"
+                  }
+                ],
+                "name": "util",
+                "type": "package"
+              }
+            ],
+            "name": "belustyle",
+            "type": "package"
+          }
+        ],
+        "name": "emc",
+        "type": "package"
+      }
+    ],
+    "name": "com",
+    "type": "package"
+  },
+  {
+    "type": "http",
+    "name": "HTTP server requests",
+    "children": [
+      {
+        "type": "route",
+        "name": "POST /api/auth/login"
+      }
+    ]
+  },
+  {
+    "type": "database",
+    "name": "Database",
+    "children": [
+      {
+        "type": "query",
+        "name": "select u1_0.user_id,u1_0.created_at,u1_0.current_payment_method,u1_0.email,u1_0.enable,u1_0.full_name,u1_0.google_id,u1_0.password_hash,u1_0.role_id,u1_0.updated_at,u1_0.user_address,u1_0.user_image,u1_0.username from user u1_0 where u1_0.username=?"
+      },
+      {
+        "type": "query",
+        "name": "select ur1_0.role_id,ur1_0.role_name from user_role ur1_0 where ur1_0.role_id=?"
+      }
+    ]
+  }
+]

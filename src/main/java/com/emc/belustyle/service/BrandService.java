@@ -1,19 +1,20 @@
 package com.emc.belustyle.service;
 
+import com.emc.belustyle.dto.SearchBrandDTO;
 import com.emc.belustyle.repo.BrandRepository;
 import com.emc.belustyle.entity.Brand;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class BrandService {
 
-    private final BrandRepository brandRepository;
+    private BrandRepository brandRepository;
 
     @Autowired
     public BrandService(BrandRepository brandRepository) {
@@ -33,6 +34,13 @@ public class BrandService {
         return brandRepository.save(brand);
     }
 
+    public List<SearchBrandDTO> getAllBrands() {
+        List<Brand> brands = brandRepository.findAll();
+        return brands.stream()
+                .map(brand -> new SearchBrandDTO(brand.getBrandName(), brand.getBrandDescription()))
+                .collect(Collectors.toList());
+    }
+
     @Transactional
     public Brand updateBrand(Brand updatedBrand) {
         Optional<Brand> existingBrand = brandRepository.findById(updatedBrand.getBrandId());
@@ -43,8 +51,6 @@ public class BrandService {
             brand.setBrandDescription(updatedBrand.getBrandDescription());
             brand.setLogoUrl(updatedBrand.getLogoUrl());
             brand.setWebsiteUrl(updatedBrand.getWebsiteUrl());
-            brand.setCreatedAt(updatedBrand.getCreatedAt());
-            brand.setUpdatedAt(updatedBrand.getUpdatedAt());
             return brandRepository.save(brand);
         } else {
             return null;
@@ -52,7 +58,7 @@ public class BrandService {
     }
 
     @Transactional
-    public void deleteBrand(@PathVariable Integer id) {
+    public void deleteBrand(Integer id) {
         brandRepository.deleteById(id);
     }
 
