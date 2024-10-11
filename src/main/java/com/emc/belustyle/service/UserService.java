@@ -320,6 +320,10 @@ public class UserService {
         return viewInfoDTO;
     }
 
+    public ViewInfoDTO getUserInfoById(String userId) {
+        Optional<User> userOptional = userRepository.findById(userId);
+        return userOptional.map(this::mapUserToViewInfoDTO).orElse(null);
+    }
 }
 
 

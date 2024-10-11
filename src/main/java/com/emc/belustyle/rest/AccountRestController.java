@@ -21,32 +21,27 @@ public class AccountRestController {
         this.userService = userService;
     }
 
-    @PreAuthorize("hasAuthority('CUSTOMER')")
+    @PreAuthorize("hasAnyAuthority('CUSTOMER','STAFF','ADMIN')")
     @GetMapping("/me")
-    public ResponseEntity<?> getCustomerInfo() {
+    public ResponseEntity<?> getMyInfo() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUsername = null;
         if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
             currentUsername = ((UserDetails) authentication.getPrincipal()).getUsername();
         }
-        if (currentUsername != null) {
-            User user = userService.findByUsername(currentUsername);
-            if (user != null) {
-                ViewInfoDTO viewInfoDTO = new ViewInfoDTO();
-                viewInfoDTO.setUsername(user.getUsername());
-                viewInfoDTO.setEmail(user.getEmail());
-                viewInfoDTO.setFullName(user.getFullName());
-                viewInfoDTO.setUserImage(user.getUserImage());
-                viewInfoDTO.setEnable(user.getEnable());
-                viewInfoDTO.setRole(String.valueOf(user.getRole().getRoleName()));
-                viewInfoDTO.setCurrentPaymentMethod(user.getCurrentPaymentMethod());
-                viewInfoDTO.setUserAddress(user.getUserAddress());
-                viewInfoDTO.setCreatedAt(user.getCreatedAt());
-                viewInfoDTO.setUpdatedAt(user.getUpdatedAt());
-
-                return ResponseEntity.ok(viewInfoDTO);
-            }
+        ViewInfoDTO viewInfoDTO = userService.getUserInfoByUsername(currentUsername);
+        if (viewInfoDTO != null) {
+            return ResponseEntity.ok(viewInfoDTO);
         }
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You are not authorized to view this information.");
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("User not found.");
+    }
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @GetMapping("/admin/{userId}")
+    public ResponseEntity<?> getStaffInfoById(@PathVariable String userId) {
+        ViewInfoDTO viewInfoDTO = userService.getUserInfoById(userId);
+        if (viewInfoDTO != null && viewInfoDTO.getRole().equals("STAFF")) {
+            return ResponseEntity.ok(viewInfoDTO);
+        }
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You can only view staff information.");
     }
 }

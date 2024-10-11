@@ -27,12 +27,10 @@ import java.util.UUID;
 @RequestMapping("/api/admin")
 public class AdminRestController {
     private final UserService userService;
-    private final UserRoleService userRoleService;
 
     @Autowired
-    public AdminRestController(UserService userService, UserRoleService userRoleService) {
-        this.userService = userService;
-        this.userRoleService = userRoleService;
+    public AdminRestController(UserService userService) {
+        this.userService = userService;;
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
@@ -86,35 +84,6 @@ public class AdminRestController {
     public ResponseEntity<List<UserIdNameDTO>> getAllUsers() {
         List<UserIdNameDTO> users = userService.getAllUsers();
         return ResponseEntity.ok(users);
-    }
-
-    @PreAuthorize("hasAuthority('ADMIN')")
-    @GetMapping("/me")
-    public ResponseEntity<?> getAdminInfo() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentUsername = null;
-        if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
-            currentUsername = ((UserDetails) authentication.getPrincipal()).getUsername();
-        }
-        if (currentUsername != null) {
-            User user = userService.findByUsername(currentUsername);
-            if (user != null) {
-                ViewInfoDTO viewInfoDTO = new ViewInfoDTO();
-                viewInfoDTO.setUsername(user.getUsername());
-                viewInfoDTO.setEmail(user.getEmail());
-                viewInfoDTO.setFullName(user.getFullName());
-                viewInfoDTO.setUserImage(user.getUserImage());
-                viewInfoDTO.setEnable(user.getEnable());
-                viewInfoDTO.setRole(String.valueOf(user.getRole().getRoleName()));
-                viewInfoDTO.setCurrentPaymentMethod(user.getCurrentPaymentMethod());
-                viewInfoDTO.setUserAddress(user.getUserAddress());
-                viewInfoDTO.setCreatedAt(user.getCreatedAt());
-                viewInfoDTO.setUpdatedAt(user.getUpdatedAt());
-
-                return ResponseEntity.ok(viewInfoDTO);
-            }
-        }
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You are not authorized to view this information.");
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
