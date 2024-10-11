@@ -1,12 +1,9 @@
 package com.emc.belustyle.service;
 
-import com.emc.belustyle.dto.UserIdNameDTO;
+import com.emc.belustyle.dto.*;
 import com.emc.belustyle.entity.UserRole;
 import com.emc.belustyle.repo.UserRepository;
 import com.emc.belustyle.repo.UserRoleRepository;
-import com.emc.belustyle.dto.ResponseDTO;
-import com.emc.belustyle.dto.UserDTO;
-import com.emc.belustyle.dto.ViewUserDTO;
 import com.emc.belustyle.dto.mapper.UserMapper;
 import com.emc.belustyle.entity.User;
 import com.emc.belustyle.exception.CustomException;
@@ -300,6 +297,27 @@ public class UserService {
                 user.getCreatedAt(),
                 user.getUpdatedAt()
         );
+    }
+    public ViewInfoDTO getUserInfoByUsername(String username) {
+        User user = findByUsername(username);
+        if (user != null) {
+            return mapUserToViewInfoDTO(user);
+        }
+        return null;
+    }
+    private ViewInfoDTO mapUserToViewInfoDTO(User user) {
+        ViewInfoDTO viewInfoDTO = new ViewInfoDTO();
+        viewInfoDTO.setUsername(user.getUsername());
+        viewInfoDTO.setEmail(user.getEmail());
+        viewInfoDTO.setFullName(user.getFullName());
+        viewInfoDTO.setUserImage(user.getUserImage());
+        viewInfoDTO.setEnable(user.getEnable());
+        viewInfoDTO.setRole(String.valueOf(user.getRole().getRoleName()));
+        viewInfoDTO.setCurrentPaymentMethod(user.getCurrentPaymentMethod());
+        viewInfoDTO.setUserAddress(user.getUserAddress());
+        viewInfoDTO.setCreatedAt(user.getCreatedAt());
+        viewInfoDTO.setUpdatedAt(user.getUpdatedAt());
+        return viewInfoDTO;
     }
 
 }
