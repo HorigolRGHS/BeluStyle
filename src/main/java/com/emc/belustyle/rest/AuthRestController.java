@@ -13,6 +13,8 @@ import com.emc.belustyle.service.UserRoleService;
 import com.emc.belustyle.service.UserService;
 import com.emc.belustyle.util.GoogleUtil;
 import com.emc.belustyle.util.JwtUtil;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -63,8 +65,67 @@ public class AuthRestController {
         return ResponseEntity.status(responseDTO.getStatusCode()).body(responseDTO);
     }
 
+//    @PostMapping("/register")
+//    public ResponseEntity<ResponseDTO> register(@RequestBody UserDTO userDTO, HttpServletRequest request) {
+//        ResponseDTO responseDTO = new ResponseDTO();
+//        try {
+//            if (userService.existsByUsername(userDTO.getUsername())) {
+//                throw new CustomException(userDTO.getUsername() + " already exists", HttpStatus.CONFLICT);
+//            }
+//            if (userService.existsByEmail(userDTO.getEmail())) {
+//                throw new CustomException(userDTO.getEmail() + " already exists", HttpStatus.CONFLICT);
+//            }
+//            User user = UserMapper.INSTANCE.toEntity(userDTO);
+//            user.setRole(userRoleService.findById(2));
+//            user.setEnable(false);
+//
+//            User savedUser = userService.create(user);
+//
+//            // Generate token and hash it
+//            String token = TokenGenerator.generateToken();
+//            String sessionToken = TokenGenerator.md5Hash(token + savedUser.getUsername());
+//
+//            // Set the token in a cookie instead of session
+//            HttpSession session = request.getSession();
+//            session.setAttribute("sessionRegistrationToken", sessionToken);
+//            session.setMaxInactiveInterval(7 * 24 * 60 * 60);
+//
+//            // Generate confirmation link
+//            String confirmationLink = "http://localhost:8080/api/auth/confirm-registration/" + savedUser.getUserId() + "?token=" + token;
+//
+//            // Prepare email content
+//            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//            SimpleDateFormat yearFormat = new SimpleDateFormat("yyyy");
+//            String currentDateTime = dateFormat.format(new Date());
+//            String currentYear = yearFormat.format(new Date());
+//
+//            String htmlContent = "<div style=\"font-family: Arial, sans-serif; text-align: center; padding: 20px;\">"
+//                    + "<h2 style=\"color: #4CAF50;\">Registration Confirmation</h2>"
+//                    + "<p style=\"color: #555; font-size: 16px;\">Hello " + user.getFullName() + ",</p>"
+//                    + "<p style=\"color: #555; font-size: 16px;\">Thank you for registering with us! Please click the button below to confirm your registration:</p>"
+//                    + "<a href=\"" + confirmationLink + "\" style=\"display: inline-block; padding: 10px 20px; font-size: 16px; color: white; background-color: #4CAF50; text-decoration: none; border-radius: 5px;\">Confirm Registration</a>"
+//                    + "<p style=\"color: #555; font-size: 14px; margin-top: 20px;\">If you didn't register, please ignore this email.</p>"
+//                    + "<p style=\"color: #555; font-size: 14px;\">Confirmation sent on: " + currentDateTime + "</p>"
+//                    + "<p style=\"color: #999; font-size: 12px;\">&copy; " + currentYear + " EMC Company. All rights reserved.</p>"
+//                    + "</div>";
+//
+//            // Send email
+//            emailService.sendHtmlMessage(userDTO.getEmail(), "Confirm Your Registration", htmlContent);
+//
+//            responseDTO.setStatusCode(HttpStatus.CREATED.value());
+//            responseDTO.setMessage("We have sent an email to your email for confirmation, please check it!");
+//
+//        } catch (CustomException e) {
+//            responseDTO.setStatusCode(HttpStatus.CONFLICT.value());
+//            responseDTO.setMessage(e.getMessage());
+//        }
+//        return ResponseEntity.status(responseDTO.getStatusCode()).body(responseDTO);
+//    }
+
+
+
     @PostMapping("/register")
-    public ResponseEntity<ResponseDTO> register(@RequestBody UserDTO userDTO, HttpServletRequest request) {
+    public ResponseEntity<ResponseDTO> register(@RequestBody UserDTO userDTO) {
         ResponseDTO responseDTO = new ResponseDTO();
         try {
             if (userService.existsByUsername(userDTO.getUsername())) {
@@ -73,26 +134,18 @@ public class AuthRestController {
             if (userService.existsByEmail(userDTO.getEmail())) {
                 throw new CustomException(userDTO.getEmail() + " already exists", HttpStatus.CONFLICT);
             }
+
             User user = UserMapper.INSTANCE.toEntity(userDTO);
             user.setRole(userRoleService.findById(2));
             user.setEnable(false);
-
             User savedUser = userService.create(user);
 
-            // Generate token and hash it
-            String token = TokenGenerator.generateToken();
-            String sessionToken = TokenGenerator.md5Hash(token + savedUser.getUsername());
+            // Generate JWT Token with user ID and expiration
+            String jwtToken = jwtUtil.generateStringToken(savedUser.getUserId() + "registration", 7*24*60*60*1000);
 
-            // Set the token in a cookie instead of session
-            HttpSession session = request.getSession(true);
-            session.setAttribute("sessionRegistrationToken", sessionToken);
-            session.setMaxInactiveInterval(7 * 24 * 60 * 60); //
+            String confirmationLink = "http://localhost:8080/api/auth/confirm-registration/" + savedUser.getUsername() + "?token=" + jwtToken;
 
 
-            // Generate confirmation link
-            String confirmationLink = "http://localhost:8080/api/auth/confirm-registration/" + savedUser.getUserId() + "?token=" + token;
-
-            // Prepare email content
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             SimpleDateFormat yearFormat = new SimpleDateFormat("yyyy");
             String currentDateTime = dateFormat.format(new Date());
@@ -108,7 +161,6 @@ public class AuthRestController {
                     + "<p style=\"color: #999; font-size: 12px;\">&copy; " + currentYear + " EMC Company. All rights reserved.</p>"
                     + "</div>";
 
-            // Send email
             emailService.sendHtmlMessage(userDTO.getEmail(), "Confirm Your Registration", htmlContent);
 
             responseDTO.setStatusCode(HttpStatus.CREATED.value());
@@ -122,29 +174,58 @@ public class AuthRestController {
     }
 
 
-    @GetMapping("/confirm-registration/{userId}")
+//    @GetMapping("/confirm-registration/{userId}")
+//    public void confirmRegistration(
+//            @PathVariable String userId,
+//            @RequestParam String token,
+//            HttpServletRequest request,
+//            HttpServletResponse response) throws IOException {
+//
+//        User user = userService.findById(userId);
+//
+//        HttpSession session = request.getSession();
+//        String realToken = (String) session.getAttribute("sessionRegistrationToken");
+//        System.out.println(realToken);
+//
+//        if (TokenGenerator.md5Hash(token + user.getUsername()).equals(realToken)) {
+//            user.setEnable(true);
+//            userService.updateUser(user);
+//            session.removeAttribute("sessionRegistrationToken");
+//            response.sendRedirect("http://localhost:3000/confirm-registration/success");
+////            return ResponseEntity.ok().body("Okay");
+//        }
+//        response.sendRedirect("http://localhost:3000/confirm-registration/error");
+////        return ResponseEntity.badRequest().body("NOT OKAY ------- ");
+//
+//    }
+
+    @GetMapping("/confirm-registration/{username}")
     public void confirmRegistration(
-            @PathVariable String userId,
+            @PathVariable String username,
             @RequestParam String token,
-            HttpServletRequest request,
             HttpServletResponse response) throws IOException {
 
-        User user = userService.findById(userId);
+            String userId = userService.findByUsername(username).getUserId();
 
-        HttpSession session = request.getSession();
-        String realToken = (String) session.getAttribute("sessionRegistrationToken");
+            // Parse the token
+            String parsedUserId = jwtUtil.extractSubject(token);
 
-        if (TokenGenerator.md5Hash(token + user.getUsername()).equals(realToken)) {
-            user.setEnable(true);
-            userService.updateUser(user);
-            session.removeAttribute("sessionRegistrationToken");
-            response.sendRedirect("http://localhost:3000/confirm-registration/success");
-//            return ResponseEntity.ok().body("Okay");
-        }
-        response.sendRedirect("http://localhost:3000/confirm-registration/error");
-//        return ResponseEntity.badRequest().body("NOT OKAY ------- ");
+            // Check if the user ID from the token matches the provided user ID
+            if (parsedUserId.equals(userId + "registration")) {
+                // Enable the user
+                User user = userService.findById(userId);
+                user.setEnable(true);
+                userService.updateUser(user);
+                response.sendRedirect("http://localhost:3000/confirm-registration/success");
+//            return ResponseEntity.ok("Registration confirmed successfully");
+            }else{
+                response.sendRedirect("http://localhost:3000/confirm-registration/error");
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid or expired token");
+            }
+
 
     }
+
 
 
     @GetMapping("/google-callback")
@@ -166,24 +247,17 @@ public class AuthRestController {
 
 
     @PostMapping("/forgot-password")
-    public ResponseEntity<String> forgotPassword(@RequestBody ResetPasswordDTO resetPasswordDTO, HttpServletRequest request) {
+    public ResponseEntity<String> forgotPassword(@RequestBody ResetPasswordDTO resetPasswordDTO) {
         String email = resetPasswordDTO.getEmail();
         User user = userService.findByEmail(email);
         if (user == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Email not found");
         }
 
-        // Generate token for password reset
-        String token = TokenGenerator.generateToken();
-        String sessionToken = TokenGenerator.md5Hash(token + user.getUserId());
-
-        // Save token in session or cache (if you prefer not to save in DB)
-        HttpSession session = request.getSession();
-        session.setAttribute("sessionForgotPasswordToken", sessionToken);
-        session.setMaxInactiveInterval(15 * 60); // 15 minutes
+        String jwtToken = jwtUtil.generateStringToken(user.getUserId() + "forgot-password", 15*60*1000);
 
         // Send email with the reset link
-        String resetLink = "http://localhost:3000/reset-password?email=" + email + "&token=" + token;
+        String resetLink = "http://localhost:3000/reset-password?email=" + email + "&token=" + jwtToken;
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         SimpleDateFormat yearFormat = new SimpleDateFormat("yyyy");
         String currentDateTime = dateFormat.format(new Date());
@@ -215,25 +289,18 @@ public class AuthRestController {
 
         // Forgot Password
         if (resetPasswordDTO.getOldPassword() == null) {
-            String token = resetPasswordDTO.getToken();
-            HttpSession session = request.getSession(false);
-
-            if (session == null || session.getAttribute("sessionForgotPasswordToken") == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired reset token");
+            if(jwtUtil.isTokenExpired(resetPasswordDTO.getToken())) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Your token was expired");
             }
 
-            String storedToken = (String) session.getAttribute("sessionForgotPasswordToken");
-            String resetToken = TokenGenerator.md5Hash(token + user.getUserId());
+            String parsedUserId = jwtUtil.extractSubject(resetPasswordDTO.getToken());
 
-            if (!storedToken.equals(resetToken)) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token");
-            }
+           if(parsedUserId.equals(user.getUserId() + "forgot-password")) {
+               user.setPasswordHash(resetPasswordDTO.getNewPassword());
+               userService.updateUser(user);
+               return ResponseEntity.ok("Your password has been reset");
+           }
 
-
-            user.setPasswordHash(resetPasswordDTO.getNewPassword());
-            userService.updateUser(user);
-
-            session.removeAttribute("sessionForgotPasswordToken");
         } else { // Reset Password
             PasswordEncoder encoder = new BCryptPasswordEncoder(BCryptPasswordEncoder.BCryptVersion.$2A, 10);
             if (encoder.matches(resetPasswordDTO.getOldPassword(), user.getPasswordHash())) {

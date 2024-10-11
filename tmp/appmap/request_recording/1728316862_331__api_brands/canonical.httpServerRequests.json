@@ -1,7 +1,0 @@
-[
-  {
-    "route": "PUT /api/brands",
-    "parameters": "()",
-    "status": 200
-  }
-]
