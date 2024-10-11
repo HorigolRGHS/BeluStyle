@@ -1,6 +1,7 @@
 package com.emc.belustyle.service;
 
 import com.emc.belustyle.dto.UserIdNameDTO;
+import com.emc.belustyle.entity.UserRole;
 import com.emc.belustyle.repo.UserRepository;
 import com.emc.belustyle.repo.UserRoleRepository;
 import com.emc.belustyle.dto.ResponseDTO;
@@ -226,6 +227,15 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
+    public User updateUserDetails(String userId, User updatedUser) throws CustomException {
+        User existingUser = findById(userId);
+        if (existingUser == null) {
+            throw new CustomException("User not found", HttpStatus.NOT_FOUND);
+        }
+        existingUser.setEnable(updatedUser.getEnable());
+        return userRepository.save(existingUser);
+    }
 
     public Page<ViewUserDTO> getAllUser(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -238,17 +248,60 @@ public class UserService {
                 user.getUpdatedAt()));
     }
 
-    public boolean deleteUser(String id) {
-        if (userRepository.existsById(id)) {
-            userRepository.deleteById(id);
-            return true;
+    @Transactional
+    public boolean deleteUserById(String userId) throws CustomException {
+        if (!userRepository.existsById(userId)) {
+            throw new CustomException("User not found", HttpStatus.NOT_FOUND);
         }
-        return false;
+        userRepository.deleteById(userId);
+        return true;
     }
+
 
     public User createUser(User user) {
         return userRepository.save(user);
     }
+    @Transactional
+    public User createStaffAccount(UserDTO userDTO) throws CustomException {
+        if (existsByEmail(userDTO.getEmail())) {
+            throw new CustomException("Email already exists!", HttpStatus.BAD_REQUEST);
+        }
+
+        User user = new User();
+        user.setEmail(userDTO.getEmail());
+        user.setUsername(userDTO.getUsername());
+        user.setFullName(userDTO.getFullName());
+
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(BCryptPasswordEncoder.BCryptVersion.$2A, 10);
+        user.setPasswordHash(encoder.encode(userDTO.getPasswordHash()));
+
+        user.setUserImage(userDTO.getUserImage());
+        user.setEnable(true);
+
+        UserRole role = userRoleService.findById(3);
+        user.setRole(role);
+
+        user.setCurrentPaymentMethod(userDTO.getCurrentPaymentMethod());
+        user.setUserAddress(userDTO.getUserAddress());
+
+        return createUser(user);
+    }
+
+    public ViewUserDTO getUserById(String userId) throws CustomException {
+        User user = findById(userId);
+        if (user == null) {
+            throw new CustomException("User not found", HttpStatus.NOT_FOUND);
+        }
+
+        return new ViewUserDTO(
+                user.getUsername(),
+                user.getEmail(),
+                user.getEnable(),
+                user.getCreatedAt(),
+                user.getUpdatedAt()
+        );
+    }
+
 }
 
 
