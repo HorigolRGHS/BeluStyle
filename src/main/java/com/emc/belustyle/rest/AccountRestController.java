@@ -68,5 +68,28 @@ public class AccountRestController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Failed to update user information.");
         }
     }
+    @PreAuthorize("hasAuthority('CUSTOMER')")
+    @PostMapping("/request-delete")
+    public ResponseEntity<?> requestDeleteAccount() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUsername = null;
+        if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
+            currentUsername = ((UserDetails) authentication.getPrincipal()).getUsername();
+        }
+
+        User currentUser = userService.findByUsername(currentUsername);
+
+        if (currentUser == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
+        }
+
+        boolean success = userService.disableAccount(currentUser.getUserId());
+
+        if (success) {
+            return ResponseEntity.ok("Account has been disabled successfully.");
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to disable the account.");
+        }
+    }
 }
 
