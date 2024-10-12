@@ -7,7 +7,6 @@ import com.emc.belustyle.dto.UserDTO;
 import com.emc.belustyle.dto.mapper.UserMapper;
 import com.emc.belustyle.entity.User;
 import com.emc.belustyle.exception.CustomException;
-import com.emc.belustyle.security.TokenGenerator;
 import com.emc.belustyle.service.EmailService;
 import com.emc.belustyle.service.UserRoleService;
 import com.emc.belustyle.service.UserService;
@@ -15,7 +14,6 @@ import com.emc.belustyle.util.GoogleUtil;
 import com.emc.belustyle.util.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -63,8 +61,9 @@ public class AuthRestController {
         return ResponseEntity.status(responseDTO.getStatusCode()).body(responseDTO);
     }
 
+
     @PostMapping("/register")
-    public ResponseEntity<ResponseDTO> register(@RequestBody UserDTO userDTO, HttpServletRequest request) {
+    public ResponseEntity<ResponseDTO> register(@RequestBody UserDTO userDTO) {
         ResponseDTO responseDTO = new ResponseDTO();
         try {
             if (userService.existsByUsername(userDTO.getUsername())) {
@@ -73,26 +72,18 @@ public class AuthRestController {
             if (userService.existsByEmail(userDTO.getEmail())) {
                 throw new CustomException(userDTO.getEmail() + " already exists", HttpStatus.CONFLICT);
             }
+
             User user = UserMapper.INSTANCE.toEntity(userDTO);
             user.setRole(userRoleService.findById(2));
             user.setEnable(false);
-
             User savedUser = userService.create(user);
 
-            // Generate token and hash it
-            String token = TokenGenerator.generateToken();
-            String sessionToken = TokenGenerator.md5Hash(token + savedUser.getUsername());
+            // Generate JWT Token with user ID and expiration
+            String jwtToken = jwtUtil.generateStringToken(savedUser.getUserId() + "registration", 7*24*60*60*1000);
 
-            // Set the token in a cookie instead of session
-            HttpSession session = request.getSession(true);
-            session.setAttribute("sessionRegistrationToken", sessionToken);
-            session.setMaxInactiveInterval(7 * 24 * 60 * 60); //
+            String confirmationLink = "http://localhost:8080/api/auth/confirm-registration/" + savedUser.getUsername() + "?token=" + jwtToken;
 
 
-            // Generate confirmation link
-            String confirmationLink = "http://localhost:8080/api/auth/confirm-registration/" + savedUser.getUserId() + "?token=" + token;
-
-            // Prepare email content
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             SimpleDateFormat yearFormat = new SimpleDateFormat("yyyy");
             String currentDateTime = dateFormat.format(new Date());
@@ -108,7 +99,6 @@ public class AuthRestController {
                     + "<p style=\"color: #999; font-size: 12px;\">&copy; " + currentYear + " EMC Company. All rights reserved.</p>"
                     + "</div>";
 
-            // Send email
             emailService.sendHtmlMessage(userDTO.getEmail(), "Confirm Your Registration", htmlContent);
 
             responseDTO.setStatusCode(HttpStatus.CREATED.value());
@@ -122,29 +112,32 @@ public class AuthRestController {
     }
 
 
-    @GetMapping("/confirm-registration/{userId}")
+    @GetMapping("/confirm-registration/{username}")
     public void confirmRegistration(
-            @PathVariable String userId,
+            @PathVariable String username,
             @RequestParam String token,
-            HttpServletRequest request,
             HttpServletResponse response) throws IOException {
 
-        User user = userService.findById(userId);
+            String userId = userService.findByUsername(username).getUserId();
 
-        HttpSession session = request.getSession();
-        String realToken = (String) session.getAttribute("sessionRegistrationToken");
+            // Parse the token
+            String parsedUserId = jwtUtil.extractSubject(token);
 
-        if (TokenGenerator.md5Hash(token + user.getUsername()).equals(realToken)) {
-            user.setEnable(true);
-            userService.updateUser(user);
-            session.removeAttribute("sessionRegistrationToken");
-            response.sendRedirect("http://localhost:3000/confirm-registration/success");
-//            return ResponseEntity.ok().body("Okay");
-        }
-        response.sendRedirect("http://localhost:3000/confirm-registration/error");
-//        return ResponseEntity.badRequest().body("NOT OKAY ------- ");
+            // Check if the user ID from the token matches the provided user ID
+            if (parsedUserId.equals(userId + "registration")) {
+                // Enable the user
+                User user = userService.findById(userId);
+                userService.updateEnable(user, true);
+                response.sendRedirect("http://localhost:3000/confirm-registration/success");
+//            return ResponseEntity.ok("Registration confirmed successfully");
+            }else{
+                response.sendRedirect("http://localhost:3000/confirm-registration/error");
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid or expired token");
+            }
+
 
     }
+
 
 
     @GetMapping("/google-callback")
@@ -166,24 +159,17 @@ public class AuthRestController {
 
 
     @PostMapping("/forgot-password")
-    public ResponseEntity<String> forgotPassword(@RequestBody ResetPasswordDTO resetPasswordDTO, HttpServletRequest request) {
+    public ResponseEntity<String> forgotPassword(@RequestBody ResetPasswordDTO resetPasswordDTO) {
         String email = resetPasswordDTO.getEmail();
         User user = userService.findByEmail(email);
         if (user == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Email not found");
         }
 
-        // Generate token for password reset
-        String token = TokenGenerator.generateToken();
-        String sessionToken = TokenGenerator.md5Hash(token + user.getUserId());
-
-        // Save token in session or cache (if you prefer not to save in DB)
-        HttpSession session = request.getSession();
-        session.setAttribute("sessionForgotPasswordToken", sessionToken);
-        session.setMaxInactiveInterval(15 * 60); // 15 minutes
+        String jwtToken = jwtUtil.generateStringToken(user.getUserId() + "forgot-password", 15*60*1000);
 
         // Send email with the reset link
-        String resetLink = "http://localhost:3000/reset-password?email=" + email + "&token=" + token;
+        String resetLink = "http://localhost:3000/reset-password?email=" + email + "&token=" + jwtToken;
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         SimpleDateFormat yearFormat = new SimpleDateFormat("yyyy");
         String currentDateTime = dateFormat.format(new Date());
@@ -215,31 +201,24 @@ public class AuthRestController {
 
         // Forgot Password
         if (resetPasswordDTO.getOldPassword() == null) {
-            String token = resetPasswordDTO.getToken();
-            HttpSession session = request.getSession(false);
-
-            if (session == null || session.getAttribute("sessionForgotPasswordToken") == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired reset token");
+            if(jwtUtil.isTokenExpired(resetPasswordDTO.getToken())) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Your token was expired");
             }
 
-            String storedToken = (String) session.getAttribute("sessionForgotPasswordToken");
-            String resetToken = TokenGenerator.md5Hash(token + user.getUserId());
+            String parsedUserId = jwtUtil.extractSubject(resetPasswordDTO.getToken());
 
-            if (!storedToken.equals(resetToken)) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token");
-            }
+           if(parsedUserId.equals(user.getUserId() + "forgot-password")) {
+               String newPassword = resetPasswordDTO.getNewPassword();
+               userService.updatePassword(user, newPassword);
+               return ResponseEntity.ok("Your password has been reset");
+           }
 
-
-            user.setPasswordHash(resetPasswordDTO.getNewPassword());
-            userService.updateUser(user);
-
-            session.removeAttribute("sessionForgotPasswordToken");
         } else { // Reset Password
             PasswordEncoder encoder = new BCryptPasswordEncoder(BCryptPasswordEncoder.BCryptVersion.$2A, 10);
             if (encoder.matches(resetPasswordDTO.getOldPassword(), user.getPasswordHash())) {
 
-                user.setPasswordHash(resetPasswordDTO.getNewPassword());
-                userService.updateUser(user);
+                String newPassword = resetPasswordDTO.getNewPassword();
+                userService.updatePassword(user, newPassword);
 
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 SimpleDateFormat yearFormat = new SimpleDateFormat("yyyy");

@@ -2,8 +2,8 @@ package com.emc.belustyle.util;
 
 import com.emc.belustyle.entity.User;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -12,7 +12,6 @@ import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Date;
-import java.util.Map;
 import java.util.function.Function;
 
 @Component
@@ -45,7 +44,7 @@ public class JwtUtil {
 
 
 
-    public String extractUsername(String token) {
+    public String extractSubject(String token) {
         return extractClaims(token, Claims::getSubject);
     }
 
@@ -55,7 +54,7 @@ public class JwtUtil {
 
 
     public boolean isValidToken(String token, UserDetails userDetails) {
-        final String username = extractUsername(token);
+        final String username = extractSubject(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 
@@ -63,24 +62,26 @@ public class JwtUtil {
         return extractClaims(token, Claims::getExpiration).before(new Date());
     }
 
-    public String generateStringToken(String resetToken, long expirationTime) {
+    public String generateStringToken(String subject, long expirationTime) {
         return Jwts.builder()
-                .setSubject(resetToken)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
-                .signWith(SECRET_KEY)
+                .setSubject(subject)
+                .setExpiration(new Date(System.currentTimeMillis() + expirationTime)) // 7 days expiry
+                .signWith(SignatureAlgorithm.HS256, SECRET_KEY) // Use a secret key
                 .compact();
     }
 
-    // New decode method to decode JWT token
-    public Map<String, Object> decodeToken(String token) {
-        Jws<Claims> jwsClaims = Jwts.parserBuilder()
-                .setSigningKey(SECRET_KEY)
-                .build()
-                .parseClaimsJws(token);
 
-        return jwsClaims.getBody();
-    }
+
+//    // New decode method to decode JWT token
+//    public Map<String, Object> decodeToken(String token) {
+//        Jws<Claims> jwsClaims = Jwts.parserBuilder()
+//                .setSigningKey(SECRET_KEY)
+//                .build()
+//                .parseClaimsJws(token);
+//
+//        return jwsClaims.getBody();
+//    }
+
 
 
 

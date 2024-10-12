@@ -1,5 +1,7 @@
 package com.emc.belustyle.entity;
 
+import com.emc.belustyle.util.Views;
+import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -15,12 +17,15 @@ public class Color {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "color_id")
+    @JsonView(Views.ListView.class)
     private int colorId;
 
     @Column(name = "color_name")
+    @JsonView(Views.ListView.class)
     private String colorName;
 
     @Column(name = "hex_code")
+    @JsonView(Views.ListView.class)
     private String hexCode;
 
 }
