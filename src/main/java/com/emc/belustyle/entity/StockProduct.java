@@ -13,20 +13,19 @@ import java.io.Serializable;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
 @Table(name = "stock_product")
 public class StockProduct {
 
     @EmbeddedId
     private StockProductId id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("variationId")
     @JoinColumn(name = "variation_id")
     @JsonView(Views.DetailedView.class)
     private ProductVariation productVariation;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("stockId")
     @JoinColumn(name = "stock_id")
     @JsonIgnore

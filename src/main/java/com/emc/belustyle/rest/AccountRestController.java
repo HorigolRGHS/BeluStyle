@@ -35,6 +35,7 @@ public class AccountRestController {
         }
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body("User not found.");
     }
+
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/admin/{userId}")
     public ResponseEntity<?> getStaffInfoById(@PathVariable String userId) {
