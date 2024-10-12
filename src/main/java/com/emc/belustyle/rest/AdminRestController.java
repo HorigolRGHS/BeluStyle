@@ -6,6 +6,7 @@ import com.emc.belustyle.dto.ViewInfoDTO;
 import com.emc.belustyle.dto.ViewUserDTO;
 import com.emc.belustyle.entity.User;
 import com.emc.belustyle.entity.UserRole;
+import com.emc.belustyle.exception.CustomException;
 import com.emc.belustyle.service.UserRoleService;
 import com.emc.belustyle.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,17 +21,29 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/admin")
 public class AdminRestController {
     private final UserService userService;
-    private final UserRoleService userRoleService;
 
     @Autowired
-    public AdminRestController(UserService userService, UserRoleService userRoleService) {
-        this.userService = userService;
-        this.userRoleService = userRoleService;
+    public AdminRestController(UserService userService) {
+        this.userService = userService;;
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @PostMapping
+    public ResponseEntity<String> createUser(@RequestBody UserDTO userDTO) {
+        try {
+            userService.createStaffAccount(userDTO);
+            return ResponseEntity.ok("Account staff created successfully!");
+        } catch (CustomException e) {
+            return ResponseEntity.status(e.getStatusCode()).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("An error occurred while creating a staff account.");
+        }
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
@@ -45,33 +58,26 @@ public class AdminRestController {
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/{userId}")
     public ResponseEntity<ViewUserDTO> getUserById(@PathVariable String userId) {
-        User user = userService.findById(userId);
-        if (user != null) {
-            ViewUserDTO viewUserDTO = new ViewUserDTO(
-                    user.getUsername(),
-                    user.getEmail(),
-                    user.getEnable(),
-                    user.getCreatedAt(),
-                    user.getUpdatedAt()
-            );
-            return ResponseEntity.ok(viewUserDTO);
-        } else {
-            return ResponseEntity.notFound().build();
+        try {
+            ViewUserDTO userDTO = userService.getUserById(userId);
+            return ResponseEntity.ok(userDTO);
+        } catch (CustomException e) {
+            return ResponseEntity.status(e.getStatusCode()).body(null);
         }
     }
 
+
     @PreAuthorize("hasAuthority('ADMIN')")
-    @DeleteMapping
+    @DeleteMapping("/{userId}")
     public ResponseEntity<?> deleteUser(@PathVariable String userId) {
-        User user = userService.findById(userId);
-        if (user != null) {
-            userService.deleteUser(userId);
+        try {
+            userService.deleteUserById(userId);
             return ResponseEntity.ok("User has been deleted successfully.");
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("User not found.");
+        } catch (CustomException e) {
+            return ResponseEntity.status(e.getStatusCode()).body(e.getMessage());
         }
     }
+
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/users/search")
@@ -81,66 +87,14 @@ public class AdminRestController {
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
-    @PostMapping
-    public ResponseEntity<String> createUser(@RequestBody UserDTO userDTO) {
+    @PutMapping("/{userId}")
+    public ResponseEntity<?> updateUser(@PathVariable String userId, @RequestBody User updatedUser) {
         try {
-            User existingUser = userService.findByEmail(userDTO.getEmail());
-
-            if (existingUser != null) {
-                return ResponseEntity.badRequest().body("Email already exists!");
-            }
-
-            User user = new User();
-            user.setEmail(userDTO.getEmail());
-            user.setUsername(userDTO.getUsername());
-            user.setFullName(userDTO.getFullName());
-
-            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(BCryptPasswordEncoder.BCryptVersion.$2A, 10);
-            user.setPasswordHash(encoder.encode(userDTO.getPasswordHash()));
-
-            user.setUserImage(userDTO.getUserImage());
-            user.setEnable(true);
-
-            UserRole role = userRoleService.findById(3);
-            user.setRole(role);
-
-            user.setCurrentPaymentMethod(userDTO.getCurrentPaymentMethod());
-            user.setUserAddress(userDTO.getUserAddress());
-
-            userService.createUser(user);
-            return ResponseEntity.ok("Account staff created successfully!");
-
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("An error occurred while creating a staff account.");
+            userService.updateUserDetails(userId, updatedUser);
+            return ResponseEntity.ok("User has been updated successfully.");
+        } catch (CustomException e) {
+            return ResponseEntity.status(e.getStatusCode()).body(e.getMessage());
         }
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
-    @GetMapping("/me")
-    public ResponseEntity<?> getAdminInfo() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentUsername = null;
-        if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
-            currentUsername = ((UserDetails) authentication.getPrincipal()).getUsername();
-        }
-        if (currentUsername != null) {
-            User user = userService.findByUsername(currentUsername);
-            if (user != null) {
-                ViewInfoDTO viewInfoDTO = new ViewInfoDTO();
-                viewInfoDTO.setUsername(user.getUsername());
-                viewInfoDTO.setEmail(user.getEmail());
-                viewInfoDTO.setFullName(user.getFullName());
-                viewInfoDTO.setUserImage(user.getUserImage());
-                viewInfoDTO.setEnable(user.getEnable());
-                viewInfoDTO.setRole(String.valueOf(user.getRole().getRoleName()));
-                viewInfoDTO.setCurrentPaymentMethod(user.getCurrentPaymentMethod());
-                viewInfoDTO.setUserAddress(user.getUserAddress());
-                viewInfoDTO.setCreatedAt(user.getCreatedAt());
-                viewInfoDTO.setUpdatedAt(user.getUpdatedAt());
-
-                return ResponseEntity.ok(viewInfoDTO);
-            }
-        }
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You are not authorized to view this information.");
-    }
 }

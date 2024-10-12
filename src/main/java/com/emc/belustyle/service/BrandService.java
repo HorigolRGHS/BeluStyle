@@ -58,8 +58,12 @@ public class BrandService {
     }
 
     @Transactional
-    public void deleteBrand(Integer id) {
-        brandRepository.deleteById(id);
+    public boolean deleteBrand(int brandId) {
+        if (brandRepository.existsById(brandId)) {
+            brandRepository.deleteById(brandId);
+            return true;
+        }
+        return false;
     }
 
 }
