@@ -3,6 +3,8 @@ package com.emc.belustyle.rest;
 import com.emc.belustyle.dto.ResponseDTO;
 import com.emc.belustyle.entity.Category;
 import com.emc.belustyle.service.CategoryService;
+import com.emc.belustyle.util.Views;
+import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +25,7 @@ public class CategoryRestController {
     }
 
     @PreAuthorize("permitAll()")
+    @JsonView(Views.ListView.class)
     @GetMapping
     public ResponseEntity<?> getCategories() {
         ResponseDTO responseDTO = new ResponseDTO();
@@ -38,6 +41,7 @@ public class CategoryRestController {
 
     @PreAuthorize("hasAnyAuthority('STAFF', 'ADMIN')")
     @GetMapping("/{id}")
+    @JsonView(Views.DetailedView.class)
     public ResponseEntity<?> getCategoryById(@PathVariable int id) {
         ResponseDTO responseDTO = new ResponseDTO();
         Category category = categoryService.findById(id);
