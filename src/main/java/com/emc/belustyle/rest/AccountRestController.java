@@ -44,4 +44,29 @@ public class AccountRestController {
         }
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You can only view staff information.");
     }
+
+    @PreAuthorize("hasAnyAuthority('CUSTOMER','ADMIN')")
+    @PutMapping
+    public ResponseEntity<?> updateUserInfo(@RequestBody User updatedUserInfo) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUsername = null;
+        if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
+            currentUsername = ((UserDetails) authentication.getPrincipal()).getUsername();
+        }
+        User currentUser = userService.findByUsername(currentUsername);
+
+        if (currentUser == null) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("User not found.");
+        }
+        if (!currentUser.getUserId().equals(updatedUserInfo.getUserId())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You cannot update userId or other restricted fields.");
+        }
+        User updated = userService.updateUserInfo(updatedUserInfo);
+        if (updated != null) {
+            return ResponseEntity.ok("User information updated successfully.");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Failed to update user information.");
+        }
+    }
 }
+
