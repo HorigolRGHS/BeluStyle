@@ -1,5 +1,8 @@
 package com.emc.belustyle.entity;
 
+import com.emc.belustyle.util.Views;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,14 +23,17 @@ public class StockProduct {
     @ManyToOne
     @MapsId("variationId")
     @JoinColumn(name = "variation_id")
-    private ProductVariation variation;
+    @JsonView(Views.DetailedView.class)
+    private ProductVariation productVariation;
 
     @ManyToOne
     @MapsId("stockId")
     @JoinColumn(name = "stock_id")
+    @JsonIgnore
     private Stock stock;
 
     @Column(name = "quantity")
+    @JsonView(Views.DetailedView.class)
     private int quantity;
 
     // Embedded ID Class

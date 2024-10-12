@@ -188,23 +188,18 @@ public class UserService {
         return userRepository.findById(userId).orElse(null);
     }
 
-    @Transactional
-    public User updateUser(User updatedUser) {
-        Optional<User> existingUser = userRepository.findById(updatedUser.getUserId());
 
-        if (existingUser.isPresent()) {
-            User user = existingUser.get();
-            user.setFullName(updatedUser.getFullName());
-            PasswordEncoder encoder = new BCryptPasswordEncoder(BCryptPasswordEncoder.BCryptVersion.$2A, 10);
-            user.setPasswordHash(encoder.encode(updatedUser.getPasswordHash()));
-            user.setCurrentPaymentMethod(updatedUser.getCurrentPaymentMethod());
-            user.setUserImage(updatedUser.getUserImage());
-            user.setUserAddress(updatedUser.getUserAddress());
-            user.setEnable(updatedUser.getEnable());
-            return userRepository.save(user);
-        } else {
-            return null;
-        }
+    @Transactional
+    public User updatePassword(User user, String newPassword) {
+        PasswordEncoder encoder = new BCryptPasswordEncoder(BCryptPasswordEncoder.BCryptVersion.$2A, 10);
+        user.setPasswordHash(encoder.encode(newPassword));
+        return userRepository.save(user);
+    }
+
+    @Transactional
+    public User updateEnable(User user, boolean enable) {
+        user.setEnable(enable);
+        return userRepository.save(user);
     }
 
     public User updateUserInfo(User updatedUser) {
@@ -220,6 +215,9 @@ public class UserService {
             return null;
         }
     }
+
+
+
 
     public List<User> findAll() {
         return userRepository.findAll();
