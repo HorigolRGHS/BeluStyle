@@ -91,5 +91,6 @@ public class AccountRestController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to disable the account.");
         }
     }
+
 }
 
