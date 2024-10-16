@@ -27,7 +27,7 @@ public class SaleRestController {
     }
 
     @GetMapping("/{saleId}")
-    public ResponseEntity<ResponseDTO> getSaleById(@PathVariable Integer saleId) {
+    public ResponseEntity<?> getSaleById(@PathVariable Integer saleId) {
         ResponseDTO responseDTO = new ResponseDTO();
         Sale sale = saleService.findSaleById(saleId);
         if (sale == null) {
@@ -37,7 +37,7 @@ public class SaleRestController {
             return ResponseEntity.status(responseDTO.getStatusCode()).body(responseDTO);
         }
         responseDTO.setStatusCode(HttpStatus.OK.value());
-        return ResponseEntity.status(responseDTO.getStatusCode()).body(responseDTO);
+        return ResponseEntity.status(responseDTO.getStatusCode()).body(sale);
     }
 
     @PostMapping

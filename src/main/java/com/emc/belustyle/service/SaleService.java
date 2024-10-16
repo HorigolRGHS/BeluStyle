@@ -1,5 +1,6 @@
 package com.emc.belustyle.service;
 
+import com.emc.belustyle.dto.ResponseDTO;
 import com.emc.belustyle.dto.SaleDTO;
 import com.emc.belustyle.entity.Product;
 import com.emc.belustyle.entity.Sale;
@@ -61,30 +62,33 @@ public class SaleService {
 
         @Transactional
     public Sale findSaleById(Integer saleId) {
-        Optional<Sale> sale = saleRepository.findById(saleId);
-        if (!sale.isEmpty()) {
-            return sale.get();
-        }
-        return null;
+        return saleRepository.findById(saleId).orElse(null);
     }
 
     @Transactional
-    public void addProductsToSale(int saleId, List<String> productIds) {
-        Sale sale = saleRepository.findById(saleId).orElseThrow(() -> new RuntimeException("Sale not found"));
+    public ResponseEntity<ResponseDTO> addProductsToSale(int saleId, List<String> productIds) {
+        ResponseDTO responseDTO = new ResponseDTO();
+        try {
+            Sale sale = saleRepository.findById(saleId).orElseThrow(() -> new RuntimeException("Sale not found"));
+            responseDTO.setMessage("Sale not found");
+            for (String productId : productIds) {
+                Product product = productRepository.findById(productId).orElseThrow(() -> new RuntimeException("Product not found"));
 
-        for (String productId : productIds) {
-            Product product = productRepository.findById(productId).orElseThrow(() -> new RuntimeException("Product not found"));
+                SaleProduct.SaleProductId id = new SaleProduct.SaleProductId();
+                id.setSaleId(saleId);
+                id.setProductId(productId);
 
-            SaleProduct.SaleProductId id = new SaleProduct.SaleProductId();
-            id.setSaleId(saleId);
-            id.setProductId(productId);
-
-            SaleProduct saleProduct = new SaleProduct();
-            saleProduct.setId(id);
-            saleProduct.setSale(sale);
-            saleProduct.setProduct(product);
-            saleProductRepository.save(saleProduct);
+                SaleProduct saleProduct = new SaleProduct();
+                saleProduct.setId(id);
+                saleProduct.setSale(sale);
+                saleProduct.setProduct(product);
+                saleProductRepository.save(saleProduct);
+            }
+        }catch (RuntimeException e) {
+            responseDTO.setMessage("Product not found");
+            responseDTO.setStatusCode(404);
         }
+        return ResponseEntity.ok(responseDTO);
     }
 
     }
