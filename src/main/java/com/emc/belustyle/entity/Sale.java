@@ -3,8 +3,10 @@ package com.emc.belustyle.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Getter
@@ -44,11 +46,17 @@ public class Sale {
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
 
+    @PrePersist
+    protected void onCreate() {
+        createdAt = new Date();
+        updatedAt = new Date();
+    }
+
     public enum SaleType {
         PERCENTAGE, FIXED_AMOUNT
     }
 
     public enum SaleStatus {
-        ACTIVE, INACTIVE, EXPIRE
+        ACTIVE, INACTIVE, EXPIRED
     }
 }

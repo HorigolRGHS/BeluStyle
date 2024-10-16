@@ -1,8 +1,11 @@
+
 package com.emc.belustyle.entity;
 
 
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.io.Serializable;
 
 
 @Entity
@@ -12,18 +15,28 @@ import lombok.*;
 @AllArgsConstructor
 @ToString
 @Table(name = "sale_product")
-public class SaleProduct {
+public class SaleProduct{
 
-    @Id
+    @EmbeddedId
+    private SaleProductId id;
+
+    @MapsId("saleId")
     @ManyToOne
     @JoinColumn(name = "sale_id", nullable = false)
     private Sale sale;
 
-    @Id
+    @MapsId("productId")
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
+    @Embeddable
+    @Data
+    public static class SaleProductId implements Serializable {
+        private int saleId;
+        private String productId;
+    }
 
 }
+
 
