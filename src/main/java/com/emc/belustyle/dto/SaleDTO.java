@@ -10,14 +10,24 @@ import java.util.Date;
 import java.util.List;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class SaleDTO {
-
+    private int saleId;
     private Sale.SaleType saleType;
     private BigDecimal saleValue;
+    private Sale.SaleStatus saleStatus;
     private Date startDate;
     private Date endDate;
-    private Sale.SaleStatus saleStatus;
-    private List<String> productIds;
+    private Date createdAt;
+    private Date updatedAt;
+    private List<ProductDTO> products;
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ProductDTO {
+        private String productId;
+        private String productName;
+        private BigDecimal productPrice;
+
+    }
 }
