@@ -91,4 +91,53 @@ public class SaleService {
         return ResponseEntity.ok(responseDTO);
     }
 
+    @Transactional
+    public ResponseEntity<ResponseDTO> removeProductFromSale(int saleId, String productId) {
+        ResponseDTO responseDTO = new ResponseDTO();
+        try {
+            Sale sale = saleRepository.findById(saleId)
+                    .orElseThrow(() -> new RuntimeException("Sale not found"));
+
+            Product product = productRepository.findById(productId)
+                    .orElseThrow(() -> new RuntimeException("Product not found"));
+
+            SaleProduct.SaleProductId id = new SaleProduct.SaleProductId();
+            id.setSaleId(saleId);
+            id.setProductId(productId);
+
+            Optional<SaleProduct> existingSaleProductOpt = saleProductRepository.findById(id);
+
+            if (existingSaleProductOpt.isPresent()) {
+                saleProductRepository.delete(existingSaleProductOpt.get());
+                responseDTO.setMessage("Product removed successfully from sale.");
+                responseDTO.setStatusCode(200);
+            } else {
+                responseDTO.setMessage("Product not found in this sale.");
+                responseDTO.setStatusCode(404);
+            }
+        } catch (RuntimeException e) {
+            responseDTO.setMessage(e.getMessage());
+            responseDTO.setStatusCode(404);
+        }
+        return ResponseEntity.ok(responseDTO);
     }
+
+    @Transactional
+    public ResponseEntity<List<Product>> getProductsInSale(int saleId) {
+        try {
+            Sale sale = saleRepository.findById(saleId)
+                    .orElseThrow(() -> new RuntimeException("Sale not found"));
+
+            List<SaleProduct> saleProducts = saleProductRepository.findById_SaleId(saleId);
+
+            List<Product> products = saleProducts.stream()
+                    .map(SaleProduct::getProduct)
+                    .collect(Collectors.toList());
+
+            return ResponseEntity.ok(products);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).body(null);
+        }
+    }
+
+}

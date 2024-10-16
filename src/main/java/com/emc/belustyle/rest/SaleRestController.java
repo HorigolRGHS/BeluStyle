@@ -2,6 +2,7 @@ package com.emc.belustyle.rest;
 
 import com.emc.belustyle.dto.ResponseDTO;
 import com.emc.belustyle.dto.SaleDTO;
+import com.emc.belustyle.entity.Product;
 import com.emc.belustyle.entity.Sale;
 import com.emc.belustyle.exception.CustomException;
 import com.emc.belustyle.repo.SaleRepository;
@@ -95,4 +96,21 @@ public class SaleRestController {
         saleService.addProductsToSale(saleId, productIds);
         return ResponseEntity.ok().build();
     }
+
+    @DeleteMapping("/{saleId}/products/{productId}")
+    public ResponseEntity<Void> removeProductFromSale(
+            @PathVariable int saleId,
+            @PathVariable String productId) {
+
+        saleService.removeProductFromSale(saleId, productId);
+
+        return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/{saleId}/products")
+    public ResponseEntity<List<Product>> getProductsInSale(
+            @PathVariable int saleId) {
+
+        return saleService.getProductsInSale(saleId);
+    }
+}
