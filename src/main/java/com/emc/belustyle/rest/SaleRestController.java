@@ -41,9 +41,39 @@ public class SaleRestController {
     }
 
     @PostMapping
-    public ResponseEntity<Sale> createSale(@RequestBody Sale sale) {
+    public ResponseEntity<?> createSale(@RequestBody Sale sale) {
+        ResponseDTO responseDTO = new ResponseDTO();
+        responseDTO.setStatusCode(HttpStatus.CREATED.value());
         Sale createdSale = saleService.createSale(sale);
-        return ResponseEntity.ok(createdSale);
+        return ResponseEntity.status(responseDTO.getStatusCode()).body(createdSale);
+    }
+
+    @PutMapping("/{saleId}")
+    public ResponseEntity<ResponseDTO> updateSale(@PathVariable Integer saleId, @RequestBody Sale sale) {
+        ResponseDTO responseDTO = new ResponseDTO();
+
+        // Check if the sale exists
+        Sale existingSale = saleService.findSaleById(saleId);
+        if (existingSale == null) {
+            responseDTO.setMessage("Sale not found");
+            responseDTO.setStatusCode(404);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseDTO);
+        }
+
+        // Update the sale properties
+        existingSale.setSaleType(sale.getSaleType());
+        existingSale.setSaleValue(sale.getSaleValue());
+        existingSale.setStartDate(sale.getStartDate());
+        existingSale.setEndDate(sale.getEndDate());
+        existingSale.setSaleStatus(sale.getSaleStatus());
+        existingSale.setUpdatedAt(new java.util.Date());
+
+        // Save updated sale
+        Sale updatedSale = saleService.createSale(existingSale);
+
+        responseDTO.setMessage("Sale updated successfully");
+        responseDTO.setStatusCode(200);
+        return ResponseEntity.ok(responseDTO);
     }
 
     @DeleteMapping("/{saleId}")
