@@ -3,10 +3,7 @@ package com.emc.belustyle.entity;
 import com.emc.belustyle.util.Views;
 import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
@@ -32,8 +29,9 @@ public class Stock {
     @JsonView(Views.ListView.class)
     private String stockAddress;
 
-    @OneToMany(mappedBy = "stock", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "stock")
     @JsonView(Views.DetailedView.class)
     private List<StockProduct> stockProducts;
+
 
 }

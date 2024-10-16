@@ -1,11 +1,9 @@
 package com.emc.belustyle.service;
 
-import com.emc.belustyle.dto.UserIdNameDTO;
+import com.emc.belustyle.dto.*;
+import com.emc.belustyle.entity.UserRole;
 import com.emc.belustyle.repo.UserRepository;
 import com.emc.belustyle.repo.UserRoleRepository;
-import com.emc.belustyle.dto.ResponseDTO;
-import com.emc.belustyle.dto.UserDTO;
-import com.emc.belustyle.dto.ViewUserDTO;
 import com.emc.belustyle.dto.mapper.UserMapper;
 import com.emc.belustyle.entity.User;
 import com.emc.belustyle.exception.CustomException;
@@ -204,6 +202,19 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    public User updateUserInfo(User updatedUser) {
+        Optional<User> existingUserOptional = userRepository.findById(updatedUser.getUserId());
+        if (existingUserOptional.isPresent()) {
+            User existingUser = existingUserOptional.get();
+            existingUser.setFullName(updatedUser.getFullName());
+            existingUser.setUserImage(updatedUser.getUserImage());
+            existingUser.setCurrentPaymentMethod(updatedUser.getCurrentPaymentMethod());
+            existingUser.setUserAddress(updatedUser.getUserAddress());
+            return userRepository.save(existingUser);
+        } else {
+            return null;
+        }
+    }
 
 
 
@@ -224,6 +235,15 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
+    public User updateUserDetails(String userId, User updatedUser) throws CustomException {
+        User existingUser = findById(userId);
+        if (existingUser == null) {
+            throw new CustomException("User not found", HttpStatus.NOT_FOUND);
+        }
+        existingUser.setEnable(updatedUser.getEnable());
+        return userRepository.save(existingUser);
+    }
 
     public Page<ViewUserDTO> getAllUser(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -236,12 +256,84 @@ public class UserService {
                 user.getUpdatedAt()));
     }
 
-    public void deleteUser(String id) {
-        userRepository.deleteById(id);
+    @Transactional
+    public boolean deleteUserById(String userId) throws CustomException {
+        if (!userRepository.existsById(userId)) {
+            throw new CustomException("User not found", HttpStatus.NOT_FOUND);
+        }
+        userRepository.deleteById(userId);
+        return true;
     }
+
 
     public User createUser(User user) {
         return userRepository.save(user);
+    }
+    @Transactional
+    public User createStaffAccount(UserDTO userDTO) throws CustomException {
+        if (existsByEmail(userDTO.getEmail())) {
+            throw new CustomException("Email already exists!", HttpStatus.BAD_REQUEST);
+        }
+
+        User user = new User();
+        user.setEmail(userDTO.getEmail());
+        user.setUsername(userDTO.getUsername());
+        user.setFullName(userDTO.getFullName());
+
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(BCryptPasswordEncoder.BCryptVersion.$2A, 10);
+        user.setPasswordHash(encoder.encode(userDTO.getPasswordHash()));
+
+        user.setUserImage(userDTO.getUserImage());
+        user.setEnable(true);
+
+        UserRole role = userRoleService.findById(3);
+        user.setRole(role);
+
+        user.setCurrentPaymentMethod(userDTO.getCurrentPaymentMethod());
+        user.setUserAddress(userDTO.getUserAddress());
+
+        return createUser(user);
+    }
+
+    public ViewUserDTO getUserById(String userId) throws CustomException {
+        User user = findById(userId);
+        if (user == null) {
+            throw new CustomException("User not found", HttpStatus.NOT_FOUND);
+        }
+
+        return new ViewUserDTO(
+                user.getUsername(),
+                user.getEmail(),
+                user.getEnable(),
+                user.getCreatedAt(),
+                user.getUpdatedAt()
+        );
+    }
+    public ViewInfoDTO getUserInfoByUsername(String username) {
+        User user = findByUsername(username);
+        if (user != null) {
+            return mapUserToViewInfoDTO(user);
+        }
+        return null;
+    }
+    private ViewInfoDTO mapUserToViewInfoDTO(User user) {
+        ViewInfoDTO viewInfoDTO = new ViewInfoDTO();
+        viewInfoDTO.setUsername(user.getUsername());
+        viewInfoDTO.setEmail(user.getEmail());
+        viewInfoDTO.setFullName(user.getFullName());
+        viewInfoDTO.setUserImage(user.getUserImage());
+        viewInfoDTO.setEnable(user.getEnable());
+        viewInfoDTO.setRole(String.valueOf(user.getRole().getRoleName()));
+        viewInfoDTO.setCurrentPaymentMethod(user.getCurrentPaymentMethod());
+        viewInfoDTO.setUserAddress(user.getUserAddress());
+        viewInfoDTO.setCreatedAt(user.getCreatedAt());
+        viewInfoDTO.setUpdatedAt(user.getUpdatedAt());
+        return viewInfoDTO;
+    }
+
+    public ViewInfoDTO getUserInfoById(String userId) {
+        Optional<User> userOptional = userRepository.findById(userId);
+        return userOptional.map(this::mapUserToViewInfoDTO).orElse(null);
     }
 }
 
