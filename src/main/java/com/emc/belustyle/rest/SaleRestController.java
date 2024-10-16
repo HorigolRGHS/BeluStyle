@@ -1,6 +1,7 @@
 package com.emc.belustyle.rest;
 
 import com.emc.belustyle.dto.ResponseDTO;
+import com.emc.belustyle.dto.SaleDTO;
 import com.emc.belustyle.entity.Sale;
 import com.emc.belustyle.exception.CustomException;
 import com.emc.belustyle.repo.SaleRepository;

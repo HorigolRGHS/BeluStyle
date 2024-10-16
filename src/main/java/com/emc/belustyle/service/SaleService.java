@@ -49,11 +49,17 @@ public class SaleService {
         if (!saleRepository.existsById(saleId)) {
             return false;
         }
+
+        // Remove associated SaleProduct entries
+        saleProductRepository.deleteBySaleId(saleId);
+
+        // Remove the sale
         saleRepository.deleteById(saleId);
+
         return true;
     }
 
-    @Transactional
+        @Transactional
     public Sale findSaleById(Integer saleId) {
         Optional<Sale> sale = saleRepository.findById(saleId);
         if (!sale.isEmpty()) {
