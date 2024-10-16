@@ -1,5 +1,6 @@
 package com.emc.belustyle.rest;
 
+import com.emc.belustyle.dto.CategoryDTO;
 import com.emc.belustyle.dto.ResponseDTO;
 import com.emc.belustyle.entity.Category;
 import com.emc.belustyle.service.CategoryService;
@@ -12,6 +13,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/categories")
@@ -24,19 +26,27 @@ public class CategoryRestController {
         this.categoryService = categoryService;
     }
 
+//    @PreAuthorize("permitAll()")
+//    @JsonView(Views.ListView.class)
+//    @GetMapping
+//    public ResponseEntity<?> getCategories() {
+//        ResponseDTO responseDTO = new ResponseDTO();
+//        List<Category> list = categoryService.findAll();
+//        if (list.isEmpty()) {
+//            responseDTO.setStatusCode(HttpStatus.NOT_FOUND.value());
+//            responseDTO.setMessage("No categories found");
+//            return ResponseEntity.status(responseDTO.getStatusCode()).body(responseDTO);
+//        } else {
+//            return ResponseEntity.status(HttpStatus.OK).body(list);
+//        }
+//    }
+
+
     @PreAuthorize("permitAll()")
-    @JsonView(Views.ListView.class)
     @GetMapping
-    public ResponseEntity<?> getCategories() {
-        ResponseDTO responseDTO = new ResponseDTO();
-        List<Category> list = categoryService.findAll();
-        if (list.isEmpty()) {
-            responseDTO.setStatusCode(HttpStatus.NOT_FOUND.value());
-            responseDTO.setMessage("No categories found");
-            return ResponseEntity.status(responseDTO.getStatusCode()).body(responseDTO);
-        } else {
-            return ResponseEntity.status(HttpStatus.OK).body(list);
-        }
+    public ResponseEntity<List<CategoryDTO>> getAllCategories() {
+        List<CategoryDTO> categories = categoryService.getAllCategoriesWithQuantity();
+        return ResponseEntity.ok(categories);
     }
 
     @PreAuthorize("hasAnyAuthority('STAFF', 'ADMIN')")
@@ -69,7 +79,8 @@ public class CategoryRestController {
         }
     }
 
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
+//    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @PreAuthorize("permitAll()")
     @PostMapping
     public Category createCategory(@RequestBody Category category) {
         return categoryService.createCategory(category);
