@@ -1,6 +1,5 @@
 package com.emc.belustyle.entity;
 
-
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,21 +16,22 @@ public class OrderDetail {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "order_detail_id", nullable = false)
     private Integer orderDetailId;
 
-    @Column(name = "order_id")
-    private String orderId;
+    @ManyToOne
+    @JoinColumn(name = "order_id", nullable = false)
+    private Order order;
 
-    @Column(name = "variation_id")
+    @Column(name = "variation_id", nullable = false)
     private Integer variationId;
 
-    @Column(name = "order_quantity")
+    @Column(name = "order_quantity", nullable = false)
     private Integer orderQuantity;
 
-    @Column(name = "unit_price", precision = 10, scale = 2)
+    @Column(name = "unit_price", precision = 10, scale = 2, nullable = false)
     private BigDecimal unitPrice;
 
     @Column(name = "discount_amount", precision = 10, scale = 2)
     private BigDecimal discountAmount;
-
 }
