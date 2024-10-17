@@ -346,11 +346,6 @@ public class UserService {
         }
         return false;
     }
-
-    public boolean isAccountDisabled(String userId) {
-        Optional<User> userOptional = userRepository.findById(userId);
-        return userOptional.map(user -> !user.getEnable()).orElse(true);
-    }
 }
 
 

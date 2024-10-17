@@ -49,7 +49,7 @@ public class AdminRestController {
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping
     public ResponseEntity<Page<ViewUserDTO>> getAllUser(
-            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size) {
         Page<ViewUserDTO> users = userService.getAllUser(page, size);
         return ResponseEntity.ok(users);
