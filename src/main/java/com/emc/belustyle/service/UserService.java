@@ -94,8 +94,8 @@ public class UserService {
             if (!user.isEnabled()) {
                 throw new CustomException("User account is disabled. Please contact Belucom204@outlook.com for support.", HttpStatus.FORBIDDEN);
             }
-
-            if(!user.getRole().getRoleName().equals("STAFF") || !user.getRole().getRoleName().equals("ADMIN") ) {
+            if (user.getRole() == null ||
+                    !(user.getRole().getRoleName().toString().equals("STAFF") || user.getRole().getRoleName().toString().equals("ADMIN"))) {
                 throw new CustomException("You have no right to login", HttpStatus.FORBIDDEN);
             }
 
