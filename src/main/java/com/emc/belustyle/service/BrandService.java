@@ -82,7 +82,7 @@ public class BrandService {
             brandDto.setWebsiteUrl((String) result[4]);
             brandDto.setCreatedAt((Date) result[5]);
             brandDto.setUpdatedAt((Date) result[6]);
-            brandDto.setTotalQuantity(((Number) result[7]).longValue());  // Cast to Long for quantity
+            brandDto.setTotalQuantity(((Number) result[7]).longValue());
 
             brands.add(brandDto);
         }
