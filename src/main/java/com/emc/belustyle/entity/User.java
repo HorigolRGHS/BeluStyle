@@ -1,5 +1,7 @@
 package com.emc.belustyle.entity;
 
+import com.emc.belustyle.util.Views;
+import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -52,6 +54,7 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "user_id", nullable = false)
+    @JsonView(Views.OrderView.class)
     private String userId;
 
     @Column(name = "username", unique = true)
@@ -83,6 +86,7 @@ public class User implements UserDetails {
     private String currentPaymentMethod;
 
     @Column(name = "user_address")
+    @JsonView(Views.OrderView.class)
     private String userAddress;
 
     @Column(name = "created_at", updatable = false)
@@ -92,6 +96,10 @@ public class User implements UserDetails {
     @Column(name = "updated_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
+
+    @OneToMany(mappedBy = "user")
+    @JsonView(Views.OrderView.class)
+    private List<UserDiscount> userDiscounts;
 
     @PrePersist
     protected void onCreate() {

@@ -7,9 +7,12 @@ import com.emc.belustyle.entity.Sale;
 import com.emc.belustyle.exception.CustomException;
 import com.emc.belustyle.repo.SaleRepository;
 import com.emc.belustyle.service.SaleService;
+import com.emc.belustyle.util.Views;
+import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,11 +25,14 @@ public class SaleRestController {
     @Autowired
     private SaleRepository saleRepository;
 
+    @PreAuthorize("hasAnyAuthority('ADMIN','STAFF')")
     @GetMapping
+    @JsonView(Views.OrderView.class)
     public List<Sale> getAllSales() {
         return saleService.findAll();
     }
 
+    @PreAuthorize("hasAnyAuthority('ADMIN','STAFF')")
     @GetMapping("/{saleId}")
     public ResponseEntity<?> getSaleById(@PathVariable Integer saleId) {
         ResponseDTO responseDTO = new ResponseDTO();
@@ -41,6 +47,7 @@ public class SaleRestController {
         return ResponseEntity.status(responseDTO.getStatusCode()).body(sale);
     }
 
+    @PreAuthorize("hasAnyAuthority('ADMIN','STAFF')")
     @PostMapping
     public ResponseEntity<?> createSale(@RequestBody Sale sale) {
         ResponseDTO responseDTO = new ResponseDTO();
@@ -49,6 +56,7 @@ public class SaleRestController {
         return ResponseEntity.status(responseDTO.getStatusCode()).body(createdSale);
     }
 
+    @PreAuthorize("hasAnyAuthority('ADMIN','STAFF')")
     @PutMapping("/{saleId}")
     public ResponseEntity<ResponseDTO> updateSale(@PathVariable Integer saleId, @RequestBody Sale sale) {
         ResponseDTO responseDTO = new ResponseDTO();
@@ -77,6 +85,7 @@ public class SaleRestController {
         return ResponseEntity.ok(responseDTO);
     }
 
+    @PreAuthorize("hasAnyAuthority('ADMIN','STAFF')")
     @DeleteMapping("/{saleId}")
     public ResponseEntity<ResponseDTO> deleteSale(@PathVariable Integer saleId) {
         ResponseDTO responseDTO = new ResponseDTO();
@@ -91,12 +100,14 @@ public class SaleRestController {
 
     }
 
+    @PreAuthorize("hasAnyAuthority('ADMIN','STAFF')")
     @PostMapping("/{saleId}/products")
     public ResponseEntity<Void> addProductsToSale(@PathVariable int saleId, @RequestBody List<String> productIds) {
         saleService.addProductsToSale(saleId, productIds);
         return ResponseEntity.ok().build();
     }
 
+    @PreAuthorize("hasAnyAuthority('ADMIN','STAFF')")
     @DeleteMapping("/{saleId}/products/{productId}")
     public ResponseEntity<Void> removeProductFromSale(
             @PathVariable int saleId,

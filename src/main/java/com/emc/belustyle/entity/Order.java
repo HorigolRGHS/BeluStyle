@@ -18,66 +18,66 @@ public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "order_id")
-    @JsonView(Views.ListView.class)
+    @JsonView(Views.OrderView.class)
     private String orderId;
 
     @Column(name = "order_date")
     @Temporal(TemporalType.TIMESTAMP)
-    @JsonView(Views.ListView.class)
+    @JsonView(Views.OrderView.class)
     private Date orderDate;
 
     @Column(name = "order_status")
-    @JsonView(Views.ListView.class)
+    @JsonView(Views.OrderView.class)
     private String orderStatus;
 
     @Column(name = "notes")
-    @JsonView(Views.ListView.class)
+    @JsonView(Views.OrderView.class)
     private String notes;
 
     @Column(name = "discount_code")
-    @JsonView(Views.ListView.class)
+    @JsonView(Views.OrderView.class)
     private String discountCode;
 
     @Column(name = "billing_address")
-    @JsonView(Views.ListView.class)
+    @JsonView(Views.OrderView.class)
     private String billingAddress;
 
     @Column(name = "expected_delivery_date")
     @Temporal(TemporalType.TIMESTAMP)
-    @JsonView(Views.ListView.class)
+    @JsonView(Views.OrderView.class)
     private Date expectedDeliveryDate;
 
     @Column(name = "shipping_method")
-    @JsonView(Views.ListView.class)
+    @JsonView(Views.OrderView.class)
     private String shippingMethod;
 
     @Column(name = "total_amount")
-    @JsonView(Views.ListView.class)
+    @JsonView(Views.OrderView.class)
     private Double totalAmount;
 
     @Column(name = "payment_method")
-    @JsonView(Views.ListView.class)
+    @JsonView(Views.OrderView.class)
     private String paymentMethod;
 
     @Column(name = "tracking_number")
-    @JsonView(Views.ListView.class)
+    @JsonView(Views.OrderView.class)
     private String trackingNumber;
 
     @Column(name = "transaction_reference")
-    @JsonView(Views.ListView.class)
+    @JsonView(Views.OrderView.class)
     private String transactionReference;
 
     @Column(name = "user_address")
-    @JsonView(Views.ListView.class)
+    @JsonView(Views.OrderView.class)
     private String userAddress;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    @JsonView(Views.DetailedView.class)
+    @JsonView(Views.OrderView.class)
     private User user;
 
     @ManyToOne
     @JoinColumn(name = "staff_id")
-    @JsonView(Views.DetailedView.class)
+    @JsonView(Views.OrderView.class)
     private User staff;
 }

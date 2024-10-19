@@ -3,6 +3,8 @@ package com.emc.belustyle.rest;
 import com.emc.belustyle.dto.OrderDTO;
 import com.emc.belustyle.entity.Order;
 import com.emc.belustyle.service.OrderService;
+import com.emc.belustyle.util.Views;
+import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/orders")
+@RequestMapping("/api/orders")
 public class OrderRestController {
     private final OrderService orderService;
 
@@ -20,7 +22,8 @@ public class OrderRestController {
     }
 
     @GetMapping
-    public List<OrderDTO> getAllOrders() {
+    @JsonView(Views.OrderView.class)
+    public List<Order> getAllOrders() {
         return orderService.findAll();
     }
 

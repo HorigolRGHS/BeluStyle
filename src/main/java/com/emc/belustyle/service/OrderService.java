@@ -23,11 +23,8 @@ public class OrderService {
         this.orderRepository = orderRepository;
     }
 
-    public List<OrderDTO> findAll() {
-        List<Order> orders = orderRepository.findAll();
-        return orders.stream()
-                .map(OrderMapper.INSTANCE::toDTO)
-                .collect(Collectors.toList());
+    public List<Order> findAll() {
+        return orderRepository.findAll();
     }
 
     public OrderDTO findById(String id) {

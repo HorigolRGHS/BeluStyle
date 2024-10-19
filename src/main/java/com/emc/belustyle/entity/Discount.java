@@ -7,6 +7,7 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 
 @Entity
@@ -20,60 +21,62 @@ public class Discount {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonView(Views.ListView.class)
     private Integer discountId;
 
     @Column(name = "discount_code", nullable = false, length = 20)
-    @JsonView(Views.ListView.class)
+    @JsonView(Views.OrderView.class)
     private String discountCode;
 
     @Column(name = "discount_type", nullable = false)
     @Enumerated(EnumType.STRING)
-    @JsonView(Views.ListView.class)
+    @JsonView(Views.OrderView.class)
     private DiscountType discountType;
 
     @Column(name = "discount_value", nullable = false, precision = 10, scale = 2)
-    @JsonView(Views.ListView.class)
+    @JsonView(Views.OrderView.class)
     private BigDecimal discountValue;
 
     @Column(name = "start_date")
-    @JsonView(Views.ListView.class)
+    @JsonView(Views.OrderView.class)
     private Date startDate;
 
     @Column(name = "end_date")
-    @JsonView(Views.ListView.class)
+    @JsonView(Views.OrderView.class)
     private Date endDate;
 
     @Column(name = "discount_status", nullable = false)
     @Enumerated(EnumType.STRING)
-    @JsonView(Views.ListView.class)
+    @JsonView(Views.OrderView.class)
     private DiscountStatus discountStatus;
 
     @Column(name = "discount_description", columnDefinition = "TEXT CHARACTER SET UTF8MB4")
-    @JsonView(Views.ListView.class)
+    @JsonView(Views.OrderView.class)
     private String discountDescription;
 
     @Column(name = "minimum_order_value", precision = 10, scale = 2)
-    @JsonView(Views.ListView.class)
+    @JsonView(Views.OrderView.class)
     private BigDecimal minimumOrderValue;
 
     @Column(name = "maximum_discount_value", precision = 10, scale = 2)
-    @JsonView(Views.ListView.class)
+    @JsonView(Views.OrderView.class)
     private BigDecimal maximumDiscountValue;
 
     @Column(name = "usage_limit", nullable = false)
-    @JsonView(Views.ListView.class)
+    @JsonView(Views.OrderView.class)
     private Integer usageLimit;
 
     @Column(name = "created_at", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    @JsonView(Views.ListView.class)
+    @JsonView(Views.OrderView.class)
     private Date createdAt;
 
     @Column(name = "updated_at")
     @Temporal(TemporalType.TIMESTAMP)
-    @JsonView(Views.ListView.class)
+    @JsonView(Views.OrderView.class)
     private Date updatedAt;
+
+    @OneToMany(mappedBy = "discount")
+    private List<UserDiscount> userDiscounts;
 
     public enum DiscountType {
         PERCENTAGE, FIXED_AMOUNT
