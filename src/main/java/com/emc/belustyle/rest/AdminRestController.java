@@ -1,9 +1,6 @@
 package com.emc.belustyle.rest;
 
-import com.emc.belustyle.dto.UserDTO;
-import com.emc.belustyle.dto.UserIdNameDTO;
-import com.emc.belustyle.dto.ViewInfoDTO;
-import com.emc.belustyle.dto.ViewUserDTO;
+import com.emc.belustyle.dto.*;
 import com.emc.belustyle.entity.User;
 import com.emc.belustyle.entity.UserRole;
 import com.emc.belustyle.exception.CustomException;
@@ -88,9 +85,9 @@ public class AdminRestController {
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("/{userId}")
-    public ResponseEntity<?> updateUser(@PathVariable String userId, @RequestBody User updatedUser) {
+    public ResponseEntity<?> updateUser(@PathVariable String userId, @RequestBody AdminUpdateDTO adminUpdateDTO) {
         try {
-            userService.updateUserDetails(userId, updatedUser);
+            userService.updateUserDetails(userId, adminUpdateDTO);
             return ResponseEntity.ok("User has been updated successfully.");
         } catch (CustomException e) {
             return ResponseEntity.status(e.getStatusCode()).body(e.getMessage());
