@@ -202,22 +202,20 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public User updateUserInfo(User updatedUser) {
-        Optional<User> existingUserOptional = userRepository.findById(updatedUser.getUserId());
+    @Transactional
+    public User updateUserInfo(String userId, UpdateUserDTO updatedUserInfo) {
+        Optional<User> existingUserOptional = userRepository.findById(userId);
         if (existingUserOptional.isPresent()) {
             User existingUser = existingUserOptional.get();
-            existingUser.setFullName(updatedUser.getFullName());
-            existingUser.setUserImage(updatedUser.getUserImage());
-            existingUser.setCurrentPaymentMethod(updatedUser.getCurrentPaymentMethod());
-            existingUser.setUserAddress(updatedUser.getUserAddress());
+            existingUser.setFullName(updatedUserInfo.getFullName());
+            existingUser.setUserImage(updatedUserInfo.getUserImage());
+            existingUser.setCurrentPaymentMethod(updatedUserInfo.getCurrentPaymentMethod());
+            existingUser.setUserAddress(updatedUserInfo.getUserAddress());
             return userRepository.save(existingUser);
         } else {
             return null;
         }
     }
-
-
-
 
     public List<User> findAll() {
         return userRepository.findAll();
@@ -249,6 +247,7 @@ public class UserService {
         Pageable pageable = PageRequest.of(page, size);
         Page<User> userPage = userRepository.findAll(pageable);
         return userPage.map(user -> new ViewUserDTO(
+                user.getUserId(),
                 user.getUsername(),
                 user.getEmail(),
                 user.getEnable(),
@@ -302,6 +301,7 @@ public class UserService {
         }
 
         return new ViewUserDTO(
+                user.getUserId(),
                 user.getUsername(),
                 user.getEmail(),
                 user.getEnable(),
