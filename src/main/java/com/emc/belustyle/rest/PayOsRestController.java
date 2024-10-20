@@ -18,7 +18,7 @@ import vn.payos.type.PaymentLinkData;
 
 
 @RestController
-@RequestMapping("/api/payment")
+@RequestMapping("/api/payment/payos")
 public class PayOsRestController {
     private final PayOS payOS;
 
