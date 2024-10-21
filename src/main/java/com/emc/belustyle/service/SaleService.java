@@ -9,10 +9,12 @@ import com.emc.belustyle.repo.ProductRepository;
 import com.emc.belustyle.repo.SaleProductRepository;
 import com.emc.belustyle.repo.SaleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -36,13 +38,34 @@ public class SaleService {
     }
 
     @Transactional
-    public Sale createSale(Sale sale) {
-        return saleRepository.save(sale);
+    public ResponseEntity<?> createSale(Sale sale) {
+        ResponseDTO responseDTO = new ResponseDTO();
+
+        if (sale.getSaleType() == Sale.SaleType.PERCENTAGE && sale.getSaleValue().compareTo(new BigDecimal("100")) >= 0) {
+            responseDTO.setStatusCode(HttpStatus.BAD_REQUEST.value());
+            responseDTO.setMessage("Sale value must be less than 100 for percentage sale type");
+            return ResponseEntity.status(responseDTO.getStatusCode()).body(responseDTO);
+        }
+
+        Sale createdSale = saleRepository.save(sale);
+        responseDTO.setStatusCode(HttpStatus.CREATED.value());
+        return ResponseEntity.status(responseDTO.getStatusCode()).body(createdSale);
     }
 
     @Transactional
-    public Sale updateSale(Sale sale) {
-        return saleRepository.save(sale);
+    public Sale updateSale(Integer saleId, Sale saleData) {
+        Sale existingSale = saleRepository.findById(saleId)
+                .orElseThrow(() -> new RuntimeException("Sale not found"));
+
+        // Update the sale properties
+        existingSale.setSaleType(saleData.getSaleType());
+        existingSale.setSaleValue(saleData.getSaleValue());
+        existingSale.setStartDate(saleData.getStartDate());
+        existingSale.setEndDate(saleData.getEndDate());
+        existingSale.setSaleStatus(saleData.getSaleStatus());
+        existingSale.setUpdatedAt(new java.util.Date());
+
+        return saleRepository.save(existingSale);
     }
 
     @Transactional
@@ -71,6 +94,7 @@ public class SaleService {
         try {
             Sale sale = saleRepository.findById(saleId).orElseThrow(() -> new RuntimeException("Sale not found"));
             responseDTO.setMessage("Sale not found");
+            responseDTO.setStatusCode(404);
             for (String productId : productIds) {
                 Product product = productRepository.findById(productId).orElseThrow(() -> new RuntimeException("Product not found"));
 
@@ -83,6 +107,8 @@ public class SaleService {
                 saleProduct.setSale(sale);
                 saleProduct.setProduct(product);
                 saleProductRepository.save(saleProduct);
+                responseDTO.setStatusCode(HttpStatus.CREATED.value());
+                responseDTO.setMessage("Sale added successfully");
             }
         }catch (RuntimeException e) {
             responseDTO.setMessage("Product not found");
@@ -119,7 +145,7 @@ public class SaleService {
             responseDTO.setMessage(e.getMessage());
             responseDTO.setStatusCode(404);
         }
-        return ResponseEntity.ok(responseDTO);
+        return ResponseEntity.status(responseDTO.getStatusCode()).body(responseDTO);
     }
 
     @Transactional
