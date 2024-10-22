@@ -13,13 +13,12 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-@Table(name = "order") // Đổi tên bảng thành orders
+@Table(name = "`order`")
 public class Order {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "order_id")
     @JsonView(Views.ListView.class)
-    private String orderId;
+    private String orderId;  // Không sử dụng @GeneratedValue để tự động sinh OrderID
 
     @Column(name = "order_date")
     @Temporal(TemporalType.TIMESTAMP)
