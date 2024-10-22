@@ -234,12 +234,12 @@ public class UserService {
     }
 
     @Transactional
-    public User updateUserDetails(String userId, User updatedUser) throws CustomException {
+    public User updateUserDetails(String userId, AdminUpdateDTO adminUpdateDTO) throws CustomException {
         User existingUser = findById(userId);
         if (existingUser == null) {
             throw new CustomException("User not found", HttpStatus.NOT_FOUND);
         }
-        existingUser.setEnable(updatedUser.getEnable());
+        existingUser.setEnable(adminUpdateDTO.getEnable());
         return userRepository.save(existingUser);
     }
 

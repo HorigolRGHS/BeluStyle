@@ -70,7 +70,6 @@ public class AccountRestController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Failed to update user information.");
         }
     }
-
     @PreAuthorize("hasAuthority('CUSTOMER')")
     @PostMapping("/request-delete")
     public ResponseEntity<?> requestDeleteAccount() {
