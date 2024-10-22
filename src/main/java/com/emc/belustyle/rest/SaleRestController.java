@@ -8,10 +8,12 @@ import com.emc.belustyle.exception.CustomException;
 import com.emc.belustyle.repo.SaleRepository;
 import com.emc.belustyle.service.SaleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -43,38 +45,22 @@ public class SaleRestController {
 
     @PostMapping
     public ResponseEntity<?> createSale(@RequestBody Sale sale) {
-        ResponseDTO responseDTO = new ResponseDTO();
-        responseDTO.setStatusCode(HttpStatus.CREATED.value());
-        Sale createdSale = saleService.createSale(sale);
-        return ResponseEntity.status(responseDTO.getStatusCode()).body(createdSale);
+        return saleService.createSale(sale);
     }
 
     @PutMapping("/{saleId}")
     public ResponseEntity<ResponseDTO> updateSale(@PathVariable Integer saleId, @RequestBody Sale sale) {
         ResponseDTO responseDTO = new ResponseDTO();
-
-        // Check if the sale exists
-        Sale existingSale = saleService.findSaleById(saleId);
-        if (existingSale == null) {
-            responseDTO.setMessage("Sale not found");
-            responseDTO.setStatusCode(404);
+        try {
+            Sale updatedSale = saleService.updateSale(saleId, sale);
+            responseDTO.setMessage("Sale updated successfully");
+            responseDTO.setStatusCode(HttpStatus.OK.value());
+            return ResponseEntity.ok(responseDTO);
+        } catch (RuntimeException ex) {
+            responseDTO.setMessage(ex.getMessage());
+            responseDTO.setStatusCode(HttpStatus.NOT_FOUND.value());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseDTO);
         }
-
-        // Update the sale properties
-        existingSale.setSaleType(sale.getSaleType());
-        existingSale.setSaleValue(sale.getSaleValue());
-        existingSale.setStartDate(sale.getStartDate());
-        existingSale.setEndDate(sale.getEndDate());
-        existingSale.setSaleStatus(sale.getSaleStatus());
-        existingSale.setUpdatedAt(new java.util.Date());
-
-        // Save updated sale
-        Sale updatedSale = saleService.createSale(existingSale);
-
-        responseDTO.setMessage("Sale updated successfully");
-        responseDTO.setStatusCode(200);
-        return ResponseEntity.ok(responseDTO);
     }
 
     @DeleteMapping("/{saleId}")
@@ -92,19 +78,16 @@ public class SaleRestController {
     }
 
     @PostMapping("/{saleId}/products")
-    public ResponseEntity<Void> addProductsToSale(@PathVariable int saleId, @RequestBody List<String> productIds) {
-        saleService.addProductsToSale(saleId, productIds);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<?> addProductsToSale(@PathVariable int saleId, @RequestBody List<String> productIds) {
+        return saleService.addProductsToSale(saleId, productIds);
     }
 
-    @DeleteMapping("/{saleId}/products/{productId}")
-    public ResponseEntity<Void> removeProductFromSale(
+    @DeleteMapping("/{saleId}/products")
+    public ResponseEntity<?> removeProductFromSale(
             @PathVariable int saleId,
-            @PathVariable String productId) {
+            @RequestParam String productId) {
 
-        saleService.removeProductFromSale(saleId, productId);
-
-        return ResponseEntity.ok().build();
+        return saleService.removeProductFromSale(saleId, productId);
     }
 
     @GetMapping("/{saleId}/products")
