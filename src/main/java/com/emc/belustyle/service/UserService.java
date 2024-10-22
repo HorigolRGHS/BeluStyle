@@ -209,7 +209,6 @@ public class UserService {
             User existingUser = existingUserOptional.get();
             existingUser.setFullName(updatedUserInfo.getFullName());
             existingUser.setUserImage(updatedUserInfo.getUserImage());
-            existingUser.setCurrentPaymentMethod(updatedUserInfo.getCurrentPaymentMethod());
             existingUser.setUserAddress(updatedUserInfo.getUserAddress());
             return userRepository.save(existingUser);
         } else {
@@ -250,6 +249,7 @@ public class UserService {
                 user.getUserId(),
                 user.getUsername(),
                 user.getEmail(),
+                user.getRole().getRoleName().toString(),
                 user.getEnable(),
                 user.getCreatedAt(),
                 user.getUpdatedAt()));
@@ -304,6 +304,7 @@ public class UserService {
                 user.getUserId(),
                 user.getUsername(),
                 user.getEmail(),
+                user.getRole().getRoleName().toString(),
                 user.getEnable(),
                 user.getCreatedAt(),
                 user.getUpdatedAt()

@@ -13,7 +13,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-@Table(name = "order") // Đổi tên bảng thành orders
+@Table(name = "order")
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

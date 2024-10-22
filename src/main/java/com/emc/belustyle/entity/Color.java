@@ -17,15 +17,15 @@ public class Color {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "color_id")
-    @JsonView(Views.ListView.class)
+    @JsonView({Views.StockView.class, Views.TransactionView.class})
     private int colorId;
 
     @Column(name = "color_name")
-    @JsonView(Views.ListView.class)
+    @JsonView({Views.StockView.class, Views.TransactionView.class})
     private String colorName;
 
     @Column(name = "hex_code")
-    @JsonView(Views.ListView.class)
+    @JsonView({Views.StockView.class, Views.TransactionView.class})
     private String hexCode;
 
 }

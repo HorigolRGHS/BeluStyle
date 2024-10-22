@@ -6,6 +6,7 @@ import com.emc.belustyle.service.StockTransactionService;
 import com.emc.belustyle.util.Views;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,15 +25,17 @@ public class StockTransactionRestController {
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'STAFF')")
     @GetMapping
-    @JsonView(Views.CoreView.class)
+    @JsonView(Views.TransactionView.class)
     public List<StockTransaction> getStockTransactionService() {
         return stockTransactionService.findAll();
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'STAFF')")
     @PostMapping
-    public StockTransaction createStockTransaction(@RequestBody StockTransactionDTO stockTransactionDTO) {
-        return stockTransactionService.createStockTransaction(stockTransactionDTO);
-    }
+    public ResponseEntity<String> bulkImportTransactions(
+            @RequestBody StockTransactionDTO stockTransactionDTO) {
+        stockTransactionService.createStockTransactions(stockTransactionDTO);
+        return ResponseEntity.ok("Bulk import of stock transactions successful");
 
+    }
 }

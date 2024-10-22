@@ -22,7 +22,7 @@ public class StockProduct {
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("variationId")
     @JoinColumn(name = "variation_id")
-    @JsonView(Views.DetailedView.class)
+    @JsonView(Views.StockView.class)
     private ProductVariation productVariation;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -32,7 +32,7 @@ public class StockProduct {
     private Stock stock;
 
     @Column(name = "quantity")
-    @JsonView(Views.DetailedView.class)
+    @JsonView(Views.StockView.class)
     private int quantity;
 
     // Embedded ID Class

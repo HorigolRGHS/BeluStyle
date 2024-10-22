@@ -37,10 +37,9 @@ public class StockRestController {
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'STAFF')")
     @GetMapping("/{id}")
-    @JsonView(Views.DetailedView.class)
+    @JsonView(Views.StockView.class)
     public Stock getStockById(@PathVariable int id) {
         return stockService.findById(id).orElse(null);
     }
-
 
 }

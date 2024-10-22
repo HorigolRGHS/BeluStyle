@@ -17,11 +17,11 @@ public class Size {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "size_id")
-    @JsonView(Views.ListView.class)
+    @JsonView({Views.StockView.class, Views.TransactionView.class})
     private int sizeId;
 
     @Column(name = "size_name")
-    @JsonView(Views.ListView.class)
+    @JsonView({Views.StockView.class, Views.TransactionView.class})
     private String sizeName;
 
 }

@@ -11,6 +11,7 @@ public class ViewUserDTO {
     private String userId;
     private String username;
     private String email;
+    private String role;
     private Boolean enable;
     private Date createdAt;
     private Date updatedAt;
