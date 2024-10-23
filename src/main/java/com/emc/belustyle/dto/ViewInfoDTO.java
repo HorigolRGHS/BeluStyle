@@ -7,6 +7,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ViewInfoDTO {
+    private String userId;
     private String username;
     private String email;
     private String fullName;

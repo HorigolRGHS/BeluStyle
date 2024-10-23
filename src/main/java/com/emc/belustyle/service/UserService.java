@@ -208,16 +208,12 @@ public class UserService {
             User existingUser = existingUserOptional.get();
             existingUser.setFullName(updatedUser.getFullName());
             existingUser.setUserImage(updatedUser.getUserImage());
-            existingUser.setCurrentPaymentMethod(updatedUser.getCurrentPaymentMethod());
             existingUser.setUserAddress(updatedUser.getUserAddress());
             return userRepository.save(existingUser);
         } else {
             return null;
         }
     }
-
-
-
 
     public List<User> findAll() {
         return userRepository.findAll();
@@ -318,6 +314,7 @@ public class UserService {
     }
     private ViewInfoDTO mapUserToViewInfoDTO(User user) {
         ViewInfoDTO viewInfoDTO = new ViewInfoDTO();
+        viewInfoDTO.setUserId(user.getUserId());
         viewInfoDTO.setUsername(user.getUsername());
         viewInfoDTO.setEmail(user.getEmail());
         viewInfoDTO.setFullName(user.getFullName());
