@@ -37,16 +37,9 @@ public class UserRestController {
             currentUsername = ((UserDetails) authentication.getPrincipal()).getUsername();
         }
         UpdateUserDTO updateUserDTO = userService.getCustomerInfoByUsername(currentUsername);
-        if (updateUserDTO != null) {
-            UpdateUserDTO responseDTO = new UpdateUserDTO(
-                    updateUserDTO.getUserId(),
-                    updateUserDTO.getFullName(),
-                    updateUserDTO.getUserImage(),
-                    updateUserDTO.getCurrentPaymentMethod(),
-                    updateUserDTO.getUserAddress()
-            );
-            return ResponseEntity.ok(responseDTO);
-        }
+            if (updateUserDTO != null) {
+                return ResponseEntity.ok(updateUserDTO);
+            }
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body("User not found.");
     }
 }
