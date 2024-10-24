@@ -22,6 +22,7 @@ public class AccountRestController {
         this.userService = userService;
     }
 
+    // View personal info
     @PreAuthorize("hasAnyAuthority('CUSTOMER','STAFF','ADMIN')")
     @GetMapping("/me")
     public ResponseEntity<?> getMyInfo() {
@@ -38,6 +39,7 @@ public class AccountRestController {
     }
 
 
+    // Staff viewed by Admin
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/admin/{userId}")
     public ResponseEntity<?> getStaffInfoById(@PathVariable String userId) {
@@ -48,6 +50,7 @@ public class AccountRestController {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You can only view staff information.");
     }
 
+    // Update personal info
     @PreAuthorize("hasAnyAuthority('CUSTOMER','ADMIN')")
     @PutMapping
     public ResponseEntity<?> updateUserInfo(@RequestBody UpdateUserDTO updatedUserInfo) {

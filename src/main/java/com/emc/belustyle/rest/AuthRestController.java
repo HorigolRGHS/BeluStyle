@@ -99,7 +99,7 @@ public class AuthRestController {
                     + "<p style=\"color: #999; font-size: 12px;\">&copy; " + currentYear + " EMC Company. All rights reserved.</p>"
                     + "</div>";
 
-            emailService.sendHtmlMessage(userDTO.getEmail(), "Confirm Your Registration", htmlContent);
+//            emailService.sendHtmlMessage(userDTO.getEmail(), "Confirm Your Registration", htmlContent);
 
             responseDTO.setStatusCode(HttpStatus.CREATED.value());
             responseDTO.setMessage("We have sent an email to your email for confirmation, please check it!");

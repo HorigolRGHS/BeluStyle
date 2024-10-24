@@ -288,7 +288,7 @@ public class UserService {
         UserRole role = userRoleService.findById(3);
         user.setRole(role);
 
-        user.setCurrentPaymentMethod(userDTO.getCurrentPaymentMethod());
+//        user.setCurrentPaymentMethod(userDTO.getCurrentPaymentMethod());
         user.setUserAddress(userDTO.getUserAddress());
 
         return createUser(user);
@@ -319,6 +319,7 @@ public class UserService {
     }
     private ViewInfoDTO mapUserToViewInfoDTO(User user) {
         ViewInfoDTO viewInfoDTO = new ViewInfoDTO();
+        viewInfoDTO.setUserId(user.getUserId());
         viewInfoDTO.setUsername(user.getUsername());
         viewInfoDTO.setEmail(user.getEmail());
         viewInfoDTO.setFullName(user.getFullName());
