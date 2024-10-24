@@ -207,9 +207,9 @@ public class UserService {
         Optional<User> existingUserOptional = userRepository.findById(userId);
         if (existingUserOptional.isPresent()) {
             User existingUser = existingUserOptional.get();
-            existingUser.setFullName(updatedUserInfo.getFullName());
-            existingUser.setUserImage(updatedUserInfo.getUserImage());
-            existingUser.setUserAddress(updatedUserInfo.getUserAddress());
+            existingUser.setFullName(updatedUser.getFullName());
+            existingUser.setUserImage(updatedUser.getUserImage());
+            existingUser.setUserAddress(updatedUser.getUserAddress());
             return userRepository.save(existingUser);
         } else {
             return null;

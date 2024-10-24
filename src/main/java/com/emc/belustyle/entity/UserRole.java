@@ -1,4 +1,5 @@
 package com.emc.belustyle.entity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -23,6 +24,7 @@ public class UserRole {
     private RoleName roleName;
 
     @OneToMany(mappedBy = "role", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<User> users;
 
     public enum RoleName {

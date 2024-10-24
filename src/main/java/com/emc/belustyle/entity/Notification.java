@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
 import lombok.*;
 
+import javax.management.relation.Role;
 import java.util.Date;
 
 @Entity
@@ -29,9 +30,10 @@ public class Notification {
     @JsonView(Views.ListView.class)
     private String message;
 
-    @Column(name = "target_role_id")
-    @JsonView(Views.ListView.class)
-    private Integer targetRoleId;
+
+    @ManyToOne
+    @JoinColumn(name = "target_role_id", referencedColumnName = "role_id")
+    private UserRole role;
 
     @Column(name = "created_at", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
