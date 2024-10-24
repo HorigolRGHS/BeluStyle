@@ -95,9 +95,22 @@ public class SaleService {
             Sale sale = saleRepository.findById(saleId).orElseThrow(() -> new RuntimeException("Sale not found"));
             responseDTO.setMessage("Sale not found");
             responseDTO.setStatusCode(404);
+
             for (String productId : productIds) {
                 Product product = productRepository.findById(productId).orElseThrow(() -> new RuntimeException("Product not found"));
 
+                // Check for conflicting sales
+                List<SaleProduct> conflictingSales = saleProductRepository.findConflictingSales(
+                        productId, saleId, sale.getStartDate(), sale.getEndDate()
+                );
+
+                if (!conflictingSales.isEmpty()) {
+                    responseDTO.setStatusCode(HttpStatus.CONFLICT.value());
+                    responseDTO.setMessage("This product is already on another active sale during this period!");
+                    return ResponseEntity.status(responseDTO.getStatusCode()).body(responseDTO);
+                }
+
+                // If no conflicts, add product to sale
                 SaleProduct.SaleProductId id = new SaleProduct.SaleProductId();
                 id.setSaleId(saleId);
                 id.setProductId(productId);
@@ -107,15 +120,19 @@ public class SaleService {
                 saleProduct.setSale(sale);
                 saleProduct.setProduct(product);
                 saleProductRepository.save(saleProduct);
-                responseDTO.setStatusCode(HttpStatus.CREATED.value());
-                responseDTO.setMessage("Sale added successfully");
             }
-        }catch (RuntimeException e) {
-            responseDTO.setMessage("Product not found");
-            responseDTO.setStatusCode(404);
+
+            responseDTO.setStatusCode(HttpStatus.CREATED.value());
+            responseDTO.setMessage("Products added successfully to sale");
+            return ResponseEntity.status(responseDTO.getStatusCode()).body(responseDTO);
+
+        } catch (RuntimeException e) {
+            responseDTO.setMessage("An error occurred: " + e.getMessage());
+            responseDTO.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ResponseEntity.status(responseDTO.getStatusCode()).body(responseDTO);
         }
-        return ResponseEntity.ok(responseDTO);
     }
+
 
     @Transactional
     public ResponseEntity<ResponseDTO> removeProductFromSale(int saleId, String productId) {

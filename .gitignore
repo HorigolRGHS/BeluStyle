@@ -35,3 +35,4 @@ build/
 ### application ###
 application.yaml
 application.properties
+VNPAYConfig.java
