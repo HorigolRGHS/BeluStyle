@@ -332,6 +332,17 @@ public class UserService {
         Optional<User> userOptional = userRepository.findById(userId);
         return userOptional.map(this::mapUserToViewInfoDTO).orElse(null);
     }
+
+    public boolean disableAccount(String userId) {
+        Optional<User> userOptional = userRepository.findById(userId);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            user.setEnable(false);
+            userRepository.save(user);
+            return true;
+        }
+        return false;
+    }
 }
 
 
