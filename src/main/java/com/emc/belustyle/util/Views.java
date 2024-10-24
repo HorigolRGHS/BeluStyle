@@ -6,5 +6,6 @@ public class Views {
     public static class DetailedView extends CoreView {}
 
     public static class StockView{}
+    public static class ProductView{}
     public static class TransactionView{}
 }

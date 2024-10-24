@@ -61,7 +61,7 @@ public class AccountRestController {
         if (currentUser == null) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("User not found.");
         }
-        if (!currentUser.getUsername().equals(updatedUserInfo.getUsername())) {
+        if (!currentUser.getUserId().equals(updatedUserInfo.getUserId())) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You cannot update userId or other restricted fields.");
         }
         User updated = userService.updateUserInfo(currentUser.getUserId(), updatedUserInfo);
@@ -71,7 +71,6 @@ public class AccountRestController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Failed to update user information.");
         }
     }
-  
     @PreAuthorize("hasAuthority('CUSTOMER')")
     @PostMapping("/request-delete")
     public ResponseEntity<?> requestDeleteAccount() {
