@@ -22,6 +22,7 @@ public class AccountRestController {
         this.userService = userService;
     }
 
+    //View personal account (Staff, Admin)
     @PreAuthorize("hasAnyAuthority('STAFF','ADMIN')")
     @GetMapping("/me")
     public ResponseEntity<?> getMyInfo() {
@@ -36,6 +37,8 @@ public class AccountRestController {
         }
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body("User not found.");
     }
+
+    //View staff info (admin)
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/admin/{userId}")
     public ResponseEntity<?> getStaffInfoById(@PathVariable String userId) {
@@ -46,6 +49,7 @@ public class AccountRestController {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You can only view staff information.");
     }
 
+    //Update personal account information
     @PreAuthorize("hasAnyAuthority('CUSTOMER','ADMIN')")
     @PutMapping
     public ResponseEntity<?> updateUserInfo(@RequestBody UpdateUserDTO updatedUserInfo) {
@@ -69,6 +73,8 @@ public class AccountRestController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Failed to update user information.");
         }
     }
+
+    //Request to disable account
     @PreAuthorize("hasAuthority('CUSTOMER')")
     @PostMapping("/request-delete")
     public ResponseEntity<?> requestDeleteAccount() {

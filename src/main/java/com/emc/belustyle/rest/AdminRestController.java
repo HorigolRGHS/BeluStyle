@@ -30,6 +30,7 @@ public class AdminRestController {
         this.userService = userService;;
     }
 
+    //Create Staff account
     @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping
     public ResponseEntity<String> createUser(@RequestBody UserDTO userDTO) {
@@ -43,6 +44,7 @@ public class AdminRestController {
         }
     }
 
+    //View account list
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping
     public ResponseEntity<Page<ViewUserDTO>> getAllUser(
@@ -52,6 +54,7 @@ public class AdminRestController {
         return ResponseEntity.ok(users);
     }
 
+    //View account by id
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/{userId}")
     public ResponseEntity<ViewUserDTO> getUserById(@PathVariable String userId) {
@@ -63,7 +66,7 @@ public class AdminRestController {
         }
     }
 
-
+    //Delete account
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{userId}")
     public ResponseEntity<?> deleteUser(@PathVariable String userId) {
@@ -75,7 +78,7 @@ public class AdminRestController {
         }
     }
 
-
+    //Search account
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/users/search")
     public ResponseEntity<List<UserIdNameDTO>> getAllUsers() {
@@ -83,6 +86,7 @@ public class AdminRestController {
         return ResponseEntity.ok(users);
     }
 
+    //Update account
     @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("/{userId}")
     public ResponseEntity<?> updateUser(@PathVariable String userId, @RequestBody AdminUpdateDTO adminUpdateDTO) {

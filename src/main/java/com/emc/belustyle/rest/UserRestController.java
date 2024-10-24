@@ -28,6 +28,8 @@ public class UserRestController {
         this.userService = userService;
         this.userRoleService = userRoleService;
     }
+
+    //View personal account (customer)
     @PreAuthorize("hasAuthority('CUSTOMER')")
     @GetMapping("/me")
     public ResponseEntity<?> getMyInfo() {

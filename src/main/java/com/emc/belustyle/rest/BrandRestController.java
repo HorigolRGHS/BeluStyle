@@ -23,6 +23,7 @@ public class BrandRestController {
         this.brandService = brandService;
     }
 
+    //Delete brand by id
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("{brandId}")
     public ResponseEntity<?> deleteBrand(@PathVariable int brandId) {
@@ -35,6 +36,7 @@ public class BrandRestController {
         }
     }
 
+    //View brand list
     @PreAuthorize("permitAll()")
     @GetMapping
     public ResponseEntity<List<BrandDTO>> getAllBrands() {
@@ -42,6 +44,7 @@ public class BrandRestController {
         return ResponseEntity.ok(brands);
     }
 
+    //View brand by id
     @PreAuthorize("hasAnyAuthority('ADMIN','STAFF')")
     @GetMapping("/{brandId}")
     public ResponseEntity<Brand> getBrandById(@PathVariable int brandId) {
@@ -53,6 +56,7 @@ public class BrandRestController {
         }
     }
 
+    //Search brand
     @PreAuthorize("hasAnyAuthority('ADMIN','STAFF')")
     @GetMapping("/search")
     public ResponseEntity<List<SearchBrandDTO>> getAllBrand() {
@@ -60,6 +64,7 @@ public class BrandRestController {
         return ResponseEntity.ok(result);
     }
 
+    //Create brand
     @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping
     public Brand createBrand(@RequestBody Brand brand) {
@@ -67,6 +72,7 @@ public class BrandRestController {
         return brandService.createBrand(brand);
     }
 
+    //Update brand
     @PreAuthorize("hasAnyAuthority('ADMIN','STAFF')")
     @PutMapping
     public ResponseEntity<?> updateBrand(@RequestBody Brand updatedBrand) {
