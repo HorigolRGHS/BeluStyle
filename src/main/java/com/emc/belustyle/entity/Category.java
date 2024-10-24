@@ -20,29 +20,26 @@ public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "category_id")
-    @JsonView(Views.ListView.class)
+    @JsonView({Views.StockView.class, Views.TransactionView.class})
     private int categoryId;
 
     @Column(name = "category_name", nullable = false)
-    @JsonView(Views.ListView.class)
+    @JsonView({Views.StockView.class,Views.TransactionView.class})
     private String categoryName;
 
     @Column(name = "category_description")
-    @JsonView(Views.ListView.class)
     private String categoryDescription;
 
     @Column(name = "image_url")
-    @JsonView(Views.ListView.class)
+    @JsonView(Views.StockView.class)
     private String imageUrl;
 
     @Column(name = "created_at", updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    @JsonView(Views.CoreView.class)
     private Date createdAt;
 
     @Column(name = "updated_at")
     @Temporal(TemporalType.TIMESTAMP)
-    @JsonView(Views.CoreView.class)
     private Date updatedAt;
 
     @PrePersist

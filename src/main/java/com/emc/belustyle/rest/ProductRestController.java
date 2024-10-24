@@ -2,14 +2,10 @@ package com.emc.belustyle.rest;
 
 import com.emc.belustyle.dto.ProductDTO;
 import com.emc.belustyle.dto.mapper.ProductMapper;
-import com.emc.belustyle.entity.Brand;
 import com.emc.belustyle.entity.Product;
 import com.emc.belustyle.service.BrandService;
 import com.emc.belustyle.service.CategoryService;
 import com.emc.belustyle.service.ProductService;
-import com.emc.belustyle.util.Views;
-import com.fasterxml.jackson.annotation.JsonView;
-import org.hibernate.annotations.View;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;

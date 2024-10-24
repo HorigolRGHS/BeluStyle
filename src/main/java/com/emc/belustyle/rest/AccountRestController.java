@@ -1,5 +1,6 @@
 package com.emc.belustyle.rest;
 
+import com.emc.belustyle.dto.UpdateUserDTO;
 import com.emc.belustyle.dto.ViewInfoDTO;
 import com.emc.belustyle.entity.User;
 import com.emc.belustyle.service.UserService;
@@ -36,6 +37,7 @@ public class AccountRestController {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body("User not found.");
     }
 
+
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/admin/{userId}")
     public ResponseEntity<?> getStaffInfoById(@PathVariable String userId) {
@@ -48,7 +50,7 @@ public class AccountRestController {
 
     @PreAuthorize("hasAnyAuthority('CUSTOMER','ADMIN')")
     @PutMapping
-    public ResponseEntity<?> updateUserInfo(@RequestBody User updatedUserInfo) {
+    public ResponseEntity<?> updateUserInfo(@RequestBody UpdateUserDTO updatedUserInfo) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUsername = null;
         if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
@@ -62,14 +64,14 @@ public class AccountRestController {
         if (!currentUser.getUsername().equals(updatedUserInfo.getUsername())) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You cannot update userId or other restricted fields.");
         }
-        User updated = userService.updateUserInfo(updatedUserInfo);
+        User updated = userService.updateUserInfo(currentUser.getUserId(), updatedUserInfo);
         if (updated != null) {
             return ResponseEntity.ok("User information updated successfully.");
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Failed to update user information.");
         }
     }
-
+  
     @PreAuthorize("hasAuthority('CUSTOMER')")
     @PostMapping("/request-delete")
     public ResponseEntity<?> requestDeleteAccount() {
@@ -93,5 +95,6 @@ public class AccountRestController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to disable the account.");
         }
     }
+
 }
 

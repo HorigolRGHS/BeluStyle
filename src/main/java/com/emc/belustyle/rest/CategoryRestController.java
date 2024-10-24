@@ -51,7 +51,6 @@ public class CategoryRestController {
 
     @PreAuthorize("hasAnyAuthority('STAFF', 'ADMIN')")
     @GetMapping("/{id}")
-    @JsonView(Views.DetailedView.class)
     public ResponseEntity<?> getCategoryById(@PathVariable int id) {
         ResponseDTO responseDTO = new ResponseDTO();
         Category category = categoryService.findById(id);

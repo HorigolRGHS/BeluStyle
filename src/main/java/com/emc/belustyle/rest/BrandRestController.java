@@ -1,5 +1,6 @@
 package com.emc.belustyle.rest;
 
+import com.emc.belustyle.dto.BrandDTO;
 import com.emc.belustyle.dto.SearchBrandDTO;
 import com.emc.belustyle.entity.Brand;
 import com.emc.belustyle.service.BrandService;
@@ -36,8 +37,8 @@ public class BrandRestController {
 
     @PreAuthorize("permitAll()")
     @GetMapping
-    public ResponseEntity<List<Brand>> getAllBrands() {
-        List<Brand> brands = brandService.findAll();
+    public ResponseEntity<List<BrandDTO>> getAllBrands() {
+        List<BrandDTO> brands = brandService.getAllBrandsWithQuantity();
         return ResponseEntity.ok(brands);
     }
 

@@ -202,8 +202,9 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public User updateUserInfo(User updatedUser) {
-        Optional<User> existingUserOptional = userRepository.findById(updatedUser.getUserId());
+    @Transactional
+    public User updateUserInfo(String userId, UpdateUserDTO updatedUserInfo) {
+        Optional<User> existingUserOptional = userRepository.findById(userId);
         if (existingUserOptional.isPresent()) {
             User existingUser = existingUserOptional.get();
             existingUser.setFullName(updatedUser.getFullName());
@@ -232,12 +233,12 @@ public class UserService {
     }
 
     @Transactional
-    public User updateUserDetails(String userId, User updatedUser) throws CustomException {
+    public User updateUserDetails(String userId, AdminUpdateDTO adminUpdateDTO) throws CustomException {
         User existingUser = findById(userId);
         if (existingUser == null) {
             throw new CustomException("User not found", HttpStatus.NOT_FOUND);
         }
-        existingUser.setEnable(updatedUser.getEnable());
+        existingUser.setEnable(adminUpdateDTO.getEnable());
         return userRepository.save(existingUser);
     }
 
@@ -245,8 +246,10 @@ public class UserService {
         Pageable pageable = PageRequest.of(page, size);
         Page<User> userPage = userRepository.findAll(pageable);
         return userPage.map(user -> new ViewUserDTO(
+                user.getUserId(),
                 user.getUsername(),
                 user.getEmail(),
+                user.getRole().getRoleName().toString(),
                 user.getEnable(),
                 user.getCreatedAt(),
                 user.getUpdatedAt()));
@@ -298,8 +301,10 @@ public class UserService {
         }
 
         return new ViewUserDTO(
+                user.getUserId(),
                 user.getUsername(),
                 user.getEmail(),
+                user.getRole().getRoleName().toString(),
                 user.getEnable(),
                 user.getCreatedAt(),
                 user.getUpdatedAt()

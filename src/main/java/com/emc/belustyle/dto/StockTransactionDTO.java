@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -15,5 +16,12 @@ public class StockTransactionDTO {
     private Integer stockId;
     private Integer variationId;
     private String transactionType;
-    private Integer quantity;
+    private List<ProductVariationQuantity> variations;
+
+
+    @Data
+    public static class ProductVariationQuantity {
+        private Integer productVariationId;
+        private Integer quantity;
+    }
 }
