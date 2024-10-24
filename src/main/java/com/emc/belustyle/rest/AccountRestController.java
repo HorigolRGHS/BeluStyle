@@ -22,7 +22,7 @@ public class AccountRestController {
         this.userService = userService;
     }
 
-    @PreAuthorize("hasAnyAuthority('CUSTOMER','STAFF','ADMIN')")
+    @PreAuthorize("hasAnyAuthority('STAFF','ADMIN')")
     @GetMapping("/me")
     public ResponseEntity<?> getMyInfo() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

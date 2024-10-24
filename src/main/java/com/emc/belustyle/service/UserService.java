@@ -316,6 +316,20 @@ public class UserService {
         }
         return null;
     }
+    public UpdateUserDTO getCustomerInfoByUsername(String username) {
+        User user = findByUsername(username);
+        if (user != null) {
+            return new UpdateUserDTO(
+                    user.getUserId(),  // Keep userId for internal use
+                    user.getFullName(),
+                    user.getUserImage(),
+                    user.getCurrentPaymentMethod(),
+                    user.getUserAddress()
+            );
+        }
+        return null;
+    }
+
     private ViewInfoDTO mapUserToViewInfoDTO(User user) {
         ViewInfoDTO viewInfoDTO = new ViewInfoDTO();
         viewInfoDTO.setUsername(user.getUsername());
