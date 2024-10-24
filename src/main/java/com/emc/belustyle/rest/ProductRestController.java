@@ -1,11 +1,15 @@
 package com.emc.belustyle.rest;
 
 import com.emc.belustyle.dto.ProductDTO;
+import com.emc.belustyle.dto.ProductListDTO;
 import com.emc.belustyle.dto.mapper.ProductMapper;
 import com.emc.belustyle.entity.Product;
 import com.emc.belustyle.service.BrandService;
 import com.emc.belustyle.service.CategoryService;
 import com.emc.belustyle.service.ProductService;
+import com.emc.belustyle.service.ProductVariationService;
+import com.emc.belustyle.util.Views;
+import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -28,11 +32,12 @@ public class ProductRestController {
     }
 
     @GetMapping()
-    public List<Product> getAllProducts() {
-        return productService.findAll();
+    public List<ProductListDTO> getAllProducts() {
+        return productService.getListProduct();
     }
 
     @GetMapping("/{productId}")
+    @JsonView(Views.ProductView.class)
     public ResponseEntity<?> getProductById(@PathVariable String productId) {
         Product product = productService.findById(productId);
         if (product != null) {

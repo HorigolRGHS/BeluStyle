@@ -19,7 +19,7 @@ public class ProductVariation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "variation_id")
-    @JsonView({Views.StockView.class, Views.TransactionView.class})
+    @JsonView({Views.StockView.class, Views.TransactionView.class, Views.ProductView.class})
     private int variationId;
 
     @ManyToOne
@@ -29,20 +29,20 @@ public class ProductVariation {
 
     @ManyToOne
     @JoinColumn(name = "size_id")
-    @JsonView({Views.StockView.class, Views.TransactionView.class})
+    @JsonView({Views.StockView.class, Views.TransactionView.class, Views.ProductView.class})
     private Size size;
 
     @ManyToOne
     @JoinColumn(name = "color_id")
-    @JsonView({Views.StockView.class, Views.TransactionView.class})
+    @JsonView({Views.StockView.class, Views.TransactionView.class, Views.ProductView.class})
     private Color color;
 
     @Column(name = "product_variation_image")
-    @JsonView({Views.StockView.class, Views.TransactionView.class })
+    @JsonView({Views.StockView.class, Views.TransactionView.class, Views.ProductView.class})
     private String productVariationImage;
 
     @Column(name = "product_price", precision = 10, scale = 2)
-    @JsonView({Views.StockView.class, Views.TransactionView.class})
+    @JsonView({Views.StockView.class, Views.TransactionView.class, Views.ProductView.class})
     private BigDecimal productPrice;
 
 //
