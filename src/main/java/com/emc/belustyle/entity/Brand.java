@@ -23,18 +23,18 @@ public class Brand {
     private int brandId;
 
     @Column(name = "brand_name", nullable = false)
-    @JsonView({Views.StockView.class, Views.TransactionView.class})
+    @JsonView({Views.StockView.class, Views.TransactionView.class, Views.ProductView.class})
     private String brandName;
 
     @Column(name = "brand_description")
     private String brandDescription;
 
     @Column(name = "logo_url")
-    @JsonView(Views.StockView.class)
+    @JsonView({Views.StockView.class})
     private String logoUrl;
 
     @Column(name = "website_url")
-    @JsonView(Views.StockView.class)
+    @JsonView({Views.StockView.class})
     private String websiteUrl;
 
     @Column(name = "created_at", updatable = false)

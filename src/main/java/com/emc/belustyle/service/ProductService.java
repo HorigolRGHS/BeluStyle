@@ -1,5 +1,7 @@
 package com.emc.belustyle.service;
 
+import com.emc.belustyle.dto.ProductListDTO;
+import com.emc.belustyle.entity.Sale;
 import com.emc.belustyle.repo.ProductRepository;
 import com.emc.belustyle.entity.Brand;
 import com.emc.belustyle.entity.Product;
@@ -8,6 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,9 +33,7 @@ public class ProductService {
     }
 
     @Transactional
-    public void deleteProduct( String id) {
-        productRepository.deleteById(id);
-    }
+    public void deleteProduct(String id) { productRepository.deleteById(id); }
 
     @Transactional
     public Product createProduct(Product product) {
@@ -49,10 +51,33 @@ public class ProductService {
             product.setProductDescription(updatedProduct.getProductDescription());
             product.setBrand(updatedProduct.getBrand());
             product.setCategory(updatedProduct.getCategory());
+
             return productRepository.save(product);
         } else {
             return null;
         }
+    }
+
+    public List<ProductListDTO> getListProduct(){
+        List<Object[]> result = productRepository.getListProduct();
+        List<ProductListDTO> productList = new ArrayList<>();
+        for (Object[] row : result) {
+            ProductListDTO productListDTO = new ProductListDTO();
+            productListDTO.setProductId((String)row[0]);
+            productListDTO.setProductName((String)row[1]);
+            productListDTO.setProductDescription((String)row[2]);
+            productListDTO.setBrandName((String)row[3]);
+            productListDTO.setCategoryName((String)row[4]);
+            productListDTO.setProductVariationImage((String)row[5]);
+            productListDTO.setProductPrice((BigDecimal)row[6]);
+            productListDTO.setSaleType((Sale.SaleType) row[7]);
+            productListDTO.setSaleValue((BigDecimal) row[8]);
+            productListDTO.setAverageRating((Double)row[9]);
+            productListDTO.setTotalRatings((Long)row[10]);
+         productList.add(productListDTO);
+
+        }
+        return productList;
     }
 
 }
