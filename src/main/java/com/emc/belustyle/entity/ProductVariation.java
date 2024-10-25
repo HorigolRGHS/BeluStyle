@@ -1,6 +1,8 @@
 package com.emc.belustyle.entity;
 
 import com.emc.belustyle.util.Views;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
 import lombok.*;

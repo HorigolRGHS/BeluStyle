@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 
 public class UpdateUserDTO{
     private String userId;
+    private String username;
     private String fullName;
     private String userImage;
     private String currentPaymentMethod;

@@ -1,7 +1,7 @@
 package com.emc.belustyle.entity;
 
 import com.emc.belustyle.util.Views;
-import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -15,6 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @ToString
 @Table(name = "product")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "productId")
 public class Product {
 
     @Id
@@ -28,7 +29,7 @@ public class Product {
     private String productName;
 
     @OneToMany(mappedBy = "product")
-    @JsonView({Views.StockView.class, Views.TransactionView.class, Views.ProductView.class})
+    @JsonView({Views.TransactionView.class, Views.ProductView.class})
     private List<ProductVariation> productVariations;
 
     @ManyToOne
