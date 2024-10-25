@@ -24,7 +24,7 @@ public class Category {
     private int categoryId;
 
     @Column(name = "category_name", nullable = false)
-    @JsonView({Views.StockView.class,Views.TransactionView.class})
+    @JsonView({Views.StockView.class,Views.TransactionView.class, Views.ProductView.class})
     private String categoryName;
 
     @Column(name = "category_description")
