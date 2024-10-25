@@ -19,10 +19,16 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/sales")
 public class SaleRestController {
-    @Autowired
+
     private SaleService saleService;
-    @Autowired
+
     private SaleRepository saleRepository;
+
+    @Autowired
+    public SaleRestController(SaleService saleService, SaleRepository saleRepository) {
+        this.saleService = saleService;
+        this.saleRepository = saleRepository;
+    }
 
     @GetMapping
     public List<Sale> getAllSales() {

@@ -42,7 +42,7 @@ public class StockTransactionService {
     }
 
     public List<StockTransaction> findAll() {
-        return stockTransactionRepository.findAll();
+        return stockTransactionRepository.findAllByOrderByTransactionIdDesc();
     }
 
     @Transactional

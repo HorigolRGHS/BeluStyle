@@ -22,8 +22,8 @@ public class UserRole {
     @Column(name = "role_name", nullable = false)
     private RoleName roleName;
 
-    @OneToMany(mappedBy = "role", cascade = CascadeType.ALL)
-    private List<User> users;
+//    @OneToMany(mappedBy = "role")
+//    private List<User> users;
 
     public enum RoleName {
         ADMIN, CUSTOMER, STAFF

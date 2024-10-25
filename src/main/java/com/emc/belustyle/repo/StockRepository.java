@@ -21,10 +21,10 @@ public interface StockRepository extends JpaRepository<Stock, Integer> {
             "pv.product_price, " +
             "pv.product_variation_image, " +
             "pr.product_name, " +
-            "pr.product_id, " + // Added product ID
-            "br.brand_id, " + // Added brand ID
+            "pr.product_id, " +
+            "br.brand_id, " +
             "br.brand_name, " +
-            "ct.category_id, " + // Added category ID
+            "ct.category_id, " +
             "ct.category_name, " +
             "sz.size_name, " +
             "cl.color_name, " +
