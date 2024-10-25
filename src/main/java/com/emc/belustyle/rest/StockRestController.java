@@ -1,6 +1,7 @@
 package com.emc.belustyle.rest;
 
 import com.emc.belustyle.dto.StockDTO;
+import com.emc.belustyle.dto.StockDetailDTO;
 import com.emc.belustyle.dto.mapper.StockMapper;
 import com.emc.belustyle.entity.Stock;
 import com.emc.belustyle.service.StockService;
@@ -35,11 +36,17 @@ public class StockRestController {
          return stockService.findAll();
     }
 
+//    @PreAuthorize("hasAnyAuthority('ADMIN', 'STAFF')")
+//    @GetMapping("/{id}")
+//    @JsonView(Views.StockView.class)
+//    public Stock getStockById(@PathVariable int id) {
+//        return stockService.findById(id).orElse(null);
+//    }
+
     @PreAuthorize("hasAnyAuthority('ADMIN', 'STAFF')")
     @GetMapping("/{id}")
-    @JsonView(Views.StockView.class)
-    public Stock getStockById(@PathVariable int id) {
-        return stockService.findById(id).orElse(null);
+    public List<StockDetailDTO> getStockById(@PathVariable int id) {
+        return stockService.getStockDetails(id);
     }
 
 }
