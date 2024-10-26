@@ -1,6 +1,5 @@
 package com.emc.belustyle.entity;
 
-
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -32,5 +31,10 @@ public class UserDiscount {
     @Temporal(TemporalType.TIMESTAMP)
     private Date usedAt;
 
+    public UserDiscount(Integer discountId, String userId) {
+        this.discountId = discountId;
+        this.userId = userId;
+        this.usageCount = 0; // Khởi tạo với giá trị mặc định là 0
+        this.usedAt = null;
+    }
 }
-
