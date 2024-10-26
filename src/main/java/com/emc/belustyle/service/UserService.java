@@ -319,6 +319,7 @@ public class UserService {
     }
     private ViewInfoDTO mapUserToViewInfoDTO(User user) {
         ViewInfoDTO viewInfoDTO = new ViewInfoDTO();
+        viewInfoDTO.setUserId(user.getUserId());
         viewInfoDTO.setUsername(user.getUsername());
         viewInfoDTO.setEmail(user.getEmail());
         viewInfoDTO.setFullName(user.getFullName());
