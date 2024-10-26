@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -76,7 +77,7 @@ public class DiscountService {
 
     // Lấy danh sách discount với phân trang
     public Page<DiscountDTO> getAllDiscounts(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "discountId"));
         return discountRepository.findAll(pageable)
                 .map(this::convertToDTO);
     }
@@ -125,6 +126,7 @@ public class DiscountService {
         discount.setUsageLimit(discountDTO.getUsageLimit());
 
 
+        System.out.printf(discount.toString()   );
         return discount;
     }
 

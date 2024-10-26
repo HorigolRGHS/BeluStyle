@@ -80,7 +80,18 @@ public class Discount {
     }
 
     public enum DiscountStatus {
-        ACTIVE, EXPIRED, USED
+       INACTIVE, ACTIVE, EXPIRED, USED
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = new Date();
+        updatedAt = new Date();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = new Date();
     }
 
 }
