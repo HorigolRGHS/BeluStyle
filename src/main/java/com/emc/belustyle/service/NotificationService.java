@@ -4,6 +4,8 @@ import com.emc.belustyle.dto.NotificationDTO;
 import com.emc.belustyle.dto.ResponseDTO;
 import com.emc.belustyle.entity.Notification;
 import com.emc.belustyle.repo.NotificationRepository;
+import com.emc.belustyle.repo.UserRepository;
+import com.emc.belustyle.repo.UserRoleRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,12 +19,13 @@ import java.util.Optional;
 @Service
 public class NotificationService {
 
-
     private NotificationRepository notificationRepository;
+    private UserRoleRepository userRoleRepository;
 
     @Autowired
-    public NotificationService(NotificationRepository notificationRepository) {
+    public NotificationService(NotificationRepository notificationRepository, UserRoleRepository userRoleRepository) {
         this.notificationRepository = notificationRepository;
+        this.userRoleRepository = userRoleRepository;
     }
 
     public List<Notification> getListNotification() {
@@ -40,12 +43,15 @@ public class NotificationService {
     }
 
     @Transactional
-    public ResponseEntity<?> addNotification(Notification notification) {
+    public ResponseEntity<?> addNotification(NotificationDTO notificationDTO) {
         ResponseDTO responseDTO = new ResponseDTO();
+        Notification notification = new Notification();
+        notification.setTitle(notificationDTO.getTitle());
+        notification.setMessage(notificationDTO.getMessage());
+        notification.setRole(userRoleRepository.findById(notificationDTO.getTargetRoleId()).orElse(null));
         notificationRepository.save(notification);
         responseDTO.setMessage("Successfully added notification");
         return ResponseEntity.status(200).body(responseDTO);
-
     }
 
     @Transactional
@@ -69,25 +75,26 @@ public class NotificationService {
            NotificationDTO notificationDTO = new NotificationDTO();
            notificationDTO.setTitle((String) result[0]);
            notificationDTO.setMessage((String) result[1]);
+           notificationDTO.setCreatedAt((Date) result[2]);
            notificationList.add(notificationDTO);
        }
 
        return notificationList;
     }
 
-    @Transactional
-    public ResponseEntity<?> updateNotification(Notification notification) {
-        ResponseDTO responseDTO = new ResponseDTO();
-        Notification updatedNotification = notificationRepository.getById(notification.getNotificationId());
-        if (updatedNotification != null) {
-            updatedNotification.setTitle(notification.getTitle());
-            updatedNotification.setMessage(notification.getMessage());
-            updatedNotification.setRole(notification.getRole());
-            notificationRepository.save(updatedNotification);
-            responseDTO.setMessage("Successfully updated notification");
-            return ResponseEntity.status(200).body(responseDTO);
-        }
-        responseDTO.setMessage("Notification not found");
-        return ResponseEntity.status(404).body(responseDTO);
-    }
+//    @Transactional
+//    public ResponseEntity<?> updateNotification(Notification notification) {
+//        ResponseDTO responseDTO = new ResponseDTO();
+//        Notification updatedNotification = notificationRepository.getById(notification.getNotificationId());
+//        if (updatedNotification != null) {
+//            updatedNotification.setTitle(notification.getTitle());
+//            updatedNotification.setMessage(notification.getMessage());
+//            updatedNotification.setRole(notification.getRole());
+//            notificationRepository.save(updatedNotification);
+//            responseDTO.setMessage("Successfully updated notification");
+//            return ResponseEntity.status(200).body(responseDTO);
+//        }
+//        responseDTO.setMessage("Notification not found");
+//        return ResponseEntity.status(404).body(responseDTO);
+//    }
 }

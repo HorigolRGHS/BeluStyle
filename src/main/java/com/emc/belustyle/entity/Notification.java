@@ -29,7 +29,6 @@ public class Notification {
     @JsonView(Views.ListView.class)
     private String message;
 
-
     @ManyToOne
     @JoinColumn(name = "target_role_id", referencedColumnName = "role_id")
     private UserRole role;

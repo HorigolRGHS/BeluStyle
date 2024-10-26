@@ -21,34 +21,34 @@ public class NotificationRestController {
         this.notificationService = notificationService;
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
-    @GetMapping("/admin")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'STAFF')")
+    @GetMapping("/as")
     public List<Notification> getNotifications() {
         return notificationService.getListNotification();
     }
 
-    @PreAuthorize("hasAuthority('STAFF')")
-    @GetMapping("/staff")
-    @JsonView(Views.ListView.class)
-    public ResponseEntity<List<NotificationDTO>> getNotificationsbyStaff() {
-        return ResponseEntity.ok(notificationService.getNotificationsByRoleId(3));
-    }
-
-    @PreAuthorize("hasAuthority('CUSTOMER')")
+    @PreAuthorize("hasAnyAuthority('CUSTOMER')")
     @GetMapping
     @JsonView(Views.ListView.class)
     public ResponseEntity<List<NotificationDTO>> getNotificationsbyUser() {
         return ResponseEntity.ok(notificationService.getNotificationsByRoleId(2));
     }
 
-//    @GetMapping("/{id}")
-//    public ResponseEntity<?> getNotificationById(@PathVariable Integer id) {
-//        return notificationService.getNotificationById(id);
-//    }
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getNotificationById(@PathVariable Integer id) {
+        return notificationService.getNotificationById(id);
+    }
 
-    @PreAuthorize("hasAnyAuthority('STAFF', 'ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping
-    public ResponseEntity<?> createNotification(@RequestBody Notification notification) {
+    public ResponseEntity<?> createNotification(@RequestBody NotificationDTO notification) {
+        return notificationService.addNotification(notification);
+    }
+
+    @PreAuthorize("hasAuthority('STAFF')")
+    @PostMapping("/staff")
+    public ResponseEntity<?> createNotificationStaff(@RequestBody NotificationDTO notification) {
+        notification.setTargetRoleId(2);
         return notificationService.addNotification(notification);
     }
 
