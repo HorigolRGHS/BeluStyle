@@ -1,14 +1,13 @@
 package com.emc.belustyle.rest;
 
 import com.emc.belustyle.dto.DiscountDTO;
+import com.emc.belustyle.entity.UserDiscount;
 import com.emc.belustyle.service.DiscountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,19 +24,16 @@ public class DiscountRestController {
         this.discountService = discountService;
     }
 
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'STAFF')")
     @PostMapping
     public ResponseEntity<?> createDiscount(@RequestBody DiscountDTO discountDTO) {
         try {
             DiscountDTO createdDiscount = discountService.addDiscount(discountDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdDiscount);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage()); // Trả về thông báo lỗi nếu discount code đã tồn tại
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }
     }
 
-
-    @PreAuthorize("permitAll()")
     @GetMapping("/{discountId}")
     public ResponseEntity<DiscountDTO> getDiscountById(@PathVariable int discountId) {
         Optional<DiscountDTO> discountDTO = discountService.getDiscountById(discountId);
@@ -45,7 +41,6 @@ public class DiscountRestController {
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'STAFF')")
     @PutMapping("/{discountId}")
     public ResponseEntity<DiscountDTO> updateDiscount(
             @PathVariable Integer discountId,
@@ -59,7 +54,6 @@ public class DiscountRestController {
         }
     }
 
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'STAFF')")
     @GetMapping
     public ResponseEntity<Page<DiscountDTO>> getAllDiscounts(
             @RequestParam(defaultValue = "0") int page,
@@ -68,32 +62,61 @@ public class DiscountRestController {
         return ResponseEntity.ok(discounts);
     }
 
-
-    @PreAuthorize("permitAll()")
     @GetMapping("/search")
-    public ResponseEntity<DiscountDTO> findDiscountByCode(@RequestParam String discountCode) {
-        Optional<DiscountDTO> discountDTO = discountService.findDiscountByCode(discountCode);
-        return discountDTO.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+    public ResponseEntity<DiscountDTO> findDiscountByCode(@RequestParam("code") String discountCode) {
+        Optional<DiscountDTO> discount = discountService.findDiscountByCode(discountCode);
+        return discount.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'STAFF')")
-    @PutMapping("/{discountId}/end")
+    @PatchMapping("/{discountId}/end")
     public ResponseEntity<DiscountDTO> endDiscount(@PathVariable int discountId) {
-        Optional<DiscountDTO> endedDiscount = discountService.endDiscount(discountId);
-        return endedDiscount.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+        Optional<DiscountDTO> discount = discountService.endDiscount(discountId);
+        return discount.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    // API xóa discount
     @DeleteMapping("/{discountId}")
-    public ResponseEntity<String> deleteDiscount(@PathVariable Integer discountId) {
-        if (discountService.deleteDiscount(discountId)) {
-            return ResponseEntity.ok("Discount has been successfully deleted."); // Trả về thông báo thành công
-        } else {
-            return ResponseEntity.notFound().build(); // Trả về 404 Not Found nếu không tìm thấy Discount
+    public ResponseEntity<Void> deleteDiscount(@PathVariable int discountId) {
+        discountService.deleteDiscount(discountId);
+        return ResponseEntity.noContent().build();
+    }
+
+    // Kiểm tra số lần sử dụng mã giảm giá
+    @GetMapping("/check-usage")
+    public ResponseEntity<Integer> checkUsage(
+            @RequestParam("userId") String userId,
+            @RequestParam("discountCode") String discountCode) {
+        // Kiểm tra mã giảm giá có tồn tại không
+        Optional<DiscountDTO> discountOpt = discountService.findDiscountByCode(discountCode);
+        if (!discountOpt.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(0); // Trả về 0 nếu không tìm thấy mã giảm giá
+        }
+        int usageCount = discountService.checkDiscountUsage(userId, discountCode);
+        return ResponseEntity.ok(usageCount);
+    }
+    @PostMapping("/{discountId}/users")
+    public ResponseEntity<?> addUserToDiscount(@PathVariable Integer discountId, @RequestParam String userId) {
+        try {
+            discountService.addUserToDiscount(userId, discountId);
+            return ResponseEntity.status(HttpStatus.CREATED).body("User added to discount.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
-}
 
+    @DeleteMapping("/{discountId}/users")
+    public ResponseEntity<?> removeUserFromDiscount(@PathVariable Integer discountId, @RequestParam String userId) {
+        discountService.removeUserFromDiscount(userId, discountId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{discountId}/users")
+    public ResponseEntity<List<UserDiscount>> getUsersByDiscountId(@PathVariable Integer discountId) {
+        List<UserDiscount> users = discountService.getUsersByDiscountId(discountId);
+        return ResponseEntity.ok(users);
+    }
+    @GetMapping("/users/{userId}/discounts")
+    public ResponseEntity<List<DiscountDTO>> getDiscountsByUserId(@PathVariable String userId) {
+        List<DiscountDTO> discounts = discountService.getDiscountsByUserId(userId);
+        return ResponseEntity.ok(discounts);
+    }
+}
