@@ -34,7 +34,7 @@ public class SaleService {
 
     @Transactional
     public List<Sale> findAll() {
-        return saleRepository.findAll();
+        return saleRepository.findAllByOrderBySaleIdDesc();
     }
 
     @Transactional

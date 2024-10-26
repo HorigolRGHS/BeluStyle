@@ -17,10 +17,10 @@ public class StockDetailDTO {
     private BigDecimal productPrice;
     private String productVariationImage;
     private String productName;
-    private String productId; // New field for product ID
-    private Integer brandId;  // New field for brand ID
+    private String productId;
+    private Integer brandId;
     private String brandName;
-    private Integer categoryId; // New field for category ID
+    private Integer categoryId;
     private String categoryName;
     private String sizeName;
     private String colorName;

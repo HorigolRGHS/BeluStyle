@@ -29,14 +29,18 @@ public class Notification {
     @JsonView(Views.ListView.class)
     private String message;
 
-    @Column(name = "target_role_id")
-    @JsonView(Views.ListView.class)
-    private Integer targetRoleId;
+    @ManyToOne
+    @JoinColumn(name = "target_role_id", referencedColumnName = "role_id")
+    private UserRole role;
 
     @Column(name = "created_at", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     @JsonView(Views.ListView.class)
     private Date createdAt;
 
+    @PrePersist
+    protected void onCreate() {
+        createdAt = new Date();
+    }
 }
 
