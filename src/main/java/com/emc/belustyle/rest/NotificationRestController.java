@@ -34,17 +34,17 @@ public class NotificationRestController {
         return ResponseEntity.ok(notificationService.getNotificationsByRoleId(3));
     }
 
-    @PreAuthorize("hasAnyAuthority('CUSTOMER')")
+    @PreAuthorize("hasAuthority('CUSTOMER')")
     @GetMapping
     @JsonView(Views.ListView.class)
     public ResponseEntity<List<NotificationDTO>> getNotificationsbyUser() {
         return ResponseEntity.ok(notificationService.getNotificationsByRoleId(2));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<?> getNotificationById(@PathVariable Integer id) {
-        return notificationService.getNotificationById(id);
-    }
+//    @GetMapping("/{id}")
+//    public ResponseEntity<?> getNotificationById(@PathVariable Integer id) {
+//        return notificationService.getNotificationById(id);
+//    }
 
     @PreAuthorize("hasAnyAuthority('STAFF', 'ADMIN')")
     @PostMapping
@@ -52,11 +52,11 @@ public class NotificationRestController {
         return notificationService.addNotification(notification);
     }
 
-    @PreAuthorize("hasAnyAuthority('STAFF', 'ADMIN')")
-    @PutMapping
-    public ResponseEntity<?> updateNotification(@RequestBody Notification notification) {
-        return notificationService.updateNotification(notification);
-    }
+//    @PreAuthorize("hasAnyAuthority('STAFF', 'ADMIN')")
+//    @PutMapping
+//    public ResponseEntity<?> updateNotification(@RequestBody Notification notification) {
+//        return notificationService.updateNotification(notification);
+//    }
 
     @PreAuthorize("hasAnyAuthority('STAFF', 'ADMIN')")
     @DeleteMapping("/{id}")

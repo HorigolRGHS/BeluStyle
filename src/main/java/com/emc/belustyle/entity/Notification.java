@@ -39,5 +39,9 @@ public class Notification {
     @JsonView(Views.ListView.class)
     private Date createdAt;
 
+    @PrePersist
+    protected void onCreate() {
+        createdAt = new Date();
+    }
 }
 

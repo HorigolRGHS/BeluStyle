@@ -42,7 +42,6 @@ public class NotificationService {
     @Transactional
     public ResponseEntity<?> addNotification(Notification notification) {
         ResponseDTO responseDTO = new ResponseDTO();
-        notification.setCreatedAt(new Date());
         notificationRepository.save(notification);
         responseDTO.setMessage("Successfully added notification");
         return ResponseEntity.status(200).body(responseDTO);
