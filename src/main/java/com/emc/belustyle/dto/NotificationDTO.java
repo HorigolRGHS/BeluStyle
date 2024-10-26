@@ -15,6 +15,7 @@ public class NotificationDTO {
     private String title;
     @JsonView(Views.ListView.class)
     private String message;
-    private String targetRoleId;
+    private int targetRoleId;
+    @JsonView(Views.ListView.class)
     private Date createdAt;
 }
