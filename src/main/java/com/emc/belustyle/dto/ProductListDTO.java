@@ -11,7 +11,9 @@ public class ProductListDTO {
     private String productId;
     private String productName;
     private String productDescription;
+    private int brandId;
     private String brandName;
+    private int categoryId;
     private String categoryName;
     private String productVariationImage;
     private BigDecimal productPrice;

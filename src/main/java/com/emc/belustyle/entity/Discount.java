@@ -95,10 +95,10 @@ public class Discount {
         updatedAt = new Date();
     }
 
-    @PrePersist
-    public void prePersist() {
-        if (this.createdAt == null) {
-            this.createdAt = Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant());
-        }
-    }
+//    @PrePersist
+//    public void prePersist() {
+//        if (this.createdAt == null) {
+//            this.createdAt = Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant());
+//        }
+//    }
 }

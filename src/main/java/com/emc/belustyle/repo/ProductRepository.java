@@ -11,7 +11,7 @@ import java.util.List;
 @Repository
 public interface ProductRepository extends JpaRepository<Product, String> {
     @Query("SELECT p.productId, p.productName, p.productDescription, " +
-            "b.brandName, c.categoryName, pv.productVariationImage, pv.productPrice, " +
+            "b.brandId, b.brandName, c.categoryId, c.categoryName, pv.productVariationImage, pv.productPrice, " +
             "s.saleType, COALESCE(s.saleValue, 0), COALESCE(AVG(r.reviewRating), 0), COUNT(r.reviewId) " +
             "FROM Product p " +
             "LEFT JOIN p.brand b " +
@@ -23,6 +23,6 @@ public interface ProductRepository extends JpaRepository<Product, String> {
             "LEFT JOIN Sale s ON sp.sale.saleId = s.saleId AND s.saleStatus = 'ACTIVE' " +
             "LEFT JOIN Review r ON p.productId = r.productId " +
             "GROUP BY p.productId, p.productName, p.productDescription, b.brandName, c.categoryName, " +
-            "pv.productVariationImage, pv.productPrice, s.saleType, s.saleValue")
+            "pv.productVariationImage, pv.productPrice, s.saleType, s.saleValue ORDER BY p.createdAt DESC")
     List<Object[]> getListProduct();
 }
