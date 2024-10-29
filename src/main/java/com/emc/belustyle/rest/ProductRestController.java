@@ -36,9 +36,10 @@ public class ProductRestController {
         return productService.getListProduct();
     }
 
-    @GetMapping("/{productId}")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'STAFF')")
+    @GetMapping("/{productId}/product-variations")
     @JsonView(Views.ProductView.class)
-    public ResponseEntity<?> getProductById(@PathVariable String productId) {
+    public ResponseEntity<?> getProductVariationsByProductId(@PathVariable String productId) {
         Product product = productService.findById(productId);
         if (product != null) {
             return ResponseEntity.ok(product);
@@ -49,11 +50,9 @@ public class ProductRestController {
 
     @PreAuthorize("hasAnyAuthority('ADMIN','STAFF')")
     @PostMapping
-    public Product createProduct(@RequestBody ProductDTO productDTO) {
-        Product product = ProductMapper.INSTANCE.toEntity(productDTO);
-        product.setBrand(brandService.findById(productDTO.getBrandId()));
-        product.setCategory(categoryService.findById(productDTO.getCategoryId()));
-        return productService.createProduct(product);
+    public ResponseEntity<Product> addProduct(@RequestBody ProductDTO productDTO) {
+        Product product = productService.addProduct(productDTO);
+        return ResponseEntity.ok(product);
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN','STAFF')")

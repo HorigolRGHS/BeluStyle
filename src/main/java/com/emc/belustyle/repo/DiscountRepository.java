@@ -1,6 +1,7 @@
 package com.emc.belustyle.repo;
 
 import com.emc.belustyle.entity.Discount;
+import com.emc.belustyle.entity.UserDiscount;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,10 +14,8 @@ import java.util.Optional;
 
 @Repository
 public interface DiscountRepository extends JpaRepository<Discount, Integer> {
-    // Xóa phương thức này:
-    // Discount findByDiscountCode(String discountCode);
 
-    Optional<Discount> findByDiscountCode(String discountCode); // Giữ lại phương thức này
+    Optional<Discount> findByDiscountCode(String discountCode);
 
     Page<Discount> findAllByDiscountStatus(Discount.DiscountStatus status, Pageable pageable);
 

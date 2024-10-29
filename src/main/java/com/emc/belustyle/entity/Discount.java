@@ -6,8 +6,9 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
-
 
 @Entity
 @Getter
@@ -80,7 +81,24 @@ public class Discount {
     }
 
     public enum DiscountStatus {
-        ACTIVE, EXPIRED, USED
+       INACTIVE, ACTIVE, EXPIRED, USED
     }
 
+    @PrePersist
+    protected void onCreate() {
+        createdAt = new Date();
+        updatedAt = new Date();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = new Date();
+    }
+
+//    @PrePersist
+//    public void prePersist() {
+//        if (this.createdAt == null) {
+//            this.createdAt = Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant());
+//        }
+//    }
 }
