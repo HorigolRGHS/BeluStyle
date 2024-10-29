@@ -1,8 +1,10 @@
 package com.emc.belustyle.service;
 
+import com.emc.belustyle.dto.ProductDTO;
 import com.emc.belustyle.dto.ProductListDTO;
+import com.emc.belustyle.entity.ProductVariation;
 import com.emc.belustyle.entity.Sale;
-import com.emc.belustyle.repo.ProductRepository;
+import com.emc.belustyle.repo.*;
 import com.emc.belustyle.entity.Brand;
 import com.emc.belustyle.entity.Product;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +20,20 @@ import java.util.Optional;
 @Service
 public class ProductService {
     private ProductRepository productRepository;
+    private BrandRepository brandRepository;
+    private CategoryRepository categoryRepository;
+    private ProductVariationRepository productVariationRepository;
+    private SizeRepository sizeRepository;
+    private ColorRepository colorRepository;
 
     @Autowired
-    public ProductService(ProductRepository productRepository) {
+    public ProductService(ProductRepository productRepository, BrandRepository brandRepository,CategoryRepository categoryRepository, ProductVariationRepository productVariationRepository, SizeRepository sizeRepository,ColorRepository colorRepository) {
         this.productRepository = productRepository;
+        this.brandRepository = brandRepository;
+        this.categoryRepository = categoryRepository;
+        this.productVariationRepository = productVariationRepository;
+        this.sizeRepository = sizeRepository;
+        this.colorRepository = colorRepository;
     }
 
     public List<Product> findAll() {
@@ -36,8 +48,32 @@ public class ProductService {
     public void deleteProduct(String id) { productRepository.deleteById(id); }
 
     @Transactional
-    public Product createProduct(Product product) {
-        return productRepository.save(product);
+    public Product addProduct(ProductDTO productDTO) {
+        Product product = new Product();
+        product.setProductName(productDTO.getProductName());
+        product.setProductDescription(productDTO.getProductDescription());
+        product.setCategory(categoryRepository.findById(productDTO.getCategoryId()).orElse(null));
+         product.setBrand(brandRepository.findById(productDTO.getBrandId()).orElse(null));
+        Product savedProduct = productRepository.save(product);
+
+    List<ProductVariation> variations = new ArrayList<>();
+        for (ProductDTO.ProductVariationDTO variationDTO : productDTO.getVariations()) {
+            ProductVariation variation = new ProductVariation();
+            variation.setSize(sizeRepository.findById(variationDTO.getSizeId()).orElse(null));
+            variation.setColor(colorRepository.findById(variationDTO.getColorId()).orElse(null));
+            variation.setProductPrice(variationDTO.getProductPrice());
+            variation.setProductVariationImage(variationDTO.getProductVariationImage());
+            variation.setProduct(product); // Set the reference back to the product
+            variations.add(variation);
+        }
+
+        // Save all ProductVariations to the database
+        productVariationRepository.saveAll(variations);
+
+        // Associate the variations with the product
+         savedProduct.setProductVariations(variations);
+
+        return savedProduct;
     }
 
     @Transactional
