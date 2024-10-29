@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -49,11 +50,13 @@ public class SaleRestController {
         return ResponseEntity.status(responseDTO.getStatusCode()).body(sale);
     }
 
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     @PostMapping
     public ResponseEntity<?> createSale(@RequestBody Sale sale) {
         return saleService.createSale(sale);
     }
 
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'STAFF')")
     @PutMapping("/{saleId}")
     public ResponseEntity<ResponseDTO> updateSale(@PathVariable Integer saleId, @RequestBody Sale sale) {
         ResponseDTO responseDTO = new ResponseDTO();
@@ -69,6 +72,7 @@ public class SaleRestController {
         }
     }
 
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     @DeleteMapping("/{saleId}")
     public ResponseEntity<ResponseDTO> deleteSale(@PathVariable Integer saleId) {
         ResponseDTO responseDTO = new ResponseDTO();
@@ -83,11 +87,13 @@ public class SaleRestController {
 
     }
 
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     @PostMapping("/{saleId}/products")
     public ResponseEntity<?> addProductsToSale(@PathVariable int saleId, @RequestBody List<String> productIds) {
         return saleService.addProductsToSale(saleId, productIds);
     }
 
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     @DeleteMapping("/{saleId}/products")
     public ResponseEntity<?> removeProductFromSale(
             @PathVariable int saleId,
@@ -95,11 +101,10 @@ public class SaleRestController {
 
         return saleService.removeProductFromSale(saleId, productId);
     }
-
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'STAFF')")
     @GetMapping("/{saleId}/products")
     public ResponseEntity<List<Product>> getProductsInSale(
             @PathVariable int saleId) {
-
         return saleService.getProductsInSale(saleId);
     }
 }
