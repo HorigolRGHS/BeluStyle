@@ -22,7 +22,7 @@ public interface ProductRepository extends JpaRepository<Product, String> {
             "LEFT JOIN SaleProduct sp ON p.productId = sp.product.productId " +
             "LEFT JOIN Sale s ON sp.sale.saleId = s.saleId AND s.saleStatus = 'ACTIVE' " +
             "LEFT JOIN Review r ON p.productId = r.productId " +
-            "GROUP BY p.productId, p.productName, p.productDescription, b.brandName, c.categoryName, " +
+            "GROUP BY p.productId, p.productName, p.productDescription, b.brandId, b.brandName, c.categoryId, c.categoryName, " +
             "pv.productVariationImage, pv.productPrice, s.saleType, s.saleValue ORDER BY p.createdAt DESC")
     List<Object[]> getListProduct();
 }

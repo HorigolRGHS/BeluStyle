@@ -58,28 +58,40 @@ public class ProductService {
         }
     }
 
-    public List<ProductListDTO> getListProduct(){
+    public List<ProductListDTO> getListProduct() {
         List<Object[]> result = productRepository.getListProduct();
         List<ProductListDTO> productList = new ArrayList<>();
-        for (Object[] row : result) {
-            ProductListDTO productListDTO = new ProductListDTO();
-            productListDTO.setProductId((String)row[0]);
-            productListDTO.setProductName((String)row[1]);
-            productListDTO.setProductDescription((String)row[2]);
-            productListDTO.setBrandId((Integer)row[3]);
-            productListDTO.setBrandName((String)row[4]);
-            productListDTO.setCategoryId((Integer)row[5]);
-            productListDTO.setCategoryName((String)row[6]);
-            productListDTO.setProductVariationImage((String)row[7]);
-            productListDTO.setProductPrice((BigDecimal)row[8]);
-            productListDTO.setSaleType((Sale.SaleType) row[9]);
-            productListDTO.setSaleValue((BigDecimal) row[10]);
-            productListDTO.setAverageRating((Double)row[11]);
-            productListDTO.setTotalRatings((Long)row[12]);
-         productList.add(productListDTO);
 
+        for (Object[] row : result) {
+            String productId = (String) row[0];
+
+            // Check if productId already exists in the list
+            boolean exists = productList.stream()
+                    .anyMatch(product -> product.getProductId().equals(productId));
+
+            // If it doesn't exist, create and add the ProductListDTO
+            if (!exists) {
+                ProductListDTO productListDTO = new ProductListDTO();
+                productListDTO.setProductId(productId);
+                productListDTO.setProductName((String) row[1]);
+                productListDTO.setProductDescription((String) row[2]);
+                productListDTO.setBrandId((Integer) row[3]);
+                productListDTO.setBrandName((String) row[4]);
+                productListDTO.setCategoryId((Integer) row[5]);
+                productListDTO.setCategoryName((String) row[6]);
+                productListDTO.setProductVariationImage((String) row[7]);
+                productListDTO.setProductPrice((BigDecimal) row[8]);
+                productListDTO.setSaleType((Sale.SaleType) row[9]);
+                productListDTO.setSaleValue((BigDecimal) row[10]);
+                productListDTO.setAverageRating((Double) row[11]);
+                productListDTO.setTotalRatings((Long) row[12]);
+
+                productList.add(productListDTO);
+            }
         }
+
         return productList;
     }
+
 
 }
