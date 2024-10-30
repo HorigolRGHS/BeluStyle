@@ -1,0 +1,14 @@
+[
+  {
+    "caller": "POST /api/auth/login",
+    "callee": "com/emc"
+  },
+  {
+    "caller": "com/emc",
+    "callee": "POST /api/auth/login"
+  },
+  {
+    "caller": "com/emc",
+    "callee": "select u1_0.user_id,u1_0.created_at,u1_0.current_payment_method,u1_0.email,u1_0.enable,u1_0.full_name,u1_0.google_id,u1_0.password_hash,u1_0.role_id,u1_0.updated_at,u1_0.user_address,u1_0.user_image,u1_0.username from user u1_0 where u1_0.username=?"
+  }
+]
