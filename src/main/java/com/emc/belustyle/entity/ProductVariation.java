@@ -27,12 +27,12 @@ public class ProductVariation {
     @JsonView({Views.StockView.class, Views.TransactionView.class})
     private Product product;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "size_id")
     @JsonView({Views.StockView.class, Views.TransactionView.class, Views.ProductView.class})
     private Size size;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "color_id")
     @JsonView({Views.StockView.class, Views.TransactionView.class, Views.ProductView.class})
     private Color color;

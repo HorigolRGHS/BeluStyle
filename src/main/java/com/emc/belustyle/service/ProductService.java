@@ -3,12 +3,10 @@ package com.emc.belustyle.service;
 import com.emc.belustyle.dto.ProductListDTO;
 import com.emc.belustyle.entity.Sale;
 import com.emc.belustyle.repo.ProductRepository;
-import com.emc.belustyle.entity.Brand;
 import com.emc.belustyle.entity.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -18,6 +16,7 @@ import java.util.Optional;
 @Service
 public class ProductService {
     private ProductRepository productRepository;
+    private ReviewService reviewService;
 
     @Autowired
     public ProductService(ProductRepository productRepository) {
@@ -79,5 +78,6 @@ public class ProductService {
         }
         return productList;
     }
+
 
 }

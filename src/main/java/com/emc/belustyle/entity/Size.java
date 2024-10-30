@@ -21,8 +21,7 @@ public class Size {
     private int sizeId;
 
     @Column(name = "size_name")
-    @JsonView({Views.StockView.class, Views.TransactionView.class})
+    @JsonView({Views.StockView.class, Views.TransactionView.class, Views.ProductView.class})
     private String sizeName;
 
 }
-
