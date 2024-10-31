@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Getter
@@ -13,10 +14,9 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-@Table(name = "order")
+@Table(name = "`order`")
 public class Order {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "order_id")
     @JsonView(Views.ListView.class)
     private String orderId;
@@ -80,4 +80,8 @@ public class Order {
     @JoinColumn(name = "staff_id")
     @JsonView(Views.DetailedView.class)
     private User staff;
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OrderDetail> orderDetails;
+
 }
