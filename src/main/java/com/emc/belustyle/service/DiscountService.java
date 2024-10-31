@@ -1,8 +1,12 @@
 package com.emc.belustyle.service;
 
 import com.emc.belustyle.dto.DiscountDTO;
+import com.emc.belustyle.dto.UserDTO;
 import com.emc.belustyle.entity.Discount;
+import com.emc.belustyle.entity.User;
 import com.emc.belustyle.entity.UserDiscount;
+import com.emc.belustyle.repo.UserRepository;
+import com.emc.belustyle.dto.mapper.UserMapper;
 import com.emc.belustyle.repo.DiscountRepository;
 import com.emc.belustyle.repo.UserDiscountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,10 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.time.ZoneId; // Giữ nguyên
 import java.util.stream.Collectors;
 
@@ -23,12 +24,19 @@ import java.util.stream.Collectors;
 public class DiscountService {
 
     private final DiscountRepository discountRepository;
-    private final UserDiscountRepository userDiscountRepository; // Khai báo repository
+    private final UserDiscountRepository userDiscountRepository;
+    private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
     @Autowired
-    public DiscountService(DiscountRepository discountRepository, UserDiscountRepository userDiscountRepository) {
+    public DiscountService(DiscountRepository discountRepository,
+                           UserDiscountRepository userDiscountRepository,
+                           UserRepository userRepository,
+                           UserMapper userMapper) {
         this.discountRepository = discountRepository;
-        this.userDiscountRepository = userDiscountRepository; // Inject repository
+        this.userDiscountRepository = userDiscountRepository;
+        this.userRepository = userRepository;
+        this.userMapper = userMapper;
     }
 
 
@@ -96,19 +104,23 @@ public class DiscountService {
         }
         return 0; // Trả về 0 nếu không tìm thấy mã giảm giá
     }
+
     @Transactional
-    public void addUserToDiscount(String userId, Integer discountId) {
+    public void addUsersToDiscount(List<String> userIds, Integer discountId) {
         Optional<Discount> discountOpt = discountRepository.findById(discountId);
         if (discountOpt.isPresent()) {
-            UserDiscount userDiscount = new UserDiscount();
-            userDiscount.setUserId(userId);
-            userDiscount.setDiscountId(discountId);
-            userDiscount.setUsageCount(0); // Thiết lập giá trị mặc định cho usageCount
-            userDiscountRepository.save(userDiscount);
+            for (String userId : userIds) {
+                UserDiscount userDiscount = new UserDiscount();
+                userDiscount.setUserId(userId);
+                userDiscount.setDiscountId(discountId);
+                userDiscount.setUsageCount(0); // Thiết lập giá trị mặc định cho usageCount
+                userDiscountRepository.save(userDiscount);
+            }
         } else {
             throw new IllegalArgumentException("Discount not found.");
         }
     }
+
 
 
     @Transactional
@@ -117,9 +129,7 @@ public class DiscountService {
         userDiscountOpt.ifPresent(userDiscountRepository::delete);
     }
 
-    public List<UserDiscount> getUsersByDiscountId(Integer discountId) {
-        return userDiscountRepository.findAllByDiscountId(discountId);
-    }
+
     public List<DiscountDTO> getDiscountsByUserId(String userId) {
         List<UserDiscount> userDiscounts = userDiscountRepository.findAllByUserId(userId);
         return userDiscounts.stream()
@@ -130,6 +140,37 @@ public class DiscountService {
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
+
+    public Map<String, Object> getUsersByDiscountId(Integer discountId) {
+        // Sử dụng findAllByDiscountId để lấy danh sách UserDiscount
+        List<UserDiscount> userDiscounts = userDiscountRepository.findAllByDiscountId(discountId);
+
+        // Lấy danh sách UserDTO từ danh sách UserDiscount
+        List<UserDTO> users = userDiscounts.stream()
+                .map(userDiscount -> {
+                    User user = userRepository.findById(userDiscount.getUserId()).orElse(null);
+                    if (user != null) {
+                        UserDTO userDTO = userMapper.toDTO(user);
+                        userDTO.setFullName(user.getFullName());
+                        userDTO.setUserImage(user.getUserImage());
+                        return userDTO;
+                    }
+                    return null;
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+
+        // Tạo Map để trả về cả hai danh sách
+        Map<String, Object> result = new HashMap<>();
+        result.put("users", users);
+        result.put("userDiscounts", userDiscounts);
+
+        return result;
+    }
+
+
+
+
     // Hàm chuyển đổi từ entity sang DTO
     private DiscountDTO convertToDTO(Discount discount) {
         return new DiscountDTO(
