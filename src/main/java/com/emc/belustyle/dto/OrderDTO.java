@@ -1,13 +1,17 @@
 package com.emc.belustyle.dto;
 
-import jakarta.persistence.*;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.*;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+
+@Getter
+@Setter
 public class OrderDTO {
     private String orderId;
     private Date orderDate;
@@ -22,6 +26,9 @@ public class OrderDTO {
     private String trackingNumber;
     private String transactionReference;
     private String userAddress;
-    private String userId; // ID của người dùng
-    private String staffId; // ID của nhân viên
+    private String userId; // Thêm thông tin userId
+    private String staffId; // Thêm thông tin staffId
+
+    @JsonProperty("orderDetails") // Đảm bảo tên này giống như trong JSON
+    private List<OrderDetailDTO> orderDetails;
 }

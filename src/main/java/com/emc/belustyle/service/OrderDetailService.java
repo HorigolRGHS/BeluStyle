@@ -17,45 +17,28 @@ public class OrderDetailService {
     @Autowired
     private OrderDetailRepository orderDetailRepository;
 
-    public List<OrderDetailDTO> getAllOrderDetails() {
-        List<OrderDetail> orderDetails = orderDetailRepository.findAll();
+    @Autowired
+    private OrderDetailMapper orderDetailMapper;
+
+    public List<OrderDetailDTO> getOrderDetailsByOrderId(String orderId) {
+        List<OrderDetail> orderDetails = orderDetailRepository.findByOrder_OrderId(orderId);
         return orderDetails.stream()
-                .map(OrderDetailMapper.INSTANCE::toDTO)
+                .map(orderDetailMapper::toDTO)
                 .collect(Collectors.toList());
     }
-
-    public OrderDetailDTO getOrderDetailById(Integer id) {
-        Optional<OrderDetail> orderDetail = orderDetailRepository.findById(id);
-        return orderDetail.map(OrderDetailMapper.INSTANCE::toDTO).orElse(null);
-    }
-
-    public OrderDetailDTO createOrderDetail(OrderDetailDTO orderDetailDTO) {
-        OrderDetail orderDetail = OrderDetailMapper.INSTANCE.toEntity(orderDetailDTO);
-        OrderDetail savedOrderDetail = orderDetailRepository.save(orderDetail);
-        return OrderDetailMapper.INSTANCE.toDTO(savedOrderDetail);
-    }
-
-    public OrderDetailDTO updateOrderDetail(Integer id, OrderDetailDTO orderDetailDTO) {
-        Optional<OrderDetail> existingOrderDetail = orderDetailRepository.findById(id);
-        if (existingOrderDetail.isPresent()) {
-            OrderDetail orderDetailToUpdate = existingOrderDetail.get();
-            // Cập nhật các thuộc tính thủ công
-            orderDetailToUpdate.setVariationId(orderDetailDTO.getVariationId());
-            orderDetailToUpdate.setOrderQuantity(orderDetailDTO.getOrderQuantity());
-            orderDetailToUpdate.setUnitPrice(orderDetailDTO.getUnitPrice());
-            orderDetailToUpdate.setDiscountAmount(orderDetailDTO.getDiscountAmount());
-            // Không cần thiết cập nhật order nếu không thay đổi
-            OrderDetail updatedOrderDetail = orderDetailRepository.save(orderDetailToUpdate);
-            return OrderDetailMapper.INSTANCE.toDTO(updatedOrderDetail);
+    public void saveOrderDetail(OrderDetail orderDetail) {
+        if (orderDetail != null) {
+            orderDetailRepository.save(orderDetail);
+        } else {
+            throw new IllegalArgumentException("Order detail cannot be null");
         }
-        return null;
     }
 
-    public boolean deleteOrderDetail(Integer id) {
-        if (orderDetailRepository.existsById(id)) {
-            orderDetailRepository.deleteById(id);
-            return true;
+    public void saveAll(List<OrderDetail> orderDetails) {
+        if (orderDetails != null && !orderDetails.isEmpty()) {
+            orderDetailRepository.saveAll(orderDetails);
+        } else {
+            throw new IllegalArgumentException("Order details list cannot be null or empty");
         }
-        return false;
     }
 }

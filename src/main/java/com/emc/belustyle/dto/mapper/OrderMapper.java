@@ -4,15 +4,17 @@ import com.emc.belustyle.dto.OrderDTO;
 import com.emc.belustyle.entity.Order;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.factory.Mappers;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = OrderDetailMapper.class)
 public interface OrderMapper {
-    OrderMapper INSTANCE = Mappers.getMapper(OrderMapper.class);
 
     @Mapping(source = "user.userId", target = "userId")
     @Mapping(source = "staff.userId", target = "staffId")
+    @Mapping(source = "orderDetails", target = "orderDetails")
     OrderDTO toDTO(Order order);
 
+    @Mapping(source = "userId", target = "user.userId")
+    @Mapping(source = "staffId", target = "staff.userId")
+    @Mapping(source = "orderDetails", target = "orderDetails")
     Order toEntity(OrderDTO orderDTO);
 }
