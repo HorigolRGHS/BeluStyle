@@ -16,7 +16,7 @@ public class VNPayRestController {
     private VNPayService vnPayService;
 
     @PostMapping("/create")
-    public String submidOrder(@RequestParam("amount") int orderTotal,
+    public String submidOrder(@RequestParam("amount") long orderTotal,
                               @RequestParam("orderInfo") String orderInfo,
                               HttpServletRequest request){
         String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
