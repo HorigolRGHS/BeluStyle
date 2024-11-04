@@ -10,7 +10,6 @@ import java.util.List;
 @Getter
 @Setter
 public class PayOsLinkRequestBodyDTO {
-    private String productName;
     private String description;
     private String returnUrl;
     private int price;
