@@ -98,31 +98,12 @@ public class PayOsRestController {
     }
 
     @PutMapping(path = "/{orderId}")
-    public ObjectNode cancelOrder(@PathVariable("orderId") int orderId) {
+    public ObjectNode cancelOrder(@PathVariable("orderId") long orderId) {
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode response = objectMapper.createObjectNode();
         try {
             PaymentLinkData order = payOS.cancelPaymentLink(orderId, null);
             response.set("data", objectMapper.valueToTree(order));
-            response.put("error", 0);
-            response.put("message", "ok");
-            return response;
-        } catch (Exception e) {
-            e.printStackTrace();
-            response.put("error", -1);
-            response.put("message", e.getMessage());
-            response.set("data", null);
-            return response;
-        }
-    }
-
-    @PostMapping(path = "/confirm-webhook")
-    public ObjectNode confirmWebhook(@RequestBody Map<String, String> requestBody) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        ObjectNode response = objectMapper.createObjectNode();
-        try {
-            String str = payOS.confirmWebhook(requestBody.get("webhookUrl"));
-            response.set("data", objectMapper.valueToTree(str));
             response.put("error", 0);
             response.put("message", "ok");
             return response;
