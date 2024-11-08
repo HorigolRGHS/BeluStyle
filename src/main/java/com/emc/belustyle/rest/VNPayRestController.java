@@ -16,7 +16,7 @@ public class VNPayRestController {
     private VNPayService vnPayService;
 
     @PostMapping("/create")
-    public String submidOrder(@RequestParam("amount") long orderTotal,
+    public String submitOrder(@RequestParam("amount") long orderTotal,
                               @RequestParam("orderInfo") String orderInfo,
                               HttpServletRequest request){
         String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
@@ -24,8 +24,8 @@ public class VNPayRestController {
     }
 
     @GetMapping("/vnpay-payment")
-    public ResponseEntity<?> GetMapping(HttpServletRequest request){
-        int paymentStatus =vnPayService.orderReturn(request);
+    public ResponseEntity<?> getMapping(HttpServletRequest request){
+        int paymentStatus = vnPayService.orderReturn(request);
 
         String orderInfo = request.getParameter("vnp_OrderInfo");
         String paymentTime = request.getParameter("vnp_PayDate");

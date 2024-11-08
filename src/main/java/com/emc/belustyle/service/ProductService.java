@@ -1,39 +1,37 @@
 package com.emc.belustyle.service;
 
-import com.emc.belustyle.dto.ProductDTO;
-import com.emc.belustyle.dto.ProductListDTO;
-import com.emc.belustyle.entity.ProductVariation;
-import com.emc.belustyle.entity.Sale;
+import com.emc.belustyle.dto.*;
+import com.emc.belustyle.entity.*;
 import com.emc.belustyle.repo.*;
-import com.emc.belustyle.entity.Brand;
-import com.emc.belustyle.entity.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class ProductService {
-    private ProductRepository productRepository;
-    private BrandRepository brandRepository;
-    private CategoryRepository categoryRepository;
-    private ProductVariationRepository productVariationRepository;
-    private SizeRepository sizeRepository;
-    private ColorRepository colorRepository;
+    private final ProductRepository productRepository;
+    private final BrandRepository brandRepository;
+    private final CategoryRepository categoryRepository;
+    private final ProductVariationRepository productVariationRepository;
+    private final SizeRepository sizeRepository;
+    private final ColorRepository colorRepository;
+    private final SaleProductRepository saleProductRepository;
+    private final ReviewRepository reviewRepository;
 
     @Autowired
-    public ProductService(ProductRepository productRepository, BrandRepository brandRepository,CategoryRepository categoryRepository, ProductVariationRepository productVariationRepository, SizeRepository sizeRepository,ColorRepository colorRepository) {
+    public ProductService(ProductRepository productRepository, BrandRepository brandRepository, CategoryRepository categoryRepository, ProductVariationRepository productVariationRepository, SizeRepository sizeRepository, ColorRepository colorRepository, SaleProductRepository saleProductRepository, ReviewRepository reviewRepository) {
         this.productRepository = productRepository;
         this.brandRepository = brandRepository;
         this.categoryRepository = categoryRepository;
         this.productVariationRepository = productVariationRepository;
         this.sizeRepository = sizeRepository;
         this.colorRepository = colorRepository;
+        this.saleProductRepository = saleProductRepository;
+        this.reviewRepository = reviewRepository;
     }
 
     public List<Product> findAll() {
@@ -43,6 +41,79 @@ public class ProductService {
     public Product findById(String id) {
         return productRepository.findById(id).orElse(null);
     }
+
+    public ProductItemDTO findProductItemById(String id) {
+        ProductItemDTO productItemDTO = new ProductItemDTO();
+        Optional<Product> product = productRepository.findById(id);
+        SaleProduct saleProduct = saleProductRepository.findSaleProductByProductId(id);
+        List<Object[]> review = reviewRepository.findReviewByProductId(id);
+        List<ProductReviewDTO> productReviewDTOList = new ArrayList<>();
+        for (Object[] result : review) {
+            ProductReviewDTO productReviewDTO = new ProductReviewDTO();
+            productReviewDTO.setReviewId((int) result[0]);
+            productReviewDTO.setFullName((String) result[1]);
+            productReviewDTO.setReviewRating((int) result[2]);
+            productReviewDTO.setReviewComment((String) result[3]);
+            productReviewDTOList.add(productReviewDTO);
+        }
+        List<Object[]> totalRating = reviewRepository.countAndAvgRatingByProductId(id);
+        List<ProductVariation> productVariations = productVariationRepository.findProductVariationByProductId(id);
+        List<ProductVariationDTO> productVariationDTOList = new ArrayList<>();
+        for (ProductVariation productVariation : productVariations) {
+            ProductVariationDTO productVariationDTO = new ProductVariationDTO();
+            productVariationDTO.setId(productVariation.getVariationId());
+            productVariationDTO.setPrice(productVariation.getProductPrice());
+            productVariationDTO.setImages(productVariation.getProductVariationImage());
+            productVariationDTOList.add(productVariationDTO);
+        }
+        List<Size> sizes = sizeRepository.findAllByProductId(id);
+        List<Color> colors = colorRepository.findAllByProductId(id);
+        Map<String, Map<String, ProductVariationDTO>> variations = new HashMap<>();
+
+        if (product.isPresent()) {
+            for (Color color : colors) {
+                Map<String, ProductVariationDTO> sizeMap = new HashMap<>();
+                for (Size size : sizes) {
+                    productVariations.stream()
+                            .filter(variation -> variation.getColor().equals(color) && variation.getSize().equals(size))
+                            .findFirst()
+                            .ifPresent(variation -> {
+                                ProductVariationDTO productVariationDTO = new ProductVariationDTO();
+                                productVariationDTO.setId(variation.getVariationId());
+                                productVariationDTO.setPrice(variation.getProductPrice());
+                                productVariationDTO.setImages(variation.getProductVariationImage());
+                                sizeMap.put(size.getSizeName(), productVariationDTO);
+                            });
+                }
+                variations.put(color.getColorName(), sizeMap);
+            }
+
+            productItemDTO.setProductId(id);
+            productItemDTO.setProductName(product.get().getProductName());
+            productItemDTO.setDescription(product.get().getProductDescription());
+
+            if (saleProduct != null) {
+                productItemDTO.setSaleType(saleProduct.getSale().getSaleType());
+                productItemDTO.setSaleValue(saleProduct.getSale().getSaleValue());
+            }
+
+            productItemDTO.setReviews(productReviewDTOList);
+
+            if (totalRating != null) {
+                for (Object[] result : totalRating) {
+                    productItemDTO.setTotalRating((long) result[0]);
+                    productItemDTO.setAvgRating((double) result[1]);
+                }
+            }
+
+            productItemDTO.setSizes(sizes);
+            productItemDTO.setColors(colors);
+            productItemDTO.setVariations(variations);
+        }
+
+        return productItemDTO;
+    }
+
 
     @Transactional
     public void deleteProduct(String id) { productRepository.deleteById(id); }
