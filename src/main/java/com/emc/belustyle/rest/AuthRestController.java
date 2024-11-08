@@ -12,6 +12,7 @@ import com.emc.belustyle.service.UserRoleService;
 import com.emc.belustyle.service.UserService;
 import com.emc.belustyle.util.GoogleUtil;
 import com.emc.belustyle.util.JwtUtil;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,6 +81,7 @@ public class AuthRestController {
 
             // Generate JWT Token with user ID and expiration
             String jwtToken = jwtUtil.generateStringToken(savedUser.getUserId() + "registration", 7*24*60*60*1000);
+
 
             String confirmationLink = "http://localhost:8080/api/auth/confirm-registration/" + savedUser.getUsername() + "?token=" + jwtToken;
 
@@ -211,6 +213,8 @@ public class AuthRestController {
                String newPassword = resetPasswordDTO.getNewPassword();
                userService.updatePassword(user, newPassword);
                return ResponseEntity.ok("Your password has been reset");
+           } else {
+               return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Your token was incorrect");
            }
 
         } else { // Reset Password

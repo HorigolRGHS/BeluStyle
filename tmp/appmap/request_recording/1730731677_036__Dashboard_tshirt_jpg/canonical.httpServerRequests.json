@@ -1,0 +1,12 @@
+[
+  {
+    "route": "GET /Dashboard/tshirt.jpg",
+    "parameters": "()",
+    "status": 404
+  },
+  {
+    "route": "GET /error",
+    "parameters": "()",
+    "status": 404
+  }
+]

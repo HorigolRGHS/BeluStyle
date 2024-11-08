@@ -1,0 +1,7 @@
+[
+  {
+    "route": "OPTIONS /api/admin",
+    "parameters": "(page,size)",
+    "status": 200
+  }
+]

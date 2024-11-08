@@ -1,0 +1,7 @@
+[
+  {
+    "route": "OPTIONS /api/auth/register",
+    "parameters": "()",
+    "status": 200
+  }
+]

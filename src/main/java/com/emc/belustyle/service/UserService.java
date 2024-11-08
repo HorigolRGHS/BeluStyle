@@ -58,13 +58,10 @@ public class UserService {
             if (!user.isEnabled()) {
                 throw new CustomException("User account is disabled. Please contact Belucom204@outlook.com for support.", HttpStatus.FORBIDDEN);
             }
-
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userDTO.getUsername(), userDTO.getPasswordHash()));
-
             if (user.getGoogleId() != null) {
                 throw new CustomException("Please login with Google account", HttpStatus.FORBIDDEN);
             }
-
             var token = jwtUtil.generateUserToken(user);
             responseDTO.setStatusCode(HttpStatus.OK.value());
             responseDTO.setToken(token);
@@ -86,9 +83,6 @@ public class UserService {
 
     public ResponseDTO loginForStaffAndAdmin(UserDTO userDTO) {
         ResponseDTO responseDTO = new ResponseDTO();
-
-
-
         try {
             var user = userRepository.findByUsername(userDTO.getUsername()).orElseThrow(() -> new CustomException("User not found", HttpStatus.NOT_FOUND));
 
@@ -99,7 +93,6 @@ public class UserService {
                     !(user.getRole().getRoleName().toString().equals("STAFF") || user.getRole().getRoleName().toString().equals("ADMIN"))) {
                 throw new CustomException("You have no right to login", HttpStatus.FORBIDDEN);
             }
-
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userDTO.getUsername(), userDTO.getPasswordHash()));
 
             if(user.getGoogleId() != null) {throw new CustomException("Please login with Google account", HttpStatus.FORBIDDEN);}
@@ -226,10 +219,20 @@ public class UserService {
                 .orElse(null);
     }
 
-    public List<UserIdNameDTO> getAllUsers() {
+    public List<ViewInfoDTO> getAllUsers() {
         List<User> users = userRepository.findAll();
         return users.stream()
-                .map(user -> new UserIdNameDTO(user.getUserId(), user.getFullName()))
+                .map(user -> new ViewInfoDTO(user.getUserId(),
+                        user.getUsername(),
+                        user.getEmail(),
+                        user.getFullName(),
+                        user.getUserImage(),
+                        user.getEnable(),
+                        user.getRole().getRoleName().toString(),
+                        user.getCurrentPaymentMethod(),
+                        user.getUserAddress(),
+                        user.getCreatedAt(),
+                        user.getUpdatedAt()))
                 .collect(Collectors.toList());
     }
 

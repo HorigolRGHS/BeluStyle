@@ -217,18 +217,18 @@ public class OrderService {
 //                .collect(Collectors.toList());
 //    }
 
-    private JSONObject handlePayOsPayment(Order order, OrderDTO orderDTO, List<OrderDetail> orderDetails, List<ItemDataDTO> itemDataList, HttpServletRequest request) {
-        PayOsLinkRequestBodyDTO payOsRequest = new PayOsLinkRequestBodyDTO(
-                "Thanh Toan Đơn Hàng",
-                "Chi tiết đơn hàng",
-                "https://yourdomain.com/order/success",
-                (int) (orderDTO.getTotalAmount() * 100),
-                "https://yourdomain.com/order/cancel",
-                itemDataList
-        );
-        ObjectNode paymentLinkResponse = payOsRestController.createPaymentLink(payOsRequest, request);
-        return handlePaymentResponse(order, paymentLinkResponse,orderDetails);
-    }
+//    private JSONObject handlePayOsPayment(Order order, OrderDTO orderDTO, List<OrderDetail> orderDetails, List<ItemDataDTO> itemDataList, HttpServletRequest request) {
+//        PayOsLinkRequestBodyDTO payOsRequest = new PayOsLinkRequestBodyDTO(
+//                "Thanh Toan Đơn Hàng",
+//                "Chi tiết đơn hàng",
+//                "https://yourdomain.com/order/success",
+//                (int) (orderDTO.getTotalAmount() * 100),
+//                "https://yourdomain.com/order/cancel",
+//                itemDataList
+//        );
+//        ObjectNode paymentLinkResponse = payOsRestController.createPaymentLink(payOsRequest, request);
+//        return handlePaymentResponse(order, paymentLinkResponse,orderDetails);
+//    }
 
     private JSONObject handleVNPayPayment(Order order, OrderDTO orderDTO, List<OrderDetail> orderDetails,  HttpServletRequest request) {
         int totalAmountInCents = (int) (orderDTO.getTotalAmount() * 100);

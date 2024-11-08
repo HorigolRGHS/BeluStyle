@@ -1,0 +1,6 @@
+[
+  {
+    "caller": "com/emc",
+    "callee": "OPTIONS /api/stocks/{id}"
+  }
+]

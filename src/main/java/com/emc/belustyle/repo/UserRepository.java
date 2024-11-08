@@ -1,6 +1,8 @@
 package com.emc.belustyle.repo;
 
 import com.emc.belustyle.entity.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -18,4 +20,7 @@ public interface UserRepository extends JpaRepository<User, String> {
 
     // Add by meow meow, if u done understand, plz ask Huy, Don't ask meow meow, thanks !!
     Optional<User> findById(String userId);
+
+
+    Page<User> findByUsernameContainingIgnoreCase(String username, Pageable pageable);
 }

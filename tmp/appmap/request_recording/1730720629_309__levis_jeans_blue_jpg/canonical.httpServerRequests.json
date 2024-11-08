@@ -1,0 +1,12 @@
+[
+  {
+    "route": "GET /error",
+    "parameters": "()",
+    "status": 404
+  },
+  {
+    "route": "GET /levis_jeans_blue.jpg",
+    "parameters": "()",
+    "status": 404
+  }
+]

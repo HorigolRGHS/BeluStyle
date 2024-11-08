@@ -1,0 +1,7 @@
+[
+  {
+    "route": "OPTIONS /api/account/admin/{userId}",
+    "parameters": "()",
+    "status": 200
+  }
+]

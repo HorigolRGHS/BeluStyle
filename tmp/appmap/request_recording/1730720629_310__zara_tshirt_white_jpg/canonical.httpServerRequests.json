@@ -1,0 +1,12 @@
+[
+  {
+    "route": "GET /error",
+    "parameters": "()",
+    "status": 404
+  },
+  {
+    "route": "GET /zara_tshirt_white.jpg",
+    "parameters": "()",
+    "status": 404
+  }
+]

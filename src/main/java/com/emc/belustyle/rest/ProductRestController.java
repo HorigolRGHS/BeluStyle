@@ -49,6 +49,16 @@ public class ProductRestController {
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN','STAFF')")
+    @PostMapping("/{productId}/product-variations")
+    public ResponseEntity<Product> addProductVariations(
+            @PathVariable("productId") String productId,
+            @RequestBody ProductDTO productDTO) {
+        Product product = productService.addVariationsToExistingProduct(productId, productDTO.getVariations());
+        return ResponseEntity.ok(product);
+    }
+
+
+    @PreAuthorize("hasAnyAuthority('ADMIN','STAFF')")
     @PostMapping
     public ResponseEntity<Product> addProduct(@RequestBody ProductDTO productDTO) {
         Product product = productService.addProduct(productDTO);
@@ -57,8 +67,8 @@ public class ProductRestController {
 
     @PreAuthorize("hasAnyAuthority('ADMIN','STAFF')")
     @PutMapping("/{id}")
-    public Product updateProduct(@RequestBody Product updatedProduct) {
-        return productService.updateProduct(updatedProduct);
+    public Product updateProduct(@RequestBody ProductDTO productDTO, @PathVariable String id) {
+        return productService.updateProduct(productDTO, id);
 
     }
 

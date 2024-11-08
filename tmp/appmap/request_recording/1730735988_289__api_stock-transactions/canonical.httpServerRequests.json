@@ -1,0 +1,7 @@
+[
+  {
+    "route": "GET /api/stock-transactions",
+    "parameters": "()",
+    "status": 200
+  }
+]
