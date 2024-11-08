@@ -80,7 +80,7 @@ public class DiscountRestController {
                 });
     }
 
-    @PatchMapping("/{discountId}/end")
+    @PutMapping("/{discountId}/end")
     public ResponseEntity<DiscountDTO> endDiscount(@PathVariable int discountId) {
         Optional<DiscountDTO> discountOpt = discountService.getDiscountById(discountId);
 
@@ -98,6 +98,7 @@ public class DiscountRestController {
         logger.warn("Discount ID {} not found for ending.", discountId);
         return ResponseEntity.notFound().build();
     }
+
 
     @DeleteMapping("/{discountId}")
     public ResponseEntity<Void> deleteDiscount(@PathVariable int discountId) {

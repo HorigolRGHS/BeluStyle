@@ -1,6 +1,7 @@
 package com.emc.belustyle.service;
 
 import com.emc.belustyle.dto.DiscountDTO;
+import com.emc.belustyle.dto.DiscountUserViewDTO;
 import com.emc.belustyle.dto.UserDTO;
 import com.emc.belustyle.entity.Discount;
 import com.emc.belustyle.entity.User;
@@ -142,31 +143,35 @@ public class DiscountService {
     }
 
     public Map<String, Object> getUsersByDiscountId(Integer discountId) {
-        // Sử dụng findAllByDiscountId để lấy danh sách UserDiscount
+        // Fetch the list of UserDiscount entities by discountId
         List<UserDiscount> userDiscounts = userDiscountRepository.findAllByDiscountId(discountId);
 
-        // Lấy danh sách UserDTO từ danh sách UserDiscount
-        List<UserDTO> users = userDiscounts.stream()
+        // Map the associated Users to UserDiscountViewDTO objects
+        List<DiscountUserViewDTO> users = userDiscounts.stream()
                 .map(userDiscount -> {
                     User user = userRepository.findById(userDiscount.getUserId()).orElse(null);
                     if (user != null) {
-                        UserDTO userDTO = userMapper.toDTO(user);
-                        userDTO.setFullName(user.getFullName());
-                        userDTO.setUserImage(user.getUserImage());
-                        return userDTO;
+                        return new DiscountUserViewDTO(
+                                user.getUserId(),
+                                user.getUsername(),
+                                user.getEmail(),
+                                user.getFullName(),
+                                user.getUserImage()
+                        );
                     }
                     return null;
                 })
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
-        // Tạo Map để trả về cả hai danh sách
+        // Prepare the response map with filtered users and userDiscounts
         Map<String, Object> result = new HashMap<>();
         result.put("users", users);
         result.put("userDiscounts", userDiscounts);
 
         return result;
     }
+
 
 
 
