@@ -1,5 +1,6 @@
 package com.emc.belustyle.repo;
 
+import com.emc.belustyle.entity.Sale;
 import com.emc.belustyle.entity.SaleProduct;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -18,4 +19,7 @@ public interface SaleProductRepository extends JpaRepository<SaleProduct, SalePr
     void deleteBySaleId(@Param("saleId") Integer saleId);
 
     List<SaleProduct> findById_SaleId(Integer saleId);
+
+    @Query("SELECT sp FROM SaleProduct sp where sp.product.productId = :productId")
+    SaleProduct findSaleProductByProductId(@Param("productId") String productId);
 }

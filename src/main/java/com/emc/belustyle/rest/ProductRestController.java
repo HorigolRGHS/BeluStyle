@@ -1,7 +1,9 @@
 package com.emc.belustyle.rest;
 
 import com.emc.belustyle.dto.ProductDTO;
+import com.emc.belustyle.dto.ProductItemDTO;
 import com.emc.belustyle.dto.ProductListDTO;
+import com.emc.belustyle.dto.ResponseDTO;
 import com.emc.belustyle.dto.mapper.ProductMapper;
 import com.emc.belustyle.entity.Product;
 import com.emc.belustyle.service.BrandService;
@@ -46,6 +48,18 @@ public class ProductRestController {
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @GetMapping("/{productId}")
+    public ResponseEntity<?> getProductItemByProductId(@PathVariable String productId) {
+        ResponseDTO responseDTO = new ResponseDTO();
+        responseDTO.setMessage("Product not found!");
+        responseDTO.setStatusCode(404);
+        ProductItemDTO product = productService.findProductItemById(productId);
+        if (product != null) {
+            return ResponseEntity.ok().body(product);
+        }
+        return ResponseEntity.status(responseDTO.getStatusCode()).body(responseDTO);
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN','STAFF')")
