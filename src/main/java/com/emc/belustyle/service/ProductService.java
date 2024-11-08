@@ -21,9 +21,10 @@ public class ProductService {
     private final ColorRepository colorRepository;
     private final SaleProductRepository saleProductRepository;
     private final ReviewRepository reviewRepository;
+    private final StockProductRepository stockProductRepository;
 
     @Autowired
-    public ProductService(ProductRepository productRepository, BrandRepository brandRepository, CategoryRepository categoryRepository, ProductVariationRepository productVariationRepository, SizeRepository sizeRepository, ColorRepository colorRepository, SaleProductRepository saleProductRepository, ReviewRepository reviewRepository) {
+    public ProductService(ProductRepository productRepository, BrandRepository brandRepository, CategoryRepository categoryRepository, ProductVariationRepository productVariationRepository, SizeRepository sizeRepository, ColorRepository colorRepository, SaleProductRepository saleProductRepository, ReviewRepository reviewRepository, StockRepository stockRepository, StockProductRepository stockProductRepository) {
         this.productRepository = productRepository;
         this.brandRepository = brandRepository;
         this.categoryRepository = categoryRepository;
@@ -32,6 +33,7 @@ public class ProductService {
         this.colorRepository = colorRepository;
         this.saleProductRepository = saleProductRepository;
         this.reviewRepository = reviewRepository;
+        this.stockProductRepository = stockProductRepository;
     }
 
     public List<Product> findAll() {
@@ -82,6 +84,13 @@ public class ProductService {
                                 productVariationDTO.setId(variation.getVariationId());
                                 productVariationDTO.setPrice(variation.getProductPrice());
                                 productVariationDTO.setImages(variation.getProductVariationImage());
+                                // Set quantity for this variation
+                                List<StockProduct> stockProduct = stockProductRepository.findStockProductByProductVariationId(variation.getVariationId());
+                                for (StockProduct stockProduct1 : stockProduct) {
+                                    if (stockProduct1.getProductVariation().getVariationId() == variation.getVariationId()) {
+                                        productVariationDTO.setQuantity(stockProduct1.getQuantity());
+                                    }
+                                }
                                 sizeMap.put(size.getSizeName(), productVariationDTO);
                             });
                 }
@@ -113,6 +122,7 @@ public class ProductService {
 
         return productItemDTO;
     }
+
 
 
     @Transactional
@@ -171,13 +181,14 @@ public class ProductService {
 
         for (Object[] row : result) {
             String productId = (String) row[0];
+            Integer quantity = (Integer) row[13]; // Assuming the quantity is at index 13
 
-            // Check if productId already exists in the list
+            // Check if productId already exists and if there's stock quantity
             boolean exists = productList.stream()
                     .anyMatch(product -> product.getProductId().equals(productId));
 
-            // If it doesn't exist, create and add the ProductListDTO
-            if (!exists) {
+            // If it doesn't exist and has quantity, create and add the ProductListDTO
+            if (!exists && quantity > 0) {
                 ProductListDTO productListDTO = new ProductListDTO();
                 productListDTO.setProductId(productId);
                 productListDTO.setProductName((String) row[1]);

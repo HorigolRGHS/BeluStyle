@@ -19,5 +19,8 @@ public interface StockProductRepository extends JpaRepository<StockProduct, Stoc
             "JOIN FETCH pv.color co " +
             "WHERE sp.stock.id = :stockId")
     List<StockProduct> findAllByStockId(@Param("stockId") int stockId);
+
+    @Query("SELECT sp FROM StockProduct sp join ProductVariation pv on sp.productVariation.variationId = pv.variationId WHERE pv.variationId = :variationId")
+    List<StockProduct> findStockProductByProductVariationId(@Param("variationId") int variationId);
 }
 
