@@ -20,6 +20,6 @@ public interface SaleProductRepository extends JpaRepository<SaleProduct, SalePr
 
     List<SaleProduct> findById_SaleId(Integer saleId);
 
-    @Query("SELECT sp FROM SaleProduct sp where sp.product.productId = :productId")
+    @Query("SELECT sp FROM SaleProduct sp join Sale s on sp.sale.saleId = s.saleId where sp.product.productId = :productId AND s.saleStatus = 'ACTIVE' ")
     SaleProduct findSaleProductByProductId(@Param("productId") String productId);
 }
