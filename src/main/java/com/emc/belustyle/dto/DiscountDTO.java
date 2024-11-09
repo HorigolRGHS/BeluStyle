@@ -22,4 +22,23 @@ public class DiscountDTO {
     private BigDecimal minimumOrderValue;
     private BigDecimal maximumDiscountValue;
     private Integer usageLimit;
+
+    private Integer usageCount;
+
+    public DiscountDTO(Integer discountId, String discountCode, String discountType, BigDecimal discountValue,
+                       Date startDate, Date endDate, String discountStatus, String discountDescription,
+                       BigDecimal minimumOrderValue, BigDecimal maximumDiscountValue, Integer usageCount) {
+        this.discountId = discountId;
+        this.discountCode = discountCode;
+        this.discountType = discountType;
+        this.discountValue = discountValue;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.discountStatus = discountStatus;
+        this.discountDescription = discountDescription;
+        this.minimumOrderValue = minimumOrderValue;
+        this.maximumDiscountValue = maximumDiscountValue;
+        this.usageCount = usageCount;
+    }
+
 }
