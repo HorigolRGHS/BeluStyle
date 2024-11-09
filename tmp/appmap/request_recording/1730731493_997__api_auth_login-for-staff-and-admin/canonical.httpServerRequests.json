@@ -1,7 +1,0 @@
-[
-  {
-    "route": "OPTIONS /api/auth/login-for-staff-and-admin",
-    "parameters": "()",
-    "status": 200
-  }
-]

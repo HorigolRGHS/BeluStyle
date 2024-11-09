@@ -1,8 +1,0 @@
-[
-  "com/emc/belustyle/dto/mapper",
-  "com/emc/belustyle/entity",
-  "com/emc/belustyle/repo",
-  "com/emc/belustyle/rest",
-  "com/emc/belustyle/service",
-  "com/emc/belustyle/util"
-]

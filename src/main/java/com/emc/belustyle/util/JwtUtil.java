@@ -18,7 +18,7 @@ import java.util.function.Function;
 public class JwtUtil {
 
 
-    private static final long EXPIRATION_TIME = 24 * 60 * 60 * 1000;
+    private static final long EXPIRATION_TIME =  24 * 60 * 60 * 1000;
     private SecretKey SECRET_KEY;
 
     public JwtUtil() {

@@ -21,4 +21,5 @@ public class ProductListDTO {
     private BigDecimal saleValue;
     private Double averageRating;
     private Long totalRatings;
+    private int quantity;
 }

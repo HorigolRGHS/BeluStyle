@@ -106,6 +106,7 @@ public class DiscountRestController {
         return ResponseEntity.notFound().build();
     }
 
+
     @DeleteMapping("/{discountId}")
     public ResponseEntity<Void> deleteDiscount(@PathVariable int discountId) {
         discountService.deleteDiscount(discountId);

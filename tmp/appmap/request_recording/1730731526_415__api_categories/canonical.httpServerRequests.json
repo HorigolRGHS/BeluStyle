@@ -1,7 +1,0 @@
-[
-  {
-    "route": "OPTIONS /api/categories",
-    "parameters": "()",
-    "status": 200
-  }
-]

@@ -1,7 +1,0 @@
-[
-  {
-    "route": "GET /api/discounts",
-    "parameters": "(page,size)",
-    "status": 200
-  }
-]

@@ -48,6 +48,7 @@ public class DiscountService {
         this.jwtUtil = jwtUtil;
     }
 
+
     public Page<DiscountDTO> getAllDiscounts(int page, int size) {
         return discountRepository.findAll(
                 PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "discountId"))
@@ -72,10 +73,12 @@ public class DiscountService {
             Discount updatedDiscount = convertToEntity(discountDTO);
             updatedDiscount.setDiscountId(discountId);
 
+            // Cập nhật createdAt chỉ khi cần thiết
             if (discountOpt.get().getCreatedAt() != null) {
                 updatedDiscount.setCreatedAt(discountOpt.get().getCreatedAt());
             }
 
+            // Thiết lập updatedAt là thời điểm hiện tại
             updatedDiscount.setUpdatedAt(Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()));
 
             return Optional.of(convertToDTO(discountRepository.save(updatedDiscount)));
@@ -95,7 +98,6 @@ public class DiscountService {
         }
         return Optional.empty();
     }
-
     @Transactional
     public void deleteDiscount(int discountId) {
         discountRepository.deleteById(discountId);

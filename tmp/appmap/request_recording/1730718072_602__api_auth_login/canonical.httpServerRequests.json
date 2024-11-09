@@ -1,7 +1,0 @@
-[
-  {
-    "route": "OPTIONS /api/auth/login",
-    "parameters": "()",
-    "status": 200
-  }
-]
