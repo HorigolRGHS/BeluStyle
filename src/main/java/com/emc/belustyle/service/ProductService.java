@@ -181,14 +181,11 @@ public class ProductService {
 
         for (Object[] row : result) {
             String productId = (String) row[0];
-            Integer quantity = (Integer) row[13]; // Assuming the quantity is at index 13
 
-            // Check if productId already exists and if there's stock quantity
             boolean exists = productList.stream()
                     .anyMatch(product -> product.getProductId().equals(productId));
 
-            // If it doesn't exist and has quantity, create and add the ProductListDTO
-            if (!exists && quantity > 0) {
+            if (!exists) {
                 ProductListDTO productListDTO = new ProductListDTO();
                 productListDTO.setProductId(productId);
                 productListDTO.setProductName((String) row[1]);
@@ -203,6 +200,7 @@ public class ProductService {
                 productListDTO.setSaleValue((BigDecimal) row[10]);
                 productListDTO.setAverageRating((Double) row[11]);
                 productListDTO.setTotalRatings((Long) row[12]);
+                productListDTO.setQuantity((Integer) row[13]);
 
                 productList.add(productListDTO);
             }
@@ -210,6 +208,4 @@ public class ProductService {
 
         return productList;
     }
-
-
 }
