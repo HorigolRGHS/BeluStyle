@@ -246,9 +246,17 @@ public class UserService {
         return userRepository.save(existingUser);
     }
 
-    public Page<ViewUserDTO> getAllUser(int page, int size) {
+    public Page<ViewUserDTO> getAllUser(int page, int size, String search) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
-        Page<User> userPage = userRepository.findAll(pageable);
+
+        Page<User> userPage;
+
+        if (search != null && !search.isEmpty()) {
+            userPage = userRepository.findByUsernameContainingOrEmailContaining(search, search, pageable);
+        } else {
+            userPage = userRepository.findAll(pageable);
+        }
+
         return userPage.map(user -> new ViewUserDTO(
                 user.getUserId(),
                 user.getUsername(),
