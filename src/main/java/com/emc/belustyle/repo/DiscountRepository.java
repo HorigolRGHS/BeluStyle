@@ -27,4 +27,11 @@ public interface DiscountRepository extends JpaRepository<Discount, Integer> {
                                    @Param("type") Discount.DiscountType type,
                                    @Param("minOrderValue") Double minOrderValue,
                                    Pageable pageable);
+
+    @Query("SELECT d, ud.usageCount FROM Discount d " +
+            "LEFT JOIN UserDiscount ud ON d.discountId = ud.discount.discountId " +
+            "WHERE ud.id.userId = :userId")
+    List<Object[]> findDiscountsWithUsageCountByUserId(@Param("userId") String userId);
+
+
 }
