@@ -1,11 +1,11 @@
 package com.emc.belustyle.service;
 
 import com.emc.belustyle.dto.DiscountDTO;
-import com.emc.belustyle.dto.DiscountUserViewDTO;
 import com.emc.belustyle.dto.UserDTO;
 import com.emc.belustyle.entity.Discount;
 import com.emc.belustyle.entity.User;
 import com.emc.belustyle.entity.UserDiscount;
+import com.emc.belustyle.entity.UserDiscount.UserDiscountId;
 import com.emc.belustyle.repo.UserRepository;
 import com.emc.belustyle.dto.mapper.UserMapper;
 import com.emc.belustyle.repo.DiscountRepository;
@@ -14,12 +14,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.*;
-import java.time.ZoneId; // Giữ nguyên
+import java.time.ZoneId;
 import java.util.stream.Collectors;
 
 @Service
@@ -95,50 +96,65 @@ public class DiscountService {
     public void deleteDiscount(int discountId) {
         discountRepository.deleteById(discountId);
     }
+
     public int checkDiscountUsage(String userId, String discountCode) {
-        // Tìm mã giảm giá theo discountCode
         Optional<Discount> discountOpt = discountRepository.findByDiscountCode(discountCode);
         if (discountOpt.isPresent()) {
-            int discountId = discountOpt.get().getDiscountId(); // Lấy ID của mã giảm giá
-            List<UserDiscount> userDiscounts = userDiscountRepository.findAllByDiscountId(discountId);
-            // Lọc danh sách để đếm số lần sử dụng của userId
+            int discountId = discountOpt.get().getDiscountId();
+            List<UserDiscount> userDiscounts = userDiscountRepository.findAllByDiscount_DiscountId(discountId);
             return (int) userDiscounts.stream()
-                    .filter(userDiscount -> userDiscount.getUserId().equals(userId))
-                    .count(); // Trả về số lần sử dụng mã giảm giá
+                    .filter(userDiscount -> userDiscount.getId().getUserId().equals(userId))
+                    .count();
         }
-        return 0; // Trả về 0 nếu không tìm thấy mã giảm giá
+        return 0;
     }
 
     @Transactional
     public void addUsersToDiscount(List<String> userIds, Integer discountId) {
         Optional<Discount> discountOpt = discountRepository.findById(discountId);
         if (discountOpt.isPresent()) {
+            Discount discount = discountOpt.get();
+            List<UserDiscount> userDiscounts = new ArrayList<>();
+
             for (String userId : userIds) {
-                UserDiscount userDiscount = new UserDiscount();
-                userDiscount.setUserId(userId);
-                userDiscount.setDiscountId(discountId);
-                userDiscount.setUsageCount(0); // Thiết lập giá trị mặc định cho usageCount
-                userDiscountRepository.save(userDiscount);
+                // Create UserDiscountId object using userId and discountId
+                UserDiscountId userDiscountId = new UserDiscountId(userId, discountId);
+
+                // Check if the relationship between user and discount already exists
+                Optional<UserDiscount> existingUserDiscount = userDiscountRepository.findByUser_UserIdAndDiscount_DiscountId(userId, discountId);
+                if (!existingUserDiscount.isPresent()) {
+                    UserDiscount userDiscount = new UserDiscount();
+                    userDiscount.setId(userDiscountId);
+                    userDiscount.setUser(userRepository.findById(userId).orElse(null));  // Assuming 'user' is part of the discount, or set it correctly
+                    userDiscount.setDiscount(discount);       // Associate the discount
+                    userDiscount.setUsageCount(0);
+
+                    userDiscounts.add(userDiscount);  // Collect all userDiscounts for batch saving
+                }
+            }
+
+            // Save all userDiscounts in bulk at once for better performance
+            if (!userDiscounts.isEmpty()) {
+                userDiscountRepository.saveAll(userDiscounts);
             }
         } else {
-            throw new IllegalArgumentException("Discount not found.");
+            throw new ResourceNotFoundException("Discount not found.");
         }
     }
 
 
-
     @Transactional
     public void removeUserFromDiscount(String userId, Integer discountId) {
-        Optional<UserDiscount> userDiscountOpt = userDiscountRepository.findByUserIdAndDiscountId(userId, discountId);
+        UserDiscountId userDiscountId = new UserDiscountId(userId, discountId);
+        Optional<UserDiscount> userDiscountOpt = userDiscountRepository.findByUser_UserIdAndDiscount_DiscountId(userId, discountId);
         userDiscountOpt.ifPresent(userDiscountRepository::delete);
     }
 
-
     public List<DiscountDTO> getDiscountsByUserId(String userId) {
-        List<UserDiscount> userDiscounts = userDiscountRepository.findAllByUserId(userId);
+        List<UserDiscount> userDiscounts = userDiscountRepository.findAllByUser_UserId(userId);
         return userDiscounts.stream()
                 .map(userDiscount -> {
-                    Optional<Discount> discountOpt = discountRepository.findById(userDiscount.getDiscountId());
+                    Optional<Discount> discountOpt = discountRepository.findById(userDiscount.getId().getDiscountId());
                     return discountOpt.map(this::convertToDTO).orElse(null);
                 })
                 .filter(Objects::nonNull)
@@ -146,28 +162,22 @@ public class DiscountService {
     }
 
     public Map<String, Object> getUsersByDiscountId(Integer discountId) {
-        // Fetch the list of UserDiscount entities by discountId
-        List<UserDiscount> userDiscounts = userDiscountRepository.findAllByDiscountId(discountId);
+        List<UserDiscount> userDiscounts = userDiscountRepository.findAllByDiscount_DiscountId(discountId).stream().toList();
 
-        // Map the associated Users to UserDiscountViewDTO objects
-        List<DiscountUserViewDTO> users = userDiscounts.stream()
+        List<UserDTO> users = userDiscounts.stream()
                 .map(userDiscount -> {
-                    User user = userRepository.findById(userDiscount.getUserId()).orElse(null);
+                    User user = userRepository.findById(userDiscount.getId().getUserId()).orElse(null);
                     if (user != null) {
-                        return new DiscountUserViewDTO(
-                                user.getUserId(),
-                                user.getUsername(),
-                                user.getEmail(),
-                                user.getFullName(),
-                                user.getUserImage()
-                        );
+                        UserDTO userDTO = userMapper.toDTO(user);
+                        userDTO.setFullName(user.getFullName());
+                        userDTO.setUserImage(user.getUserImage());
+                        return userDTO;
                     }
                     return null;
                 })
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
-        // Prepare the response map with filtered users and userDiscounts
         Map<String, Object> result = new HashMap<>();
         result.put("users", users);
         result.put("userDiscounts", userDiscounts);
@@ -175,11 +185,6 @@ public class DiscountService {
         return result;
     }
 
-
-
-
-
-    // Hàm chuyển đổi từ entity sang DTO
     private DiscountDTO convertToDTO(Discount discount) {
         return new DiscountDTO(
                 discount.getDiscountId(),
@@ -196,15 +201,14 @@ public class DiscountService {
         );
     }
 
-    // Hàm chuyển đổi từ DTO sang entity
     private Discount convertToEntity(DiscountDTO discountDTO) {
         Discount discount = new Discount();
         discount.setDiscountCode(discountDTO.getDiscountCode());
-        discount.setDiscountType(Discount.DiscountType.valueOf(discountDTO.getDiscountType())); // Sửa lại tham chiếu DiscountType
+        discount.setDiscountType(Discount.DiscountType.valueOf(discountDTO.getDiscountType()));
         discount.setDiscountValue(discountDTO.getDiscountValue());
         discount.setStartDate(discountDTO.getStartDate());
         discount.setEndDate(discountDTO.getEndDate());
-        discount.setDiscountStatus(Discount.DiscountStatus.valueOf(discountDTO.getDiscountStatus())); // Sửa lại tham chiếu DiscountStatus
+        discount.setDiscountStatus(Discount.DiscountStatus.valueOf(discountDTO.getDiscountStatus()));
         discount.setDiscountDescription(discountDTO.getDiscountDescription());
         discount.setMinimumOrderValue(discountDTO.getMinimumOrderValue());
         discount.setMaximumDiscountValue(discountDTO.getMaximumDiscountValue());

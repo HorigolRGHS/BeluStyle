@@ -3,6 +3,7 @@ package com.emc.belustyle.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serializable;
 import java.util.Date;
 
 @Entity
@@ -14,27 +15,46 @@ import java.util.Date;
 @Table(name = "user_discount")
 public class UserDiscount {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer userDiscountId;
+    @EmbeddedId
+    private UserDiscountId id;
 
-    @Column(name = "user_id")
-    private String userId;
+    @MapsId("userId")
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-    @Column(name = "discount_id", nullable = false)
-    private Integer discountId;
+    @MapsId("discountId")
+    @ManyToOne
+    @JoinColumn(name = "discount_id", nullable = false)
+    private Discount discount;
 
     @Column(name = "usage_count", nullable = false)
-    private Integer usageCount;
+    private Integer usageCount = 0;
 
     @Column(name = "used_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date usedAt;
 
-    public UserDiscount(Integer discountId, String userId) {
-        this.discountId = discountId;
-        this.userId = userId;
-        this.usageCount = 0; // Khởi tạo với giá trị mặc định là 0
+
+    public UserDiscount(User user, Discount discount) {
+        this.id = new UserDiscountId(user.getUserId(), discount.getDiscountId());
+        this.user = user;
+        this.discount = discount;
+        this.usageCount = 0;
         this.usedAt = null;
+    }
+
+    @Data
+    @Embeddable
+    public static class UserDiscountId implements Serializable {
+        private String userId;
+        private Integer discountId;
+
+        public UserDiscountId() {}
+
+        public UserDiscountId(String userId, Integer discountId) {
+            this.userId = userId;
+            this.discountId = discountId;
+        }
     }
 }

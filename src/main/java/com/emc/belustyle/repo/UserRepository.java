@@ -21,6 +21,6 @@ public interface UserRepository extends JpaRepository<User, String> {
     // Add by meow meow, if u done understand, plz ask Huy, Don't ask meow meow, thanks !!
     Optional<User> findById(String userId);
 
+    Page<User> findByUsernameContainingOrEmailContaining(String username, String email, Pageable pageable);
 
-    Page<User> findByUsernameContainingIgnoreCase(String username, Pageable pageable);
 }
