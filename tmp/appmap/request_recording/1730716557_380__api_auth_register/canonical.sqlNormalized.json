@@ -1,0 +1,6 @@
+[
+  "insert into user (created_at,current_payment_method,email,enable,full_name,google_id,password_hash,role_id,updated_at,user_address,user_image,username,user_id) values (?,?,?,?,?,?,?,?,?,?,?,?,?)",
+  "select u1_0.user_id from user u1_0 where u1_0.email=? limit ?",
+  "select u1_0.user_id from user u1_0 where u1_0.username=? limit ?",
+  "select ur1_0.role_id,ur1_0.role_name from user_role ur1_0 where ur1_0.role_id=?"
+]

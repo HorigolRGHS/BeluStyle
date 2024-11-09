@@ -1,0 +1,14 @@
+[
+  {
+    "caller": "GET /api/stocks",
+    "callee": "com/emc"
+  },
+  {
+    "caller": "com/emc",
+    "callee": "GET /api/stocks"
+  },
+  {
+    "caller": "com/emc",
+    "callee": "select s1_0.stock_id,s1_0.stock_address,s1_0.stock_name from stock s1_0"
+  }
+]

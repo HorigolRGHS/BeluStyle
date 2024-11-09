@@ -34,26 +34,38 @@ public class Product {
 
     @ManyToOne
     @JoinColumn(name = "category_id")
-    @JsonView({Views.StockView.class, Views.TransactionView.class})
+    @JsonView({Views.StockView.class, Views.TransactionView.class, Views.ProductView.class})
     private Category category;
 
     @ManyToOne()
     @JoinColumn(name = "brand_id")
-    @JsonView({Views.StockView.class, Views.TransactionView.class})
+    @JsonView({Views.StockView.class, Views.TransactionView.class, Views.ProductView.class})
     private Brand brand;
 
     @Column(name = "product_description")
-    @JsonView({Views.StockView.class, Views.ProductView.class})
+    @JsonView({Views.StockView.class, Views.ProductView.class, Views.ProductView.class})
     private String productDescription;
 
     @Column(name = "created_at", updatable = false)
+    @JsonView({Views.ProductView.class})
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
 
     @Column(name = "updated_at")
+    @JsonView({Views.ProductView.class})
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
 
+    @PrePersist
+    protected void onCreate() {
+        createdAt = new Date();
+        updatedAt = new Date();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = new Date();
+    }
 
 }
 

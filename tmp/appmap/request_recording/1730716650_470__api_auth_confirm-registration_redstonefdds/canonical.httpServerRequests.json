@@ -1,0 +1,7 @@
+[
+  {
+    "route": "GET /api/auth/confirm-registration/{username}",
+    "parameters": "(token)",
+    "status": 302
+  }
+]

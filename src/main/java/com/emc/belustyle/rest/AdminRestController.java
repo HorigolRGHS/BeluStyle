@@ -78,8 +78,8 @@ public class AdminRestController {
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/users/search")
-    public ResponseEntity<List<UserIdNameDTO>> getAllUsers() {
-        List<UserIdNameDTO> users = userService.getAllUsers();
+    public ResponseEntity<List<ViewInfoDTO>> getAllUsers() {
+        List<ViewInfoDTO> users = userService.getAllUsers();
         return ResponseEntity.ok(users);
     }
 

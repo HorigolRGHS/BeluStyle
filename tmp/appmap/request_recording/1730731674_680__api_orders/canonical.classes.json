@@ -1,0 +1,5 @@
+[
+  "com/emc/belustyle/dto/mapper/OrderMapperImpl",
+  "com/emc/belustyle/repo/OrderRepository",
+  "com/emc/belustyle/service/OrderService"
+]

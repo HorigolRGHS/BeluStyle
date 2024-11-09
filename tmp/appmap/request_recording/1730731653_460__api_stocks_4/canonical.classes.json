@@ -1,0 +1,5 @@
+[
+  "com/emc/belustyle/repo/StockRepository",
+  "com/emc/belustyle/rest/StockRestController",
+  "com/emc/belustyle/service/StockService"
+]

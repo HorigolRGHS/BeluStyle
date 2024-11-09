@@ -3,6 +3,9 @@ package com.emc.belustyle.service;
 import com.emc.belustyle.dto.*;
 import com.emc.belustyle.entity.*;
 import com.emc.belustyle.repo.*;
+import com.emc.belustyle.entity.Brand;
+import com.emc.belustyle.entity.Product;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -157,17 +160,17 @@ public class ProductService {
         return savedProduct;
     }
 
+
     @Transactional
-    public Product updateProduct(Product updatedProduct) {
-        Optional<Product> existingProduct = productRepository.findById(updatedProduct.getProductId());
+    public Product updateProduct(ProductDTO productDTO, String id) {
+        Optional<Product> existingProduct = productRepository.findById(id);
 
         if (existingProduct.isPresent()) {
             Product product = existingProduct.get();
-            product.setProductDescription(updatedProduct.getProductDescription());
-            product.setProductName(updatedProduct.getProductName());
-            product.setProductDescription(updatedProduct.getProductDescription());
-            product.setBrand(updatedProduct.getBrand());
-            product.setCategory(updatedProduct.getCategory());
+            product.setProductDescription(productDTO.getProductDescription());
+            product.setProductName(productDTO.getProductName());
+            product.setBrand(brandRepository.findById(productDTO.getBrandId()).orElse(null));
+            product.setCategory(categoryRepository.findById(productDTO.getCategoryId()).orElse(null));
 
             return productRepository.save(product);
         } else {
@@ -208,4 +211,26 @@ public class ProductService {
 
         return productList;
     }
+
+
+    @Transactional
+    public Product addVariationsToExistingProduct(String productId, List<ProductDTO.ProductVariationDTO> variationDTOs) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new EntityNotFoundException("Product not found"));
+
+        List<ProductVariation> variations = new ArrayList<>();
+        for (ProductDTO.ProductVariationDTO variationDTO : variationDTOs) {
+            ProductVariation variation = new ProductVariation();
+            variation.setSize(sizeRepository.findById(variationDTO.getSizeId()).orElse(null));
+            variation.setColor(colorRepository.findById(variationDTO.getColorId()).orElse(null));
+            variation.setProductPrice(variationDTO.getProductPrice());
+            variation.setProductVariationImage(variationDTO.getProductVariationImage());
+            variation.setProduct(product); // Link variation to the product
+            variations.add(variation);
+        }
+        productVariationRepository.saveAll(variations);
+        product.getProductVariations().addAll(variations);
+        return productRepository.save(product);
+    }
+
 }

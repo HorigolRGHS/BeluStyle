@@ -36,3 +36,6 @@ build/
 application.yaml
 application.properties
 VNPAYConfig.java
+
+### appmap ###
+/tmp/

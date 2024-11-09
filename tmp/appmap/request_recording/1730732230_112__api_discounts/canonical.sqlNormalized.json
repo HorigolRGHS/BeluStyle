@@ -1,0 +1,4 @@
+[
+  "select count(d1_0.discount_id) from discount d1_0",
+  "select d1_0.discount_id,d1_0.created_at,d1_0.discount_code,d1_0.discount_description,d1_0.discount_status,d1_0.discount_type,d1_0.discount_value,d1_0.end_date,d1_0.maximum_discount_value,d1_0.minimum_order_value,d1_0.start_date,d1_0.updated_at,d1_0.usage_limit from discount d1_0 limit ?,?"
+]

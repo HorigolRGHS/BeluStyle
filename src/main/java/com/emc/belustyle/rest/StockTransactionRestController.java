@@ -26,7 +26,7 @@ public class StockTransactionRestController {
     @PreAuthorize("hasAnyAuthority('ADMIN', 'STAFF')")
     @GetMapping
     @JsonView(Views.TransactionView.class)
-    public List<StockTransaction> getStockTransactionService() {
+    public List<StockTransaction> getStockTransactions() {
         return stockTransactionService.findAll();
     }
 

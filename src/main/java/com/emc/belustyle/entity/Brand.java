@@ -19,7 +19,7 @@ public class Brand {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "brand_id")
-    @JsonView({Views.StockView.class, Views.TransactionView.class})
+    @JsonView({Views.StockView.class, Views.TransactionView.class, Views.ProductView.class})
     private int brandId;
 
     @Column(name = "brand_name", nullable = false)

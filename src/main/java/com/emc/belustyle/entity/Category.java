@@ -20,7 +20,7 @@ public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "category_id")
-    @JsonView({Views.StockView.class, Views.TransactionView.class})
+    @JsonView({Views.StockView.class, Views.TransactionView.class, Views.ProductView.class})
     private int categoryId;
 
     @Column(name = "category_name", nullable = false)

@@ -221,7 +221,9 @@ public class OrderService {
 //        PayOsLinkRequestBodyDTO payOsRequest = new PayOsLinkRequestBodyDTO(
 //                "Thanh Toan Đơn Hàng",
 //                "Chi tiết đơn hàng",
+//                "https://yourdomain.com/order/success",
 //                (int) (orderDTO.getTotalAmount() * 100),
+//                "https://yourdomain.com/order/cancel",
 //                itemDataList
 //        );
 //        ObjectNode paymentLinkResponse = payOsRestController.createPaymentLink(payOsRequest, request);

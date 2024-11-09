@@ -1,0 +1,228 @@
+{
+  "events": [
+    {
+      "defined_class": "com.emc.belustyle.security.JwtAuthFilter",
+      "event": "call",
+      "id": 1,
+      "lineno": 36,
+      "method_id": "doFilterInternal",
+      "parameters": [
+        {
+          "class": "org.springframework.security.web.header.HeaderWriterFilter$HeaderWriterRequest",
+          "kind": "req",
+          "name": "request",
+          "object_id": 317354543,
+          "value": "org.springframework.security.web.header.HeaderWriterFilter$HeaderWriterRequest@12ea722f"
+        },
+        {
+          "class": "org.springframework.security.web.header.HeaderWriterFilter$HeaderWriterResponse",
+          "kind": "req",
+          "name": "response",
+          "object_id": 383120554,
+          "value": "org.springframework.security.web.header.HeaderWriterFilter$HeaderWriterResponse@16d5f4aa"
+        },
+        {
+          "class": "org.springframework.security.web.FilterChainProxy$VirtualFilterChain",
+          "kind": "req",
+          "name": "filterChain",
+          "object_id": 1406629908,
+          "value": "org.springframework.security.web.FilterChainProxy$VirtualFilterChain@53d77814"
+        }
+      ],
+      "path": "src/main/java/com/emc/belustyle/security/JwtAuthFilter.java",
+      "receiver": {
+        "class": "com.emc.belustyle.security.JwtAuthFilter",
+        "object_id": 1155523763,
+        "value": "com.emc.belustyle.security.JwtAuthFilter@44dfe4b3"
+      },
+      "static": false,
+      "thread_id": 55
+    },
+    {
+      "event": "call",
+      "http_server_request": {
+        "headers": {
+          "sec-fetch-mode": "no-cors",
+          "referer": "http://localhost:3000/Dashboard/Categories",
+          "sec-fetch-site": "same-origin",
+          "x-forwarded-proto": "http",
+          "cookie": "G_ENABLED_IDPS=google; Idea-6e730597=d605e9f1-140e-425c-b62d-459a46bd0f76",
+          "accept-language": "en-US,en-US;q=0.9,en;q=0.8",
+          "x-forwarded-port": "3000",
+          "x-forwarded-for": "127.0.0.1",
+          "accept": "image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8",
+          "sec-ch-ua": "\"Chromium\";v=\"130\", \"Google Chrome\";v=\"130\", \"Not?A_Brand\";v=\"99\"",
+          "sec-ch-ua-mobile": "?0",
+          "x-forwarded-host": "localhost:3000",
+          "sec-ch-ua-platform": "\"Windows\"",
+          "host": "localhost:8080",
+          "connection": "close",
+          "accept-encoding": "gzip, deflate, br, zstd",
+          "sec-fetch-dest": "image",
+          "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36"
+        },
+        "path_info": "/Dashboard/jeans.jpg",
+        "protocol": "HTTP/1.1",
+        "request_method": "GET"
+      },
+      "id": 2,
+      "thread_id": 55
+    },
+    {
+      "elapsed": 0.00094074,
+      "event": "return",
+      "http_server_response": {
+        "headers": {
+          "X-Frame-Options": "DENY",
+          "Cache-Control": "no-cache, no-store, max-age=0, must-revalidate",
+          "X-Content-Type-Options": "nosniff",
+          "Vary": "Origin",
+          "Pragma": "no-cache",
+          "Expires": "0",
+          "X-XSS-Protection": "0"
+        },
+        "status": 404
+      },
+      "id": 3,
+      "parent_id": 2,
+      "thread_id": 55
+    },
+    {
+      "elapsed": 0.0012591,
+      "event": "return",
+      "id": 4,
+      "parent_id": 1,
+      "thread_id": 55
+    },
+    {
+      "event": "call",
+      "http_server_request": {
+        "headers": {
+          "sec-fetch-mode": "no-cors",
+          "referer": "http://localhost:3000/Dashboard/Categories",
+          "sec-fetch-site": "same-origin",
+          "x-forwarded-proto": "http",
+          "cookie": "G_ENABLED_IDPS=google; Idea-6e730597=d605e9f1-140e-425c-b62d-459a46bd0f76",
+          "accept-language": "en-US,en-US;q=0.9,en;q=0.8",
+          "x-forwarded-port": "3000",
+          "x-forwarded-for": "127.0.0.1",
+          "accept": "image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8",
+          "sec-ch-ua": "\"Chromium\";v=\"130\", \"Google Chrome\";v=\"130\", \"Not?A_Brand\";v=\"99\"",
+          "sec-ch-ua-mobile": "?0",
+          "x-forwarded-host": "localhost:3000",
+          "sec-ch-ua-platform": "\"Windows\"",
+          "host": "localhost:8080",
+          "connection": "close",
+          "accept-encoding": "gzip, deflate, br, zstd",
+          "sec-fetch-dest": "image",
+          "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36"
+        },
+        "normalized_path_info": "/error",
+        "path_info": "/error",
+        "protocol": "HTTP/1.1",
+        "request_method": "GET"
+      },
+      "id": 5,
+      "thread_id": 55
+    },
+    {
+      "elapsed": 0.00111599,
+      "event": "return",
+      "http_server_response": {
+        "headers": {
+          "X-Frame-Options": "DENY",
+          "Transfer-Encoding": "chunked",
+          "Cache-Control": "no-cache, no-store, max-age=0, must-revalidate",
+          "X-Content-Type-Options": "nosniff",
+          "Connection": "close",
+          "Vary": "Origin",
+          "Pragma": "no-cache",
+          "Expires": "0",
+          "X-XSS-Protection": "0",
+          "Date": "Mon, 04 Nov 2024 10:08:11 GMT",
+          "Content-Type": "application/json"
+        },
+        "status": 404
+      },
+      "id": 6,
+      "parent_id": 5,
+      "thread_id": 55
+    }
+  ],
+  "version": "1.2",
+  "metadata": {
+    "name": "GET /Dashboard/jeans.jpg (404) - 17:08:12.458",
+    "app": "BeluStyle",
+    "language": {
+      "name": "java",
+      "version": "17.0.12+8-LTS-286",
+      "engine": "Java HotSpot(TM) 64-Bit Server VM"
+    },
+    "client": {
+      "name": "appmap-java",
+      "url": "https://github.com/appland/appmap-java"
+    },
+    "recorder": {
+      "name": "request_recording",
+      "type": "requests"
+    },
+    "recording": {},
+    "git": {
+      "repository": "https://github.com/HorigolRGHS/BeluStyle",
+      "branch": "main",
+      "commit": "a2f74e6e178fe2e86805bc914140955eb978d8a0"
+    }
+  },
+  "classMap": [
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [
+                    {
+                      "children": [
+                        {
+                          "name": "doFilterInternal",
+                          "type": "function",
+                          "static": false,
+                          "location": "src/main/java/com/emc/belustyle/security/JwtAuthFilter.java:36"
+                        }
+                      ],
+                      "name": "JwtAuthFilter",
+                      "type": "class"
+                    }
+                  ],
+                  "name": "security",
+                  "type": "package"
+                }
+              ],
+              "name": "belustyle",
+              "type": "package"
+            }
+          ],
+          "name": "emc",
+          "type": "package"
+        }
+      ],
+      "name": "com",
+      "type": "package"
+    },
+    {
+      "type": "http",
+      "name": "HTTP server requests",
+      "children": [
+        {
+          "type": "route",
+          "name": "GET /Dashboard/jeans.jpg"
+        },
+        {
+          "type": "route",
+          "name": "GET /error"
+        }
+      ]
+    }
+  ]
+}

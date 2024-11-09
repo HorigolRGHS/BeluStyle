@@ -78,8 +78,7 @@ public class CategoryRestController {
         }
     }
 
-//    @PreAuthorize("hasAnyAuthority('ADMIN')")
-    @PreAuthorize("permitAll()")
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     @PostMapping
     public Category createCategory(@RequestBody Category category) {
         return categoryService.createCategory(category);

@@ -1,0 +1,4 @@
+[
+  "com/emc/belustyle/rest/CategoryRestController",
+  "com/emc/belustyle/service/CategoryService"
+]
