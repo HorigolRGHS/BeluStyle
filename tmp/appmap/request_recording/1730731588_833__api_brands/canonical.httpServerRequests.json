@@ -1,7 +1,0 @@
-[
-  {
-    "route": "OPTIONS /api/brands",
-    "parameters": "()",
-    "status": 200
-  }
-]

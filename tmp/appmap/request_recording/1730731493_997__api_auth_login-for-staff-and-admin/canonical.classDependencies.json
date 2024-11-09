@@ -1,6 +1,0 @@
-[
-  {
-    "caller": "com/emc",
-    "callee": "OPTIONS /api/auth/login-for-staff-and-admin"
-  }
-]

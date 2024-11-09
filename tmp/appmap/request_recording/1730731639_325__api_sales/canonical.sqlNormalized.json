@@ -1,3 +1,0 @@
-[
-  "select s1_0.sale_id,s1_0.created_at,s1_0.end_date,s1_0.sale_status,s1_0.sale_type,s1_0.sale_value,s1_0.start_date,s1_0.updated_at from sale s1_0 order by s1_0.sale_id desc"
-]

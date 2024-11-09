@@ -1,7 +1,0 @@
-[
-  {
-    "route": "DELETE /api/categories/{id}",
-    "parameters": "()",
-    "status": 200
-  }
-]
