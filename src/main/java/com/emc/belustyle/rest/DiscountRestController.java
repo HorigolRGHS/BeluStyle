@@ -1,9 +1,11 @@
 package com.emc.belustyle.rest;
 
 import com.emc.belustyle.dto.DiscountDTO;
+import com.emc.belustyle.dto.DiscountUserDTO;
 import com.emc.belustyle.dto.UserDTO;
 import com.emc.belustyle.entity.UserDiscount;
 import com.emc.belustyle.service.DiscountService;
+import com.emc.belustyle.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -14,9 +16,11 @@ import org.springframework.web.bind.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/discounts")
@@ -24,10 +28,12 @@ public class DiscountRestController {
 
     private final DiscountService discountService;
     private static final Logger logger = LoggerFactory.getLogger(DiscountRestController.class);
+    private final JwtUtil jwtUtil;
 
     @Autowired
-    public DiscountRestController(DiscountService discountService) {
+    public DiscountRestController(DiscountService discountService, JwtUtil jwtUtil) {
         this.discountService = discountService;
+        this.jwtUtil = jwtUtil;
     }
 
     @PostMapping
@@ -149,9 +155,28 @@ public class DiscountRestController {
 
 
 
-    @GetMapping("/users/{userId}/discounts")
-    public ResponseEntity<List<DiscountDTO>> getDiscountsByUserId(@PathVariable String userId) {
+    @GetMapping("/users/{userId}")
+    public ResponseEntity<List<Map<String, Object>>> getDiscountsByUserId(@PathVariable String userId) {
         List<DiscountDTO> discounts = discountService.getDiscountsByUserId(userId);
-        return ResponseEntity.ok(discounts);
+
+        // Chuyển đổi DiscountDTO thành dạng bạn yêu cầu
+        List<Map<String, Object>> myDiscounts = discounts.stream().map(discount -> {
+            Map<String, Object> discountMap = new HashMap<>();
+            discountMap.put("discountCode", discount.getDiscountCode());
+            discountMap.put("discountType", discount.getDiscountType());
+            discountMap.put("discountValue", discount.getDiscountValue());
+            discountMap.put("usageCount", discount.getUsageCount());
+            discountMap.put("endDate", discount.getEndDate().toString());  // Chuyển đổi date thành định dạng string
+
+            return discountMap;
+        }).collect(Collectors.toList());
+
+        return ResponseEntity.ok(myDiscounts);
+    }
+
+
+    // Phương thức phụ để giải mã userId từ token
+    private String extractUserIdFromToken(String token) {
+        return jwtUtil.extractSubject(token);
     }
 }

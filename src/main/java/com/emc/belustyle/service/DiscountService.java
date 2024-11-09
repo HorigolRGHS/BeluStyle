@@ -1,6 +1,7 @@
 package com.emc.belustyle.service;
 
 import com.emc.belustyle.dto.DiscountDTO;
+import com.emc.belustyle.dto.DiscountUserViewDTO;
 import com.emc.belustyle.dto.UserDTO;
 import com.emc.belustyle.entity.Discount;
 import com.emc.belustyle.entity.User;
@@ -10,6 +11,7 @@ import com.emc.belustyle.repo.UserRepository;
 import com.emc.belustyle.dto.mapper.UserMapper;
 import com.emc.belustyle.repo.DiscountRepository;
 import com.emc.belustyle.repo.UserDiscountRepository;
+import com.emc.belustyle.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -30,16 +32,20 @@ public class DiscountService {
     private final UserDiscountRepository userDiscountRepository;
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final JwtUtil jwtUtil;
+
 
     @Autowired
     public DiscountService(DiscountRepository discountRepository,
                            UserDiscountRepository userDiscountRepository,
                            UserRepository userRepository,
+                           JwtUtil jwtUtil,
                            UserMapper userMapper) {
         this.discountRepository = discountRepository;
         this.userDiscountRepository = userDiscountRepository;
         this.userRepository = userRepository;
         this.userMapper = userMapper;
+        this.jwtUtil = jwtUtil;
     }
 
 
@@ -161,17 +167,21 @@ public class DiscountService {
                 .collect(Collectors.toList());
     }
 
+
     public Map<String, Object> getUsersByDiscountId(Integer discountId) {
         List<UserDiscount> userDiscounts = userDiscountRepository.findAllByDiscount_DiscountId(discountId).stream().toList();
 
-        List<UserDTO> users = userDiscounts.stream()
+        List<DiscountUserViewDTO> users = userDiscounts.stream()
                 .map(userDiscount -> {
                     User user = userRepository.findById(userDiscount.getId().getUserId()).orElse(null);
                     if (user != null) {
-                        UserDTO userDTO = userMapper.toDTO(user);
-                        userDTO.setFullName(user.getFullName());
-                        userDTO.setUserImage(user.getUserImage());
-                        return userDTO;
+                        return new DiscountUserViewDTO(
+                                user.getUserId(),
+                                user.getUsername(),
+                                user.getEmail(),
+                                user.getFullName(),
+                                user.getUserImage()
+                        );
                     }
                     return null;
                 })
@@ -186,7 +196,7 @@ public class DiscountService {
     }
 
     private DiscountDTO convertToDTO(Discount discount) {
-        return new DiscountDTO(
+        DiscountDTO discountDTO = new DiscountDTO(
                 discount.getDiscountId(),
                 discount.getDiscountCode(),
                 discount.getDiscountType().name(),
@@ -199,7 +209,14 @@ public class DiscountService {
                 discount.getMaximumDiscountValue(),
                 discount.getUsageLimit()
         );
+
+        // Calculate the usage count
+        int usageCount = userDiscountRepository.findAllByDiscount_DiscountId(discount.getDiscountId()).size();
+        discountDTO.setUsageCount(usageCount); // Set the usage count
+
+        return discountDTO;
     }
+
 
     private Discount convertToEntity(DiscountDTO discountDTO) {
         Discount discount = new Discount();
