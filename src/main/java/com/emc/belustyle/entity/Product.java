@@ -2,9 +2,13 @@ package com.emc.belustyle.entity;
 
 import com.emc.belustyle.util.Views;
 import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.SerializerProvider;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -15,7 +19,7 @@ import java.util.List;
 @AllArgsConstructor
 @ToString
 @Table(name = "product")
-//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "productId")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "productId")
 public class Product {
 
     @Id
@@ -69,4 +73,6 @@ public class Product {
     }
 
 }
+
+
 

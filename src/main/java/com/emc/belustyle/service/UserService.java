@@ -141,6 +141,7 @@ public class UserService {
             user.setEmail(email);
             user.setFullName(fullName);
             user.setUserImage(userImage);
+            user.setPhoneNumber(null);
             user.setRole(userRoleService.findById(2)); // Assuming role ID 2 is for users
             user.setEnable(true);
             create(user); // Save user
