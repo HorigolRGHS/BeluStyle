@@ -1,4 +1,0 @@
-[
-  "select n1_0.notification_id,n1_0.created_at,n1_0.message,n1_0.target_role_id,n1_0.title from notification n1_0 order by n1_0.notification_id desc",
-  "select ur1_0.role_id,ur1_0.role_name from user_role ur1_0 where ur1_0.role_id=?"
-]

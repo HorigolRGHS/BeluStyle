@@ -1,7 +1,0 @@
-[
-  {
-    "route": "OPTIONS /api/notifications/as",
-    "parameters": "()",
-    "status": 200
-  }
-]

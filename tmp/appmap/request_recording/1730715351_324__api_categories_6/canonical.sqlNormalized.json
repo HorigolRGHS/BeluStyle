@@ -1,5 +1,0 @@
-[
-  "delete from category where category_id=?",
-  "select c1_0.category_id,c1_0.category_description,c1_0.category_name,c1_0.created_at,c1_0.image_url,c1_0.updated_at from category c1_0 where c1_0.category_id=?",
-  "select count(*) from category c1_0 where c1_0.category_id=?"
-]
