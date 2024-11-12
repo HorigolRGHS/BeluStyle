@@ -9,7 +9,7 @@ import java.util.Optional;
 
 @Repository
 public interface UserDiscountRepository extends JpaRepository<UserDiscount, Integer> {
-    // Corrected method to find all UserDiscounts by discountId.
+
     List<UserDiscount> findAllByDiscount_DiscountId(int discountId);
 
     List<UserDiscount> findAllByUser_UserId(String userId);

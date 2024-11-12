@@ -69,6 +69,9 @@ public class User implements UserDetails {
     @Column(name = "full_name", length = 50)
     private String fullName;
 
+    @Column(name = "phone_number", length = 20)
+    private String phoneNumber;
+
     @Column(name = "user_image")
     private String userImage;
 

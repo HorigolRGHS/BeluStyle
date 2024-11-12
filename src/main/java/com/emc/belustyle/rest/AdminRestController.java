@@ -56,9 +56,9 @@ public class AdminRestController {
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/{userId}")
-    public ResponseEntity<ViewUserDTO> getUserById(@PathVariable String userId) {
+    public ResponseEntity<ViewInfoDTO> getUserById(@PathVariable String userId) {
         try {
-            ViewUserDTO userDTO = userService.getUserById(userId);
+            ViewInfoDTO userDTO = userService.getUserById(userId);
             return ResponseEntity.ok(userDTO);
         } catch (CustomException e) {
             return ResponseEntity.status(e.getStatusCode()).body(null);

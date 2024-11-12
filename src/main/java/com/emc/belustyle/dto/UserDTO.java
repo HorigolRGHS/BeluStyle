@@ -14,6 +14,7 @@ public class UserDTO {
     private String email;
     private String fullName;
     private String userImage;
+    private String phoneNumber;
     private Boolean enable;
     private String role; // You may want to keep this as a simple String or create a RoleDTO
     private String currentPaymentMethod;

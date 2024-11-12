@@ -22,6 +22,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.Optional;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -306,22 +307,28 @@ public class UserService {
         return createUser(user);
     }
 
-    public ViewUserDTO getUserById(String userId) throws CustomException {
+    public ViewInfoDTO getUserById(String userId) throws CustomException {
         User user = findById(userId);
         if (user == null) {
             throw new CustomException("User not found", HttpStatus.NOT_FOUND);
         }
 
-        return new ViewUserDTO(
+        return new ViewInfoDTO(
                 user.getUserId(),
                 user.getUsername(),
                 user.getEmail(),
-                user.getRole().getRoleName().toString(),
+                user.getFullName(),
+                user.getUserImage(),
                 user.getEnable(),
+                user.getRole().getRoleName().toString(),
+                user.getCurrentPaymentMethod(),
+                user.getUserAddress(),
                 user.getCreatedAt(),
                 user.getUpdatedAt()
         );
     }
+
+
     public ViewInfoDTO getUserInfoByUsername(String username) {
         User user = findByUsername(username);
         if (user != null) {
