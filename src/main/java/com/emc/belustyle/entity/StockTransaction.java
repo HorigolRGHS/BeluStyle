@@ -30,6 +30,11 @@ public class StockTransaction {
     @JsonView(Views.TransactionView.class)
     private ProductVariation productVariation;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    @JsonView(Views.TransactionView.class)
+    private User user;
+
     @Column(name = "transaction_type")
     @Enumerated(EnumType.STRING)
     @JsonView(Views.TransactionView.class)

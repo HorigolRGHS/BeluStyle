@@ -17,6 +17,7 @@ public class StockTransactionDTO {
     private Integer variationId;
     private String transactionType;
     private List<ProductVariationQuantity> variations;
+    private String username;
 
 
     @Data

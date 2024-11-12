@@ -5,10 +5,7 @@ import com.emc.belustyle.dto.mapper.StockTransactionMapper;
 import com.emc.belustyle.entity.ProductVariation;
 import com.emc.belustyle.entity.Stock;
 import com.emc.belustyle.entity.StockTransaction;
-import com.emc.belustyle.repo.ProductRepository;
-import com.emc.belustyle.repo.ProductVariationRepository;
-import com.emc.belustyle.repo.StockRepository;
-import com.emc.belustyle.repo.StockTransactionRepository;
+import com.emc.belustyle.repo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,14 +21,16 @@ public class StockTransactionService {
     private StockTransactionRepository stockTransactionRepository;
     private StockRepository stockRepository;
     private ProductRepository productRepository;
+    private UserRepository userRepository;
 
 
     @Autowired
-    public StockTransactionService(StockTransactionRepository stockTransactionRepository, StockRepository stockRepository, ProductRepository productRepository, ProductVariationRepository productVariationRepository) {
+    public StockTransactionService(StockTransactionRepository stockTransactionRepository, StockRepository stockRepository, ProductRepository productRepository, ProductVariationRepository productVariationRepository, UserRepository userRepository) {
         this.stockTransactionRepository = stockTransactionRepository;
         this.stockRepository = stockRepository;
         this.productRepository = productRepository;
         this.productVariationRepository = productVariationRepository;
+        this.userRepository = userRepository;
     }
 
     public StockTransaction createStockTransaction(StockTransactionDTO stockTransactionDTO) {
@@ -61,6 +60,7 @@ public class StockTransactionService {
             StockTransaction stockTransaction = new StockTransaction();
             stockTransaction.setStock(stock.get());
             stockTransaction.setProductVariation(productVariation.get());
+            stockTransaction.setUser(userRepository.findByUsername(stockTransactionDTO.getUsername()).orElse(null));
             stockTransaction.setTransactionType(StockTransaction.TransactionType.IN); // Assuming IN transaction
             stockTransaction.setQuantity(variationQuantity.getQuantity());
 

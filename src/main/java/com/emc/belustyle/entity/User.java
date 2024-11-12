@@ -1,5 +1,7 @@
 package com.emc.belustyle.entity;
 
+import com.emc.belustyle.util.Views;
+import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -55,6 +57,7 @@ public class User implements UserDetails {
     private String userId;
 
     @Column(name = "username", unique = true)
+    @JsonView(Views.TransactionView.class)
     private String username;
 
     @Column(name = "google_id")
