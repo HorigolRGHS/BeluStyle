@@ -15,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @ToString
 @Table(name = "product")
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "productId")
+//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "productId")
 public class Product {
 
     @Id
@@ -29,7 +29,8 @@ public class Product {
     private String productName;
 
     @OneToMany(mappedBy = "product")
-    @JsonView({Views.TransactionView.class, Views.ProductView.class})
+    @JsonView({ Views.ProductView.class})
+    @JsonManagedReference
     private List<ProductVariation> productVariations;
 
     @ManyToOne
