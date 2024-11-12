@@ -26,9 +26,10 @@ public class Order {
     @JsonView(Views.ListView.class)
     private Date orderDate;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "order_status")
     @JsonView(Views.ListView.class)
-    private String orderStatus;
+    private OrderStatus orderStatus;
 
     @Column(name = "notes")
     @JsonView(Views.ListView.class)
@@ -55,9 +56,10 @@ public class Order {
     @JsonView(Views.ListView.class)
     private Double totalAmount;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "payment_method")
     @JsonView(Views.ListView.class)
-    private String paymentMethod;
+    private PaymentMethod paymentMethod;
 
     @Column(name = "tracking_number")
     @JsonView(Views.ListView.class)
@@ -83,5 +85,13 @@ public class Order {
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderDetail> orderDetails;
+
+    public enum OrderStatus {
+        PENDING, PROCESSING, COMPLETED, PAID, CANCELLED
+    }
+
+    public enum PaymentMethod {
+        COD, VNPAY, PAYOS, TRANSFER
+    }
 
 }

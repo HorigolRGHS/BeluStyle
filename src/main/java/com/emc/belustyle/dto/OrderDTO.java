@@ -1,5 +1,6 @@
 package com.emc.belustyle.dto;
 
+import com.emc.belustyle.entity.Order;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
@@ -15,14 +16,14 @@ import java.util.List;
 public class OrderDTO {
     private String orderId;
     private Date orderDate;
-    private String orderStatus;
+    private Order.OrderStatus orderStatus;
     private String notes;
     private String discountCode;
     private String billingAddress;
     private Date expectedDeliveryDate;
     private String shippingMethod;
     private Double totalAmount;
-    private String paymentMethod;
+    private Order.PaymentMethod paymentMethod;
     private String trackingNumber;
     private String transactionReference;
     private String userAddress;
