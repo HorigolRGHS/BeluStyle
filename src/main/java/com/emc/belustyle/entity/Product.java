@@ -34,7 +34,6 @@ public class Product {
 
     @OneToMany(mappedBy = "product")
     @JsonView({ Views.ProductView.class})
-    @JsonManagedReference
     private List<ProductVariation> productVariations;
 
     @ManyToOne
