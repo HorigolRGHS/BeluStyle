@@ -2,6 +2,7 @@ package com.emc.belustyle.service;
 
 import com.emc.belustyle.dto.DiscountDTO;
 import com.emc.belustyle.dto.DiscountUserViewDTO;
+import com.emc.belustyle.dto.ResponseDTO;
 import com.emc.belustyle.dto.UserDTO;
 import com.emc.belustyle.entity.Discount;
 import com.emc.belustyle.entity.User;
@@ -17,6 +18,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -204,6 +210,43 @@ public class DiscountService {
         result.put("userDiscounts", userDiscounts);
 
         return result;
+    }
+
+
+    public ResponseEntity<?> checkUserDiscount(String discountCode) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUsername = null;
+        if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
+            currentUsername = ((UserDetails) authentication.getPrincipal()).getUsername();
+        }
+
+        if (currentUsername == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new ResponseDTO(HttpStatus.UNAUTHORIZED.value(), "User not authenticated"));
+        }
+
+        String userId = userRepository.findByUsername(currentUsername)
+                .map(User::getUserId)
+                .orElse(null);
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ResponseDTO(HttpStatus.NOT_FOUND.value(), "User ID not found for authenticated user"));
+        }
+
+        Optional<DiscountDTO> discountOpt = findDiscountByCode(discountCode);
+        if (!discountOpt.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ResponseDTO(HttpStatus.NOT_FOUND.value(), "Discount code not found"));
+        }
+
+        boolean hasDiscount = checkDiscountUsage(userId, discountCode) > 0;
+        if (hasDiscount) {
+            DiscountDTO discountDTO = discountOpt.get();
+            return ResponseEntity.ok(discountDTO);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ResponseDTO(HttpStatus.NOT_FOUND.value(), "User does not have this discount"));
+        }
     }
 
     private DiscountDTO convertToDTO(Discount discount) {

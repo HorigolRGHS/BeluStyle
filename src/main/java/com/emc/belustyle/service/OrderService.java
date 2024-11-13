@@ -205,32 +205,31 @@ public class OrderService {
     private Order initializeOrder(OrderDTO orderDTO) {
         Order order = new Order();
 
-        // Gán OrderId nếu chưa có
         if (orderDTO.getOrderId() == null || orderDTO.getOrderId().isEmpty()) {
-            orderDTO.setOrderId(generateOrderId()); // Phương thức generateOrderId() đảm bảo định dạng B00001, B00002, ...
+            orderDTO.setOrderId(generateOrderId());
         }
         order.setOrderId(orderDTO.getOrderId());
 
-        // Gán thông tin từ DTO sang Order
-        setUser(order, orderDTO.getUserId()); // Thiết lập user từ userId
-        order.setOrderDate(new Date()); // Sử dụng java.util.Date
-        order.setOrderStatus(Order.OrderStatus.PENDING);// Trạng thái mặc định
+        setUser(order, orderDTO.getUserId());
+        order.setOrderDate(new Date());
+        order.setOrderStatus(Order.OrderStatus.PENDING);
         order.setTotalAmount(orderDTO.getTotalAmount());
 
         order.setUserAddress(orderDTO.getUserAddress());
         order.setPaymentMethod(orderDTO.getPaymentMethod());
         order.setShippingMethod(orderDTO.getShippingMethod());
-        order.setTrackingNumber(orderDTO.getTrackingNumber());
+
+        // Tạo tracking_number ngẫu nhiên
+        order.setTrackingNumber(generateTrackingNumber());
+
         order.setNotes(orderDTO.getNotes());
         order.setDiscountCode(orderDTO.getDiscountCode());
         order.setBillingAddress(orderDTO.getBillingAddress());
 
-        // Tạo expectedDeliveryDate là 10 ngày sau
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DAY_OF_MONTH, 10);
-        order.setExpectedDeliveryDate(calendar.getTime()); // Sử dụng java.util.Date
+        order.setExpectedDeliveryDate(calendar.getTime());
 
-        // Gán transaction reference hoặc thiết lập giá trị mặc định
         order.setTransactionReference(orderDTO.getTransactionReference() != null ? orderDTO.getTransactionReference() : generateDefaultTransactionReference());
 
         return order;
@@ -665,6 +664,18 @@ public class OrderService {
             detailJson.put("productImage", variation.getProductVariationImage()); // Lấy ảnh từ ProductVariation
         }
         return detailJson;
+    }
+
+    private String generateTrackingNumber() {
+        String prefix = "TN";
+        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        StringBuilder trackingNumber = new StringBuilder(prefix);
+        Random random = new Random();
+
+        for (int i = 0; i < 8; i++) {
+            trackingNumber.append(characters.charAt(random.nextInt(characters.length())));
+        }
+        return trackingNumber.toString();
     }
 
 }
