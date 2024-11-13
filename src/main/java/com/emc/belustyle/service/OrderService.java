@@ -328,6 +328,8 @@ public class OrderService {
         );
 
         ObjectNode paymentLinkResponse = payOsRestController.createPaymentLink(payOsRequest, request);
+        System.out.println("Payment link response: " + paymentLinkResponse);
+
         return handlePaymentResponse(order, paymentLinkResponse, orderDetails);
     }
 
@@ -383,7 +385,7 @@ public class OrderService {
 
     private JSONObject handlePaymentResponse(Order order, ObjectNode paymentLinkResponse, List<OrderDetail> orderDetails) {
         if (paymentLinkResponse.get("error").asInt() == 0) {
-            String paymentLink = paymentLinkResponse.get("data").get("paymentLink").asText();
+            String paymentLink = paymentLinkResponse.get("data").get("checkoutUrl").asText(); // Sử dụng checkoutUrl
             order.setTransactionReference(paymentLink);
             orderRepository.save(order);
             sendOrderConfirmationEmail(order, orderDetails);
@@ -391,6 +393,7 @@ public class OrderService {
         }
         return null;
     }
+
 
     private JSONObject redirectPayment(String paymentLink) {
         JSONObject response = new JSONObject();
@@ -547,32 +550,38 @@ public class OrderService {
     }
     // Phương thức chung để xây dựng nội dung email
     private String buildOrderEmailBody(Order order, List<OrderDetail> orderDetails, String headerMessage) {
+        String logoUrl = "https://i.imgur.com/DjTbAx2.png"; // Link ảnh logo của shop
         StringBuilder body = new StringBuilder();
-        body.append("<h2 style='color: #3abd5d;'>").append(headerMessage).append("</h2>")
+
+        body.append("<div style='font-family: Arial, sans-serif; max-width: 600px; margin: auto; color: #333;'>")
+                .append("<div style='text-align: center; padding: 20px; border-bottom: 2px solid #3abd5d;'>")
+                .append("<img src='").append(logoUrl).append("' alt='BeluStyle Logo' style='height: 50px; margin-bottom: 10px;' />")
+                .append("<h1 style='color: #3abd5d; font-size: 24px; margin: 0;'>BeluStyle</h1>")
+                .append("</div>")
+                .append("<div style='padding: 20px;'>")
+                .append("<h2 style='color: #3abd5d;'>").append(headerMessage).append("</h2>")
+                .append("<p style='font-size: 16px; color: #555;'>Xin chào, cảm ơn bạn đã đặt hàng tại BeluStyle! Dưới đây là thông tin chi tiết về đơn hàng của bạn.</p>")
                 .append("<h3 style='color: #0d0a29;'>Thông tin đơn hàng:</h3>")
-                .append("<ul>")
+                .append("<ul style='list-style-type: none; padding: 0;'>")
                 .append("<li><strong>Mã đơn hàng:</strong> ").append(order.getOrderId()).append("</li>")
                 .append("<li><strong>Ngày đặt:</strong> ").append(order.getOrderDate()).append("</li>")
                 .append("<li><strong>Phương thức thanh toán:</strong> ").append(order.getPaymentMethod()).append("</li>")
                 .append("<li><strong>Phương thức giao hàng:</strong> ").append(order.getShippingMethod()).append("</li>")
                 .append("<li><strong>Tổng số tiền:</strong> ").append(order.getTotalAmount()).append(" VND</li>")
-                .append("</ul>");
-
-        // Bảng chi tiết sản phẩm
-        body.append("<h3 style='color: #0d0a29;'>Chi tiết sản phẩm:</h3>")
-                .append("<table style='width: 100%; border-collapse: collapse;'>")
+                .append("</ul>")
+                .append("<h3 style='color: #0d0a29;'>Chi tiết sản phẩm:</h3>")
+                .append("<table style='width: 100%; border-collapse: collapse; margin-top: 10px;'>")
                 .append("<thead>")
-                .append("<tr>")
-                .append("<th style='border: 1px solid #ddd; padding: 8px; background-color: #f0ece9;'>Tên sản phẩm</th>")
-                .append("<th style='border: 1px solid #ddd; padding: 8px; background-color: #f0ece9;'>Kích thước</th>")
-                .append("<th style='border: 1px solid #ddd; padding: 8px; background-color: #f0ece9;'>Màu sắc</th>")
-                .append("<th style='border: 1px solid #ddd; padding: 8px; background-color: #f0ece9;'>Số lượng</th>")
-                .append("<th style='border: 1px solid #ddd; padding: 8px; background-color: #f0ece9;'>Đơn giá</th>")
+                .append("<tr style='background-color: #f0ece9;'>")
+                .append("<th style='padding: 8px; border: 1px solid #ddd;'>Tên sản phẩm</th>")
+                .append("<th style='padding: 8px; border: 1px solid #ddd;'>Kích thước</th>")
+                .append("<th style='padding: 8px; border: 1px solid #ddd;'>Màu sắc</th>")
+                .append("<th style='padding: 8px; border: 1px solid #ddd;'>Số lượng</th>")
+                .append("<th style='padding: 8px; border: 1px solid #ddd;'>Đơn giá</th>")
                 .append("</tr>")
                 .append("</thead>")
                 .append("<tbody>");
 
-        // Chuyển đổi OrderDetails thành danh sách ProductVariations
         List<ProductVariation> productVariations = convertOrderDetailsToProductVariations(orderDetails);
 
         if (productVariations != null && !productVariations.isEmpty()) {
@@ -580,22 +589,31 @@ public class OrderService {
                 int orderQuantity = getOrderQuantityForVariation(orderDetails, String.valueOf(productVariation.getVariationId()));
 
                 body.append("<tr>")
-                        .append("<td style='border: 1px solid #ddd; padding: 8px;'>").append(productVariation.getProduct().getProductName()).append("</td>")
-                        .append("<td style='border: 1px solid #ddd; padding: 8px;'>").append(productVariation.getSize().getSizeName()).append("</td>")
-                        .append("<td style='border: 1px solid #ddd; padding: 8px;'>").append(productVariation.getColor().getColorName()).append("</td>")
-                        .append("<td style='border: 1px solid #ddd; padding: 8px;'>").append(orderQuantity).append("</td>")
-                        .append("<td style='border: 1px solid #ddd; padding: 8px;'>").append(productVariation.getProductPrice()).append(" VND</td>")
+                        .append("<td style='padding: 8px; border: 1px solid #ddd;'>").append(productVariation.getProduct().getProductName()).append("</td>")
+                        .append("<td style='padding: 8px; border: 1px solid #ddd;'>").append(productVariation.getSize().getSizeName()).append("</td>")
+                        .append("<td style='padding: 8px; border: 1px solid #ddd;'>").append(productVariation.getColor().getColorName()).append("</td>")
+                        .append("<td style='padding: 8px; border: 1px solid #ddd;'>").append(orderQuantity).append("</td>")
+                        .append("<td style='padding: 8px; border: 1px solid #ddd;'>").append(productVariation.getProductPrice()).append(" VND</td>")
                         .append("</tr>");
             }
         } else {
-            body.append("<tr><td colspan='5' style='border: 1px solid #ddd; padding: 8px; text-align: center;'>Không có sản phẩm nào trong đơn hàng.</td></tr>");
+            body.append("<tr><td colspan='5' style='padding: 8px; border: 1px solid #ddd; text-align: center;'>Không có sản phẩm nào trong đơn hàng.</td></tr>");
         }
 
         body.append("</tbody>")
-                .append("</table>");
+                .append("</table>")
+                .append("<p style='text-align: center; color: #777; font-size: 14px; margin-top: 20px;'>")
+                .append("Cảm ơn bạn đã mua sắm tại BeluStyle! Nếu bạn có bất kỳ thắc mắc nào, xin vui lòng liên hệ với chúng tôi.")
+                .append("</p>")
+                .append("</div>")
+                .append("<footer style='text-align: center; padding: 10px; background-color: #3abd5d; color: #fff;'>")
+                .append("<p style='margin: 0; font-size: 14px;'>© 2024 BeluStyle</p>")
+                .append("</footer>")
+                .append("</div>");
 
         return body.toString();
     }
+
 
     private Map<String, Object> buildOrderResponseJson(Order order) {
         Map<String, Object> orderJson = new HashMap<>();
