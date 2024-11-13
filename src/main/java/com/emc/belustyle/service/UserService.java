@@ -265,7 +265,6 @@ public class UserService {
                 user.getUserId(),
                 user.getUsername(),
                 user.getEmail(),
-                user.getPhoneNumber(),
                 user.getRole().getRoleName().toString(),
                 user.getEnable(),
                 user.getCreatedAt(),

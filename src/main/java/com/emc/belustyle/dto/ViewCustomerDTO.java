@@ -7,10 +7,11 @@ import java.util.Date;
 
 @Data
 @AllArgsConstructor
-public class ViewUserDTO {
+public class ViewCustomerDTO {
     private String userId;
     private String username;
     private String email;
+    private String phoneNumber;
     private String role;
     private Boolean enable;
     private Date createdAt;
