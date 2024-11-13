@@ -191,8 +191,9 @@ public class DiscountRestController {
     }
 
 
-    // Phương thức phụ để giải mã userId từ token
-    private String extractUserIdFromToken(String token) {
-        return jwtUtil.extractSubject(token);
+    @GetMapping("/check-user-discount")
+    public ResponseEntity<?> checkUserDiscount(@RequestParam("discount") String discountCode) {
+        return discountService.checkUserDiscount(discountCode);
     }
+
 }
