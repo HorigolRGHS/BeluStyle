@@ -138,7 +138,7 @@ public class OrderService {
     }
 
     @Transactional
-    public Map<String, Object> createOrder(OrderDTO orderDTO, HttpServletRequest request, HttpServletResponse response) {
+    public Map<String, Object> createOrder(OrderDTO orderDTO, HttpServletRequest request) {
         // Log thông tin OrderDTO nhận được
         System.out.println("Received OrderDTO: " + orderDTO); // Kiểm tra lại tại đây
 

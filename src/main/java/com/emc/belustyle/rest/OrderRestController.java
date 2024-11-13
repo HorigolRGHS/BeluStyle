@@ -111,9 +111,9 @@ public class OrderRestController {
 
     @PreAuthorize("permitAll()")
     @PostMapping
-    public ResponseEntity<Map<String, Object>> createOrder(@RequestBody OrderDTO orderDTO, HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<Map<String, Object>> createOrder(@RequestBody OrderDTO orderDTO, HttpServletRequest request) {
         try {
-            Map<String, Object> jsonResponse = orderService.createOrder(orderDTO, request, response);
+            Map<String, Object> jsonResponse = orderService.createOrder(orderDTO, request);
             return ResponseEntity.ok(jsonResponse);
         } catch (Exception e) {
             Map<String, Object> errorResponse = new HashMap<>();
