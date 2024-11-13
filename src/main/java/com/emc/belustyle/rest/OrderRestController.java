@@ -111,6 +111,13 @@ public class OrderRestController {
     @PreAuthorize("permitAll()")
     @PostMapping
     public ResponseEntity<Map<String, Object>> createOrder(@RequestBody OrderDTO orderDTO, HttpServletRequest request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUsername = null;
+        if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
+            currentUsername = ((UserDetails) authentication.getPrincipal()).getUsername();
+        }
+        String userId = userService.findByUsername(currentUsername).getUserId();
+        orderDTO.setUserId(userId);
         try {
             Map<String, Object> jsonResponse = orderService.createOrder(orderDTO, request);
             return ResponseEntity.ok(jsonResponse);

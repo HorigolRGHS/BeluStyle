@@ -35,10 +35,10 @@ public class PayOsRestController {
         try {
             final String baseUrl = getBaseUrl(httpServletRequest);
             final String description = "Thanh Toan BeluStyle";
-            final String returnUrl = "http://localhost:3000/order/success";
+            final String returnUrl = "http://localhost:3000/orders/success";
 //            final String returnUrl = baseUrl + "/order/success";
 //            final String cancelUrl = baseUrl + "/order/cancel";
-            final String cancelUrl = "http://localhost:3000/order/cancel";
+            final String cancelUrl = "http://localhost:3000/orders/error";
             final int price = RequestBody.getPrice();
 
             String currentTimeString = String.valueOf(new Date().getTime());
