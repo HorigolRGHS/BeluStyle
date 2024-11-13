@@ -13,4 +13,5 @@ import java.util.List;
 public interface ProductVariationRepository extends JpaRepository<ProductVariation, Integer> {
     @Query("SELECT pv FROM ProductVariation pv WHERE pv.product.productId = :productId")
     public List<ProductVariation> findProductVariationByProductId(@Param("productId") String productId);
+
 }

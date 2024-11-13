@@ -55,8 +55,6 @@ public class OrderService {
                         ProductVariationMapper productVariationMapper,
                         OrderDetailService orderDetailService,
                         UserRepository userRepository, ProductRepository productRepository) {
-                        UserRepository userRepository) {
-                        OrderDetailService orderDetailService, UserRepository userRepository) {
         this.orderRepository = orderRepository;
         this.orderMapper = orderMapper;
         this.orderDetailMapper = orderDetailMapper;
@@ -69,6 +67,8 @@ public class OrderService {
         this.productVariationMapper = productVariationMapper;
         this.userRepository = userRepository;
         this.productRepository = productRepository;
+
+
     }
 
     @Transactional
