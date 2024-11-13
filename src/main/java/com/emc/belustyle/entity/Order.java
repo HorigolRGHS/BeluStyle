@@ -13,7 +13,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
+@ToString(exclude = "orderDetails")
 @Table(name = "`order`")
 public class Order {
     @Id

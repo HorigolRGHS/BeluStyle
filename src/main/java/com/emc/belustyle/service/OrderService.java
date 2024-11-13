@@ -56,6 +56,8 @@ public class OrderService {
                         ProductVariationService productVariationService,
                         ProductVariationRepository productVariationRepository,
                         ProductVariationMapper productVariationMapper,
+                        OrderDetailService orderDetailService,
+                        UserRepository userRepository) {
                         OrderDetailService orderDetailService, UserRepository userRepository) {
         this.orderRepository = orderRepository;
         this.orderMapper = orderMapper;
@@ -280,17 +282,21 @@ public class OrderService {
         if (orderDetails == null || orderDetails.isEmpty()) {
             throw new IllegalArgumentException("Order details cannot be null or empty for payment processing");
         }
-//        List<ItemDataDTO> itemDataList = createItemDataList(orderDTO);
+
         switch (orderDTO.getPaymentMethod()) {
             case PAYOS:
-                return null;
+                return handlePayOsPayment(order, orderDTO, orderDetails, request);
             case VNPAY:
                 return handleVNPayPayment(order, orderDTO, orderDetails, request);
+            case COD:
+                return handleCODPayment(order, orderDetails);
+            case TRANSFER:
+                return handleTransferPayment(order, orderDetails);
             default:
                 throw new IllegalArgumentException("Invalid payment method: " + orderDTO.getPaymentMethod());
         }
-
     }
+
 
 //    private List<ItemDataDTO> createItemDataList(OrderDTO orderDTO) {
 //        return orderDTO.getOrderDetails().stream()
@@ -303,18 +309,52 @@ public class OrderService {
 //                .collect(Collectors.toList());
 //    }
 
-//    private JSONObject handlePayOsPayment(Order order, OrderDTO orderDTO, List<OrderDetail> orderDetails, List<ItemDataDTO> itemDataList, HttpServletRequest request) {
-//        PayOsLinkRequestBodyDTO payOsRequest = new PayOsLinkRequestBodyDTO(
-//                "Thanh Toan Đơn Hàng",
-//                "Chi tiết đơn hàng",
-//                "https://yourdomain.com/order/success",
-//                (int) (orderDTO.getTotalAmount() * 100),
-//                "https://yourdomain.com/order/cancel",
-//                itemDataList
-//        );
-//        ObjectNode paymentLinkResponse = payOsRestController.createPaymentLink(payOsRequest, request);
-//        return handlePaymentResponse(order, paymentLinkResponse,orderDetails);
-//    }
+    private JSONObject handlePayOsPayment(Order order, OrderDTO orderDTO, List<OrderDetail> orderDetails, HttpServletRequest request) {
+        List<ItemDataDTO> itemDataList = orderDTO.getOrderDetails().stream()
+                .map(detail -> {
+                    ItemDataDTO item = new ItemDataDTO();
+                    item.setName("Product Item");
+                    item.setPrice(detail.getUnitPrice().intValue());
+                    item.setQuantity(detail.getOrderQuantity());
+                    return item;
+                })
+                .collect(Collectors.toList());
+
+        PayOsLinkRequestBodyDTO payOsRequest = new PayOsLinkRequestBodyDTO(
+                "Thanh Toan Đơn Hàng",
+                "https://yourdomain.com/order/success",
+                (int) (orderDTO.getTotalAmount() * 100),
+                "https://yourdomain.com/order/cancel",
+                itemDataList
+        );
+
+        ObjectNode paymentLinkResponse = payOsRestController.createPaymentLink(payOsRequest, request);
+        return handlePaymentResponse(order, paymentLinkResponse, orderDetails);
+    }
+
+
+    private JSONObject handleCODPayment(Order order, List<OrderDetail> orderDetails) {
+        order.setOrderStatus(Order.OrderStatus.PENDING);
+        orderRepository.save(order);
+        sendOrderConfirmationEmail(order, orderDetails);
+
+        JSONObject response = new JSONObject();
+        response.put("error", 0);
+        response.put("message", "Order created with COD payment");
+        return response;
+    }
+
+    private JSONObject handleTransferPayment(Order order, List<OrderDetail> orderDetails) {
+        order.setOrderStatus(Order.OrderStatus.PENDING);
+        orderRepository.save(order);
+        sendOrderConfirmationEmail(order, orderDetails);
+
+        JSONObject response = new JSONObject();
+        response.put("error", 0);
+        response.put("message", "Order created with bank transfer payment");
+        return response;
+    }
+
 
     private JSONObject handleVNPayPayment(Order order, OrderDTO orderDTO, List<OrderDetail> orderDetails, HttpServletRequest request) {
         int totalAmountInCents = (int) (orderDTO.getTotalAmount() * 100);
@@ -325,13 +365,13 @@ public class OrderService {
                 request
         );
 
-        // Giả sử VNPAY trả về mã giao dịch, ta chỉ lấy mã giao dịch (6 số) thay vì lưu toàn bộ liên kết
         String transactionReference = extractTransactionCode(paymentLink);
         order.setTransactionReference(transactionReference);
         orderRepository.save(order);
         sendOrderConfirmationEmail(order, orderDetails);
         return redirectPayment(paymentLink);
     }
+
 
     // Phương thức để lấy mã giao dịch từ `paymentLink`
     private String extractTransactionCode(String paymentLink) {
@@ -342,7 +382,7 @@ public class OrderService {
         return "000000"; // Mã mặc định nếu không tìm thấy mã giao dịch hợp lệ
     }
 
-    private JSONObject handlePaymentResponse(Order order, ObjectNode paymentLinkResponse,List<OrderDetail> orderDetails) {
+    private JSONObject handlePaymentResponse(Order order, ObjectNode paymentLinkResponse, List<OrderDetail> orderDetails) {
         if (paymentLinkResponse.get("error").asInt() == 0) {
             String paymentLink = paymentLinkResponse.get("data").get("paymentLink").asText();
             order.setTransactionReference(paymentLink);
@@ -352,6 +392,7 @@ public class OrderService {
         }
         return null;
     }
+
     private JSONObject redirectPayment(String paymentLink) {
         JSONObject response = new JSONObject();
         response.put("error", 0);
@@ -368,10 +409,11 @@ public class OrderService {
 
             if (isSuccess) {
                 sendPaymentSuccessEmail(order);
+            } else {
+                sendOrderCancellationEmail(order);
             }
         }
     }
-
 
     private String generateOrderId() {
         long orderCount = orderRepository.count();
@@ -493,6 +535,7 @@ public class OrderService {
             throw new IllegalStateException("Order must be in PAID status to be reviewed by staff.");
         }
     }
+
 
     public void confirmOrderReceived(String orderId) {
         Order order = orderRepository.findById(orderId).orElseThrow(() -> new IllegalArgumentException("Invalid order ID"));
