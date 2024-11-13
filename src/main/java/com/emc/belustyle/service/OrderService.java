@@ -16,6 +16,7 @@ import com.emc.belustyle.repo.UserRepository;
 import com.emc.belustyle.rest.PayOsRestController;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -139,7 +140,7 @@ public class OrderService {
     }
 
     @Transactional
-    public Map<String, Object> createOrder(OrderDTO orderDTO, HttpServletRequest request) {
+    public Map<String, Object> createOrder(OrderDTO orderDTO, HttpServletRequest request, HttpServletResponse response) {
         // Log thông tin OrderDTO nhận được
         System.out.println("Received OrderDTO: " + orderDTO); // Kiểm tra lại tại đây
 
@@ -349,6 +350,7 @@ public class OrderService {
         JSONObject response = new JSONObject();
         response.put("error", 0);
         response.put("message", "Order created with COD payment");
+
         return response;
     }
 

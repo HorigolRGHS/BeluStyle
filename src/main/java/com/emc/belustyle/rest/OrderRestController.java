@@ -6,6 +6,7 @@ import com.emc.belustyle.dto.ResponseDTO;
 import com.emc.belustyle.entity.User;
 import com.emc.belustyle.service.OrderService;
 import com.emc.belustyle.service.UserService;
+import jakarta.servlet.http.HttpServletResponse;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -110,9 +111,9 @@ public class OrderRestController {
 
     @PreAuthorize("permitAll()")
     @PostMapping
-    public ResponseEntity<Map<String, Object>> createOrder(@RequestBody OrderDTO orderDTO, HttpServletRequest request) {
+    public ResponseEntity<Map<String, Object>> createOrder(@RequestBody OrderDTO orderDTO, HttpServletRequest request, HttpServletResponse response) {
         try {
-            Map<String, Object> jsonResponse = orderService.createOrder(orderDTO, request);
+            Map<String, Object> jsonResponse = orderService.createOrder(orderDTO, request, response);
             return ResponseEntity.ok(jsonResponse);
         } catch (Exception e) {
             Map<String, Object> errorResponse = new HashMap<>();

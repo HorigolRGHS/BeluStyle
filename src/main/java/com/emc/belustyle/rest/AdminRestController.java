@@ -27,7 +27,7 @@ public class AdminRestController {
 
     @Autowired
     public AdminRestController(UserService userService) {
-        this.userService = userService;;
+        this.userService = userService;
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
