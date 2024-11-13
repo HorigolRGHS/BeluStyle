@@ -12,6 +12,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -172,6 +176,18 @@ public class DiscountRestController {
         }).collect(Collectors.toList());
 
         return ResponseEntity.ok(myDiscounts);
+    }
+
+    @PreAuthorize("hasAuthority('CUSTOMER')")
+    @GetMapping("/me")
+    public ResponseEntity<?> getDiscountsByUsername() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUsername = null;
+        if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
+            currentUsername = ((UserDetails) authentication.getPrincipal()).getUsername();
+        }
+        List<DiscountDTO> userDiscounts = discountService.getDiscountsByUsername(currentUsername);
+        return ResponseEntity.ok().body(userDiscounts);
     }
 
 

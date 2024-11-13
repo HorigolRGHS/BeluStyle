@@ -6,13 +6,11 @@ import com.emc.belustyle.dto.PayOsLinkRequestBodyDTO;
 import com.emc.belustyle.dto.ItemDataDTO;
 import com.emc.belustyle.dto.mapper.OrderMapper;
 import com.emc.belustyle.dto.mapper.OrderDetailMapper;
-import com.emc.belustyle.entity.Order;
-import com.emc.belustyle.entity.OrderDetail;
+import com.emc.belustyle.entity.*;
 
-import com.emc.belustyle.entity.ProductVariation;
 import com.emc.belustyle.dto.mapper.ProductVariationMapper;
-import com.emc.belustyle.entity.User;
 import com.emc.belustyle.repo.OrderRepository;
+import com.emc.belustyle.repo.ProductRepository;
 import com.emc.belustyle.repo.ProductVariationRepository;
 import com.emc.belustyle.repo.UserRepository;
 import com.emc.belustyle.rest.PayOsRestController;
@@ -34,6 +32,7 @@ import java.util.stream.Collectors;
 public class OrderService {
 
     private final OrderRepository orderRepository;
+    private final ProductRepository productRepository;
     private boolean isCancellingOrder = false;
     private final OrderMapper orderMapper;
     private final OrderDetailMapper orderDetailMapper;
@@ -57,7 +56,7 @@ public class OrderService {
                         ProductVariationRepository productVariationRepository,
                         ProductVariationMapper productVariationMapper,
                         OrderDetailService orderDetailService,
-                        UserRepository userRepository) {
+                        UserRepository userRepository, ProductRepository productRepository) {
         this.orderRepository = orderRepository;
         this.orderMapper = orderMapper;
         this.orderDetailMapper = orderDetailMapper;
@@ -69,7 +68,7 @@ public class OrderService {
         this.productVariationRepository = productVariationRepository;
         this.productVariationMapper = productVariationMapper;
         this.userRepository = userRepository;
-
+        this.productRepository = productRepository;
     }
 
     @Transactional
@@ -312,7 +311,8 @@ public class OrderService {
         List<ItemDataDTO> itemDataList = orderDTO.getOrderDetails().stream()
                 .map(detail -> {
                     ItemDataDTO item = new ItemDataDTO();
-                    item.setName("Product Item");
+                    String productName = productRepository.getProductNameById(detail.getVariationId());
+                    item.setName(productName);
                     item.setPrice(detail.getUnitPrice().intValue());
                     item.setQuantity(detail.getOrderQuantity());
                     return item;
@@ -321,9 +321,9 @@ public class OrderService {
 
         PayOsLinkRequestBodyDTO payOsRequest = new PayOsLinkRequestBodyDTO(
                 "Thanh Toan Đơn Hàng",
-                "https://yourdomain.com/order/success",
-                (int) (orderDTO.getTotalAmount() * 100),
-                "https://yourdomain.com/order/cancel",
+                null,
+                (int) (orderDTO.getTotalAmount() * 1),
+                null,
                 itemDataList
         );
 
@@ -383,7 +383,7 @@ public class OrderService {
 
     private JSONObject handlePaymentResponse(Order order, ObjectNode paymentLinkResponse, List<OrderDetail> orderDetails) {
         if (paymentLinkResponse.get("error").asInt() == 0) {
-            String paymentLink = paymentLinkResponse.get("data").get("paymentLink").asText();
+            String paymentLink = paymentLinkResponse.get("data").get("checkoutUrl").asText(); // Sử dụng checkoutUrl
             order.setTransactionReference(paymentLink);
             orderRepository.save(order);
             sendOrderConfirmationEmail(order, orderDetails);
