@@ -24,8 +24,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.text.DecimalFormat;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -415,7 +413,7 @@ public class OrderService {
     public void handlePaymentCallback(String orderId, boolean isSuccess) {
         Order order = orderRepository.findById(orderId).orElse(null);
         if (order != null) {
-            order.setOrderStatus(isSuccess ? Order.OrderStatus.PAID : Order.OrderStatus.CANCELLED);
+            order.setOrderStatus(isSuccess ? Order.OrderStatus.PROCESSING : Order.OrderStatus.CANCELLED);
             orderRepository.save(order);
 
             if (isSuccess) {
@@ -536,19 +534,19 @@ public class OrderService {
         User staff = userRepository.findByUsername(staffName)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid staff name"));
 
-        if (order.getOrderStatus() == Order.OrderStatus.PAID) {
-            order.setOrderStatus(isApproved ? Order.OrderStatus.PROCESSING : Order.OrderStatus.CANCELLED);
+        if (order.getOrderStatus() == Order.OrderStatus.PROCESSING) {
+            order.setOrderStatus(isApproved ? Order.OrderStatus.SHIPPED: Order.OrderStatus.CANCELLED);
             order.setStaff(staff); // Gán staff vào order
             orderRepository.save(order);
         } else {
-            throw new IllegalStateException("Order must be in PAID status to be reviewed by staff.");
+            throw new IllegalStateException("Order must be in PROCESSING status to be reviewed by staff.");
         }
     }
 
 
     public void confirmOrderReceived(String orderId) {
         Order order = orderRepository.findById(orderId).orElseThrow(() -> new IllegalArgumentException("Invalid order ID"));
-        if (order.getOrderStatus() == Order.OrderStatus.PROCESSING) {
+        if (order.getOrderStatus() == Order.OrderStatus.SHIPPED) {
             order.setOrderStatus(Order.OrderStatus.COMPLETED);
             orderRepository.save(order);
         } else {
