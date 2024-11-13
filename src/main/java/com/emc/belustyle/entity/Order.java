@@ -87,7 +87,7 @@ public class Order {
     private List<OrderDetail> orderDetails;
 
     public enum OrderStatus {
-        PENDING, PROCESSING, COMPLETED, PAID, CANCELLED
+        PENDING, SHIPPED, COMPLETED, PROCESSING, CANCELLED
     }
 
     public enum PaymentMethod {
