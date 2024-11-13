@@ -36,7 +36,7 @@ public class OrderRestController {
     @Autowired
     private UserService userService;
 
-    @PreAuthorize("permitAll()")
+    @PreAuthorize("hasAnyAuthority('STAFF', 'ADMIN')")
     @GetMapping
     public Page<OrderDTO> getOrders(
             @RequestParam(value = "status", required = false) String status,
@@ -120,11 +120,18 @@ public class OrderRestController {
         return ResponseEntity.ok(responseDTO);
     }
 
+    @PreAuthorize("hasAnyAuthority('STAFF', 'ADMIN')")
     @PutMapping("/{orderId}/staff-review")
-    public ResponseEntity<ResponseDTO> reviewOrderByStaff(@PathVariable String orderId, @RequestBody Map<String, Boolean> body) {
+    public ResponseEntity<ResponseDTO> reviewOrderByStaff(@PathVariable String orderId, @RequestBody Map<String, Object> body) {
         try {
-            boolean isApproved = body.getOrDefault("isApproved", false);
-            orderService.reviewOrderByStaff(orderId, isApproved);
+            boolean isApproved = (boolean) body.getOrDefault("isApproved", false);
+            String staffName = (String) body.get("staffName");
+
+            if (staffName == null || staffName.isEmpty()) {
+                throw new IllegalArgumentException("Staff name is required.");
+            }
+
+            orderService.reviewOrderByStaff(orderId, staffName, isApproved);
             ResponseDTO responseDTO = new ResponseDTO(HttpStatus.OK.value(), "Order reviewed successfully.");
             return ResponseEntity.ok(responseDTO);
         } catch (Exception e) {

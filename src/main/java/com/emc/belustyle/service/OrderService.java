@@ -14,6 +14,7 @@ import com.emc.belustyle.dto.mapper.ProductVariationMapper;
 import com.emc.belustyle.entity.User;
 import com.emc.belustyle.repo.OrderRepository;
 import com.emc.belustyle.repo.ProductVariationRepository;
+import com.emc.belustyle.repo.UserRepository;
 import com.emc.belustyle.rest.PayOsRestController;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.servlet.http.HttpServletRequest;
@@ -43,6 +44,7 @@ public class OrderService {
     private final ProductVariationService productVariationService;
     private final ProductVariationRepository productVariationRepository;
     private final ProductVariationMapper productVariationMapper;
+    private final UserRepository userRepository;
 
     @Autowired
     public OrderService(OrderRepository orderRepository,
@@ -54,7 +56,7 @@ public class OrderService {
                         ProductVariationService productVariationService,
                         ProductVariationRepository productVariationRepository,
                         ProductVariationMapper productVariationMapper,
-                        OrderDetailService orderDetailService) {
+                        OrderDetailService orderDetailService, UserRepository userRepository) {
         this.orderRepository = orderRepository;
         this.orderMapper = orderMapper;
         this.orderDetailMapper = orderDetailMapper;
@@ -65,6 +67,7 @@ public class OrderService {
         this.productVariationService = productVariationService;
         this.productVariationRepository = productVariationRepository;
         this.productVariationMapper = productVariationMapper;
+        this.userRepository = userRepository;
 
     }
 
@@ -473,10 +476,18 @@ public class OrderService {
         return 0; // Trả về 0 nếu không tìm thấy
     }
 
-    public void reviewOrderByStaff(String orderId, boolean isApproved) {
-        Order order = orderRepository.findById(orderId).orElseThrow(() -> new IllegalArgumentException("Invalid order ID"));
+    @Transactional
+    public void reviewOrderByStaff(String orderId, String staffName, boolean isApproved) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid order ID"));
+
+        // Lấy thông tin của staff dựa trên tên
+        User staff = userRepository.findByUsername(staffName)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid staff name"));
+
         if (order.getOrderStatus() == Order.OrderStatus.PAID) {
             order.setOrderStatus(isApproved ? Order.OrderStatus.PROCESSING : Order.OrderStatus.CANCELLED);
+            order.setStaff(staff); // Gán staff vào order
             orderRepository.save(order);
         } else {
             throw new IllegalStateException("Order must be in PAID status to be reviewed by staff.");
