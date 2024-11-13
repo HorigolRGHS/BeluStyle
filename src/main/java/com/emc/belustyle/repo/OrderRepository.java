@@ -12,6 +12,8 @@ import org.springframework.stereotype.Repository;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+import java.util.Optional;
+
 
 @Repository
 
@@ -26,5 +28,8 @@ public interface OrderRepository extends JpaRepository<Order, String>, JpaSpecif
     @Modifying
     @Query("UPDATE Order o SET o.orderStatus = 'CANCELLED' WHERE o.orderId = :orderId")
     void updateOrderStatusToCancelled(@Param("orderId") String orderId);
+
+    @Query("SELECT o FROM Order o left join User u on u.username = o.user.username WHERE u.username = :username AND o.orderId = :orderId ")
+    Optional<Order> findOrderByUserIdAndOrderId(String username, String orderId);
 
 }
