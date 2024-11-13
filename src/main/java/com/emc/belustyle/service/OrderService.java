@@ -333,7 +333,6 @@ public class OrderService {
         );
 
         ObjectNode paymentLinkResponse = payOsRestController.createPaymentLink(payOsRequest, request);
-        System.out.println("Payment link response: " + paymentLinkResponse);
 
         return handlePaymentResponse(order, paymentLinkResponse, orderDetails);
     }
@@ -368,7 +367,7 @@ public class OrderService {
         String paymentLink = vnPayService.createOrder(
                 totalAmountInCents,
                 "Order " + order.getOrderId(),
-                "https://yourdomain.com/order/success",
+                "http://localhost:3000/orders/success",
                 request
         );
 
@@ -380,19 +379,33 @@ public class OrderService {
     }
 
 
-    // Phương thức để lấy mã giao dịch từ `paymentLink`
     private String extractTransactionCode(String paymentLink) {
-        // Giả định mã giao dịch là phần cuối của `paymentLink` và có độ dài 6 ký tự
-        if (paymentLink != null && paymentLink.length() >= 6) {
-            return paymentLink.substring(paymentLink.length() - 6);
+        if (paymentLink == null || paymentLink.isEmpty()) {
+            return "000000"; // Mã mặc định nếu không có paymentLink
         }
-        return "000000"; // Mã mặc định nếu không tìm thấy mã giao dịch hợp lệ
+
+        if (paymentLink.contains("vnp_TxnRef")) {
+            // URL của VNPAY, lấy giá trị của tham số `vnp_TxnRef`
+            String[] params = paymentLink.split("&");
+            for (String param : params) {
+                if (param.startsWith("vnp_TxnRef=")) {
+                    return param.substring("vnp_TxnRef=".length());
+                }
+            }
+        } else if (paymentLink.contains("pay.payos.vn")) {
+            // URL của PAYOS, lấy 32 ký tự cuối (mã giao dịch)
+            return paymentLink.substring(paymentLink.lastIndexOf('/') + 1);
+        }
+
+        return "000000"; // Trả về mã mặc định nếu không khớp định dạng
     }
+
 
     private JSONObject handlePaymentResponse(Order order, ObjectNode paymentLinkResponse, List<OrderDetail> orderDetails) {
         if (paymentLinkResponse.get("error").asInt() == 0) {
             String paymentLink = paymentLinkResponse.get("data").get("checkoutUrl").asText(); // Sử dụng checkoutUrl
-            order.setTransactionReference(paymentLink);
+            String transactionReference = extractTransactionCode(paymentLink);
+            order.setTransactionReference(transactionReference);
             orderRepository.save(order);
             sendOrderConfirmationEmail(order, orderDetails);
             return redirectPayment(paymentLink);

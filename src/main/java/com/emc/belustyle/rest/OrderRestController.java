@@ -109,9 +109,17 @@ public class OrderRestController {
 
 
 
-    @PreAuthorize("permitAll()")
+    @PreAuthorize("hasAuthority('CUSTOMER')")
     @PostMapping
     public ResponseEntity<Map<String, Object>> createOrder(@RequestBody OrderDTO orderDTO, HttpServletRequest request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUsername = null;
+        if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
+            currentUsername = ((UserDetails) authentication.getPrincipal()).getUsername();
+        }
+        String userId = userService.findByUsername(currentUsername).getUserId();
+        System.out.println(userId);
+        orderDTO.setUserId(userId);
         try {
             Map<String, Object> jsonResponse = orderService.createOrder(orderDTO, request);
             return ResponseEntity.ok(jsonResponse);
@@ -133,6 +141,7 @@ public class OrderRestController {
         ResponseDTO responseDTO = new ResponseDTO(HttpStatus.OK.value(), "Payment callback processed successfully.");
         return ResponseEntity.ok(responseDTO);
     }
+
 
     @PutMapping("/{orderId}/staff-review")
     public ResponseEntity<ResponseDTO> reviewOrderByStaff(@PathVariable String orderId, @RequestBody Map<String, Object> body) {
