@@ -121,10 +121,16 @@ public class OrderRestController {
     }
 
     @PutMapping("/{orderId}/staff-review")
-    public ResponseEntity<ResponseDTO> reviewOrderByStaff(@PathVariable String orderId, @RequestBody Map<String, Boolean> body) {
+    public ResponseEntity<ResponseDTO> reviewOrderByStaff(@PathVariable String orderId, @RequestBody Map<String, Object> body) {
         try {
-            boolean isApproved = body.getOrDefault("isApproved", false);
-            orderService.reviewOrderByStaff(orderId, isApproved);
+            boolean isApproved = (boolean) body.getOrDefault("isApproved", false);
+            String staffName = (String) body.get("staffName");
+
+            if (staffName == null || staffName.isEmpty()) {
+                throw new IllegalArgumentException("Staff name is required.");
+            }
+
+            orderService.reviewOrderByStaff(orderId, staffName, isApproved);
             ResponseDTO responseDTO = new ResponseDTO(HttpStatus.OK.value(), "Order reviewed successfully.");
             return ResponseEntity.ok(responseDTO);
         } catch (Exception e) {
@@ -132,6 +138,8 @@ public class OrderRestController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDTO);
         }
     }
+
+
 
     @PutMapping("/{orderId}/confirm-receipt")
     public ResponseEntity<ResponseDTO> confirmOrderReceived(@PathVariable String orderId) {
