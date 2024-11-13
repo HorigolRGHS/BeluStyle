@@ -85,6 +85,13 @@ public class OrderService {
     }
 
     @Transactional
+    public Optional<Map<String, Object>> getMyOrderById(String orderId, String username) {
+        Optional<Order> order = orderRepository.findOrderByUserIdAndOrderId(username, orderId);
+        return orderRepository.findOrderByUserIdAndOrderId(username, orderId)
+                .map(this::buildOrderResponseJson);
+    }
+
+    @Transactional
     public Map<String, Object> getOrdersByUserId(String userId, Pageable pageable) {
         Page<Order> ordersPage = orderRepository.findByUserId(userId, pageable);
 
@@ -360,7 +367,7 @@ public class OrderService {
 
 
     private JSONObject handleVNPayPayment(Order order, OrderDTO orderDTO, List<OrderDetail> orderDetails, HttpServletRequest request) {
-        int totalAmountInCents = (int) (orderDTO.getTotalAmount() * 100);
+        int totalAmountInCents = (int) (orderDTO.getTotalAmount() * 1);
         String paymentLink = vnPayService.createOrder(
                 totalAmountInCents,
                 "Order " + order.getOrderId(),

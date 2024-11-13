@@ -54,8 +54,21 @@ public class OrderRestController {
         return order.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(null));
     }
 
+    @PreAuthorize("hasAuthority('CUSTOMER')")
+    @GetMapping("/me/{id}")
+    public ResponseEntity<Map<String, Object>> getMyOrderById(@PathVariable String id) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUsername = null;
+        if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
+            currentUsername = ((UserDetails) authentication.getPrincipal()).getUsername();
+        }
+        Optional<Map<String, Object>> order = orderService.getMyOrderById(id, currentUsername);
+        return order.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(null));
+    }
+
     @GetMapping("/{orderId}/details")
     public List<OrderDetailDTO> getOrderDetails(@PathVariable String orderId) {
+
         return orderService.getOrderDetails(orderId);
     }
 
@@ -70,7 +83,7 @@ public class OrderRestController {
         return ResponseEntity.ok(ordersResponse);
     }
 
-    @PreAuthorize("permitAll()")
+    @PreAuthorize("hasAuthority('CUSTOMER')")
     @GetMapping("/my-orders")
     public ResponseEntity<Map<String, Object>> getOrdersForCurrentUser(
             @RequestParam(value = "page", defaultValue = "0") int page,
