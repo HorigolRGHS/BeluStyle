@@ -64,9 +64,6 @@ public class AccountRestController {
         if (currentUser == null) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("User not found.");
         }
-        if (!currentUser.getUserId().equals(updatedUserInfo.getUserId())) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You cannot update userId or other restricted fields.");
-        }
         User updated = userService.updateUserInfo(currentUser.getUserId(), updatedUserInfo);
         if (updated != null) {
             return ResponseEntity.ok("User information updated successfully.");
