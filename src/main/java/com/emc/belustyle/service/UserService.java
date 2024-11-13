@@ -205,6 +205,7 @@ public class UserService {
             User existingUser = existingUserOptional.get();
             existingUser.setFullName(updatedUserInfo.getFullName());
             existingUser.setUserImage(updatedUserInfo.getUserImage());
+            existingUser.setPhoneNumber(updatedUserInfo.getPhoneNumber());
             existingUser.setUserAddress(updatedUserInfo.getUserAddress());
             return userRepository.save(existingUser);
         } else {
@@ -228,6 +229,7 @@ public class UserService {
                         user.getUsername(),
                         user.getEmail(),
                         user.getFullName(),
+                        user.getPhoneNumber(),
                         user.getUserImage(),
                         user.getEnable(),
                         user.getRole().getRoleName().toString(),
@@ -263,6 +265,7 @@ public class UserService {
                 user.getUserId(),
                 user.getUsername(),
                 user.getEmail(),
+                user.getPhoneNumber(),
                 user.getRole().getRoleName().toString(),
                 user.getEnable(),
                 user.getCreatedAt(),
@@ -292,7 +295,7 @@ public class UserService {
         user.setEmail(userDTO.getEmail());
         user.setUsername(userDTO.getUsername());
         user.setFullName(userDTO.getFullName());
-
+        user.setPhoneNumber(userDTO.getPhoneNumber());
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(BCryptPasswordEncoder.BCryptVersion.$2A, 10);
         user.setPasswordHash(encoder.encode(userDTO.getPasswordHash()));
 
@@ -319,6 +322,7 @@ public class UserService {
                 user.getUsername(),
                 user.getEmail(),
                 user.getFullName(),
+                user.getPhoneNumber(),
                 user.getUserImage(),
                 user.getEnable(),
                 user.getRole().getRoleName().toString(),
@@ -343,6 +347,7 @@ public class UserService {
         viewInfoDTO.setUsername(user.getUsername());
         viewInfoDTO.setEmail(user.getEmail());
         viewInfoDTO.setFullName(user.getFullName());
+        viewInfoDTO.setPhoneNumber(user.getPhoneNumber());
         viewInfoDTO.setUserImage(user.getUserImage());
         viewInfoDTO.setEnable(user.getEnable());
         viewInfoDTO.setRole(String.valueOf(user.getRole().getRoleName()));

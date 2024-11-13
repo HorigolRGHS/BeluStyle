@@ -10,6 +10,7 @@ import java.util.Date;
 public class ViewUserDTO {
     private String userId;
     private String username;
+    private String phoneNumber;
     private String email;
     private String role;
     private Boolean enable;
