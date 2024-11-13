@@ -13,7 +13,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class OrderDTO {
+public class  OrderDTO {
     private String orderId;
     private Date orderDate;
     private Order.OrderStatus orderStatus;

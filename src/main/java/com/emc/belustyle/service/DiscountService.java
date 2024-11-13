@@ -167,6 +167,17 @@ public class DiscountService {
                 .collect(Collectors.toList());
     }
 
+    public List<DiscountDTO> getDiscountsByUsername(String username) {
+        List<UserDiscount> userDiscounts = userDiscountRepository.findAllByUser_Username(username);
+        return userDiscounts.stream()
+                .map(userDiscount -> {
+                    Optional<Discount> discountOpt = discountRepository.findById(userDiscount.getId().getDiscountId());
+                    return discountOpt.map(this::convertToDTO).orElse(null);
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+    }
+
 
     public Map<String, Object> getUsersByDiscountId(Integer discountId) {
         List<UserDiscount> userDiscounts = userDiscountRepository.findAllByDiscount_DiscountId(discountId).stream().toList();
