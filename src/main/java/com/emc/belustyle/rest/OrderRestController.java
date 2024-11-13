@@ -6,7 +6,6 @@ import com.emc.belustyle.dto.ResponseDTO;
 import com.emc.belustyle.entity.User;
 import com.emc.belustyle.service.OrderService;
 import com.emc.belustyle.service.UserService;
-import jakarta.servlet.http.HttpServletResponse;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -37,7 +36,7 @@ public class OrderRestController {
     @Autowired
     private UserService userService;
 
-    @PreAuthorize("permitAll()")
+    @PreAuthorize("hasAnyAuthority('STAFF', 'ADMIN')")
     @GetMapping
     public Page<OrderDTO> getOrders(
             @RequestParam(value = "status", required = false) String status,
@@ -109,17 +108,9 @@ public class OrderRestController {
 
 
 
-    @PreAuthorize("hasAuthority('CUSTOMER')")
+    @PreAuthorize("permitAll()")
     @PostMapping
     public ResponseEntity<Map<String, Object>> createOrder(@RequestBody OrderDTO orderDTO, HttpServletRequest request) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentUsername = null;
-        if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
-            currentUsername = ((UserDetails) authentication.getPrincipal()).getUsername();
-        }
-        String userId = userService.findByUsername(currentUsername).getUserId();
-        System.out.println(userId);
-        orderDTO.setUserId(userId);
         try {
             Map<String, Object> jsonResponse = orderService.createOrder(orderDTO, request);
             return ResponseEntity.ok(jsonResponse);
@@ -142,7 +133,7 @@ public class OrderRestController {
         return ResponseEntity.ok(responseDTO);
     }
 
-
+    @PreAuthorize("hasAnyAuthority('STAFF', 'ADMIN')")
     @PutMapping("/{orderId}/staff-review")
     public ResponseEntity<ResponseDTO> reviewOrderByStaff(@PathVariable String orderId, @RequestBody Map<String, Object> body) {
         try {

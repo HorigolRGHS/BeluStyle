@@ -27,7 +27,7 @@ public class DiscountDTO {
 
     public DiscountDTO(Integer discountId, String discountCode, String discountType, BigDecimal discountValue,
                        Date startDate, Date endDate, String discountStatus, String discountDescription,
-                       BigDecimal minimumOrderValue, BigDecimal maximumDiscountValue, Integer usageCount) {
+                       BigDecimal minimumOrderValue, BigDecimal maximumDiscountValue, Integer usageLimit) {
         this.discountId = discountId;
         this.discountCode = discountCode;
         this.discountType = discountType;
@@ -38,7 +38,7 @@ public class DiscountDTO {
         this.discountDescription = discountDescription;
         this.minimumOrderValue = minimumOrderValue;
         this.maximumDiscountValue = maximumDiscountValue;
-        this.usageCount = usageCount;
+        this.usageLimit = usageLimit;
     }
 
 }
