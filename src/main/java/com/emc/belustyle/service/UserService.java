@@ -8,11 +8,8 @@ import com.emc.belustyle.dto.mapper.UserMapper;
 import com.emc.belustyle.entity.User;
 import com.emc.belustyle.exception.CustomException;
 import com.emc.belustyle.util.JwtUtil;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -222,23 +219,23 @@ public class UserService {
                 .orElse(null);
     }
 
-    public List<ViewInfoDTO> getAllUsers() {
-        List<User> users = userRepository.findAll();
-        return users.stream()
-                .map(user -> new ViewInfoDTO(user.getUserId(),
-                        user.getUsername(),
-                        user.getEmail(),
-                        user.getFullName(),
-                        user.getPhoneNumber(),
-                        user.getUserImage(),
-                        user.getEnable(),
-                        user.getRole().getRoleName().toString(),
-                        user.getCurrentPaymentMethod(),
-                        user.getUserAddress(),
-                        user.getCreatedAt(),
-                        user.getUpdatedAt()))
-                .collect(Collectors.toList());
-    }
+//    public List<ViewInfoDTO> getAllUsers() {
+//        List<User> users = userRepository.findAll();
+//        return users.stream()
+//                .map(user -> new ViewInfoDTO(user.getUserId(),
+//                        user.getUsername(),
+//                        user.getEmail(),
+//                        user.getFullName(),
+//                        user.getPhoneNumber(),
+//                        user.getUserImage(),
+//                        user.getEnable(),
+//                        user.getRole().getRoleName().toString(),
+//                        user.getCurrentPaymentMethod(),
+//                        user.getUserAddress(),
+//                        user.getCreatedAt(),
+//                        user.getUpdatedAt()))
+//                .collect(Collectors.toList());
+//    }
 
     @Transactional
     public User updateUserDetails(String userId, AdminUpdateDTO adminUpdateDTO) throws CustomException {
@@ -261,14 +258,19 @@ public class UserService {
             userPage = userRepository.findAll(pageable);
         }
 
-        return userPage.map(user -> new ViewUserDTO(
-                user.getUserId(),
-                user.getUsername(),
-                user.getEmail(),
-                user.getRole().getRoleName().toString(),
-                user.getEnable(),
-                user.getCreatedAt(),
-                user.getUpdatedAt()));
+        List<ViewUserDTO> filteredUsers = userPage.getContent().stream()
+                .filter(user -> user.getRole().getRoleName() == UserRole.RoleName.CUSTOMER
+                        || user.getRole().getRoleName() == UserRole.RoleName.STAFF)
+                .map(user -> new ViewUserDTO(
+                        user.getUserId(),
+                        user.getUsername(),
+                        user.getEmail(),
+                        user.getRole().getRoleName().toString(),
+                        user.getEnable(),
+                        user.getCreatedAt(),
+                        user.getUpdatedAt()))
+                .collect(Collectors.toList());
+        return new PageImpl<>(filteredUsers, pageable, userPage.getTotalElements());
     }
 
     @Transactional

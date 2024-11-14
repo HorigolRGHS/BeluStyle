@@ -46,7 +46,7 @@ public class AdminRestController {
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping
     public ResponseEntity<Page<ViewUserDTO>> getAllUser(
-            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String search) {
         Page<ViewUserDTO> users = userService.getAllUser(page, size, search);
@@ -78,12 +78,12 @@ public class AdminRestController {
     }
 
 
-    @PreAuthorize("hasAuthority('ADMIN')")
-    @GetMapping("/users/search")
-    public ResponseEntity<List<ViewInfoDTO>> getAllUsers() {
-        List<ViewInfoDTO> users = userService.getAllUsers();
-        return ResponseEntity.ok(users);
-    }
+//    @PreAuthorize("hasAuthority('ADMIN')")
+//    @GetMapping("/users/search")
+//    public ResponseEntity<List<ViewInfoDTO>> getAllUsers() {
+//        List<ViewInfoDTO> users = userService.getAllUsers();
+//        return ResponseEntity.ok(users);
+//    }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("/{userId}")

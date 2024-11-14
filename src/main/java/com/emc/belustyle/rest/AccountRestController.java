@@ -40,15 +40,15 @@ public class AccountRestController {
 
 
     // Staff viewed by Admin
-    @PreAuthorize("hasAuthority('ADMIN')")
-    @GetMapping("/admin/{userId}")
-    public ResponseEntity<?> getStaffInfoById(@PathVariable String userId) {
-        ViewInfoDTO viewInfoDTO = userService.getUserInfoById(userId);
-        if (viewInfoDTO != null && viewInfoDTO.getRole().equals("STAFF")) {
-            return ResponseEntity.ok(viewInfoDTO);
-        }
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You can only view staff information.");
-    }
+//    @PreAuthorize("hasAuthority('ADMIN')")
+//    @GetMapping("/admin/{userId}")
+//    public ResponseEntity<?> getStaffInfoById(@PathVariable String userId) {
+//        ViewInfoDTO viewInfoDTO = userService.getUserInfoById(userId);
+//        if (viewInfoDTO != null && viewInfoDTO.getRole().equals("STAFF")) {
+//            return ResponseEntity.ok(viewInfoDTO);
+//        }
+//        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You can only view staff information.");
+//    }
 
     // Update personal info
     @PreAuthorize("hasAnyAuthority('CUSTOMER','ADMIN')")
