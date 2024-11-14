@@ -22,9 +22,10 @@ public interface BrandRepository extends JpaRepository<Brand, Integer> {
 
     @Query("SELECT b.brandName, COALESCE(SUM(od.orderQuantity), 0) AS totalProductsSold " +
             "FROM Brand b " +
-            "JOIN Product p ON p.brand.brandId = b.brandId " +
-            "JOIN ProductVariation pv ON pv.product.productId = p.productId " +
-            "JOIN OrderDetail od ON od.variationId = pv.variationId " +
+            "LEFT JOIN Product p ON p.brand.brandId = b.brandId " +
+            "LEFT JOIN ProductVariation pv ON pv.product.productId = p.productId " +
+            "LEFT JOIN OrderDetail od ON od.variationId = pv.variationId " +
             "GROUP BY b.brandId, b.brandName, b.logoUrl")
     List<Object[]> findTotalProductsSoldPerBrand();
+
 }
