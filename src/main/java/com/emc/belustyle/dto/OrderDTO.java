@@ -28,7 +28,10 @@ public class  OrderDTO {
     private String transactionReference;
     private String userAddress;
     private String userId; // Thêm thông tin userId
+    private String customerUsername;
     private String staffId; // Thêm thông tin staffId
+    private String staffUsername;
+
 
     @JsonProperty("orderDetails") // Đảm bảo tên này giống như trong JSON
     private List<OrderDetailDTO> orderDetails;

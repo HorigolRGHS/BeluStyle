@@ -258,6 +258,27 @@ public class DiscountService {
         }
     }
 
+    @Transactional
+    public void assignNewUserDiscount(String userId) {
+        Optional<Discount> newUserDiscount = discountRepository.findByDiscountCode("BELUSTYLEGIFT");
+
+        if (newUserDiscount.isPresent()) {
+            Discount discount = newUserDiscount.get();
+            Optional<UserDiscount> existingUserDiscount = userDiscountRepository.findByUser_UserIdAndDiscount_DiscountId(userId, discount.getDiscountId());
+
+            if (!existingUserDiscount.isPresent()) {
+                UserDiscount userDiscount = new UserDiscount();
+                userDiscount.setId(new UserDiscount.UserDiscountId(userId, discount.getDiscountId()));
+                userDiscount.setUser(userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found")));
+                userDiscount.setDiscount(discount);
+                userDiscount.setUsageCount(0);
+
+                userDiscountRepository.save(userDiscount);
+            }
+        }
+    }
+
+
     private DiscountDTO convertToDTO(Discount discount) {
         DiscountDTO discountDTO = new DiscountDTO(
                 discount.getDiscountId(),

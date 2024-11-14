@@ -8,6 +8,7 @@ import com.emc.belustyle.dto.mapper.UserMapper;
 import com.emc.belustyle.entity.User;
 import com.emc.belustyle.exception.CustomException;
 import com.emc.belustyle.service.EmailService;
+import com.emc.belustyle.service.DiscountService;
 import com.emc.belustyle.service.UserRoleService;
 import com.emc.belustyle.service.UserService;
 import com.emc.belustyle.util.GoogleUtil;
@@ -37,17 +38,19 @@ public class AuthRestController {
     private final UserRoleService userRoleService;
     private final JwtUtil jwtUtil;
     private final EmailService emailService;
+    private final DiscountService discountService;
 
     private final AuthenticationManager authenticationManager;
 
 
     @Autowired
-    public AuthRestController(UserService userService, UserRoleService userRoleService, JwtUtil jwtUtil, AuthenticationManager authenticationManager, EmailService emailService) {
+    public AuthRestController(UserService userService, UserRoleService userRoleService, JwtUtil jwtUtil, AuthenticationManager authenticationManager, EmailService emailService,DiscountService discountService) {
         this.userService = userService;
         this.userRoleService = userRoleService;
         this.jwtUtil = jwtUtil;
         this.authenticationManager = authenticationManager;
         this.emailService = emailService;
+        this.discountService = discountService;
     }
 
     @PostMapping("/login")
@@ -78,6 +81,9 @@ public class AuthRestController {
             user.setRole(userRoleService.findById(2));
             user.setEnable(false);
             User savedUser = userService.create(user);
+
+            // Gọi hàm assignNewUserDiscount để gán mã giảm giá cho người dùng mới
+            discountService.assignNewUserDiscount(savedUser.getUserId());
 
             // Generate JWT Token with user ID and expiration
             String jwtToken = jwtUtil.generateStringToken(savedUser.getUserId() + "registration", 7*24*60*60*1000);
@@ -155,6 +161,15 @@ public class AuthRestController {
         // Call the service method
         ResponseDTO responseDTO = userService.handleGoogleLogin(googleId, email, fullName, userImage);
 
+        // Kiểm tra nếu là người dùng mới được tạo
+        if (responseDTO.getStatusCode() == HttpStatus.CREATED.value()) {
+            // Lấy ID của người dùng vừa tạo
+            User user = userService.findByEmail(email);
+            if (user != null) {
+                // Gọi hàm assignNewUserDiscount để gán mã giảm giá cho người dùng mới
+                discountService.assignNewUserDiscount(user.getUserId());
+            }
+        }
 
         return ResponseEntity.status(responseDTO.getStatusCode()).body(responseDTO);
     }
