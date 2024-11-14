@@ -453,6 +453,13 @@ public class OrderService {
     public void handlePaymentCallback(String orderId, boolean isSuccess) {
         Order order = orderRepository.findById(orderId).orElse(null);
         if (order != null) {
+            // Only proceed if the order is in the PENDING status
+            if (order.getOrderStatus() != Order.OrderStatus.PENDING) {
+                // System.out.println("Order is not in PENDING status. Payment callback will not be processed.");
+                return;
+            }
+
+            // Update the order status based on the payment success
             order.setOrderStatus(isSuccess ? Order.OrderStatus.PROCESSING : Order.OrderStatus.CANCELLED);
             orderRepository.save(order);
 
@@ -460,6 +467,7 @@ public class OrderService {
             sendPaymentCallbackEmail(order, isSuccess);
         }
     }
+
 
     private String generateOrderId() {
         long orderCount = orderRepository.count();
