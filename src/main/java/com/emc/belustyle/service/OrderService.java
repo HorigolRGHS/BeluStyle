@@ -596,7 +596,7 @@ public class OrderService {
         String logoUrl = "https://i.imgur.com/DjTbAx2.png"; // Shop logo URL
         String primaryColor = "#62C0EE"; // Primary color of the email
         String accentColor = "#555"; // Secondary text color
-        String facebookUrl = "https://www.facebook.com/profile.php?id=61552976986503"; // URL to your Facebook page
+        String facebookUrl = "https://www.facebook.com/profile.php?id=61552976986503"; // URRL to your Facebook page
 
         StringBuilder body = new StringBuilder();
         body.append("<div style='font-family: Arial, sans-serif; max-width: 600px; margin: auto; color: ")
