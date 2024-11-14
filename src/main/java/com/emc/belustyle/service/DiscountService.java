@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.time.ZoneId;
@@ -215,7 +216,7 @@ public class DiscountService {
 
 
     public ResponseEntity<?> checkUserDiscount(String discountCode, BigDecimal subTotal) {
-        System.out.println(subTotal);
+        DecimalFormat decimalFormat = new DecimalFormat("#,##0.00");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUsername = null;
         if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
@@ -247,10 +248,17 @@ public class DiscountService {
             if (Objects.equals(discountDTO.getDiscountStatus(), "EXPIRED")) {
                 return ResponseEntity.status(HttpStatus.GONE).body(new ResponseDTO(HttpStatus.GONE.value(), "Discount expired"));
             }
-            if (discountDTO.getMinimumOrderValue().compareTo(subTotal) <= 0) {
+            if (Objects.equals(discountDTO.getDiscountStatus(), "USED")) {
+                return ResponseEntity.status(HttpStatus.GONE).body(new ResponseDTO(HttpStatus.GONE.value(), "Discount has reached the limit! Try another discount."));
+            }
+            if (discountDTO.getMinimumOrderValue() != null && discountDTO.getMinimumOrderValue().compareTo(subTotal) <= 0) {
                 return ResponseEntity.ok(discountDTO);
-            }else{
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseDTO(HttpStatus.BAD_REQUEST.value(), "Minimum Order Value is " + discountDTO.getMinimumOrderValue()));
+            } else if (discountDTO.getMinimumOrderValue() == null) {
+                return ResponseEntity.ok(discountDTO);
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                        new ResponseDTO(HttpStatus.BAD_REQUEST.value(), "The minimum order value is " + decimalFormat.format(discountDTO.getMinimumOrderValue()) + ". Please add more items to your cart.")
+                );
             }
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
