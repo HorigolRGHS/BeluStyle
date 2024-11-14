@@ -54,6 +54,7 @@ public class OrderRestController {
         return order.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(null));
     }
 
+
     @PreAuthorize("hasAuthority('CUSTOMER')")
     @GetMapping("/me/{id}")
     public ResponseEntity<Map<String, Object>> getMyOrderById(@PathVariable String id) {

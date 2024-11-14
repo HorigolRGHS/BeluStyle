@@ -9,10 +9,7 @@ import com.emc.belustyle.dto.mapper.OrderDetailMapper;
 import com.emc.belustyle.entity.*;
 
 import com.emc.belustyle.dto.mapper.ProductVariationMapper;
-import com.emc.belustyle.repo.OrderRepository;
-import com.emc.belustyle.repo.ProductRepository;
-import com.emc.belustyle.repo.ProductVariationRepository;
-import com.emc.belustyle.repo.UserRepository;
+import com.emc.belustyle.repo.*;
 import com.emc.belustyle.rest.PayOsRestController;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.servlet.http.HttpServletRequest;
@@ -43,6 +40,7 @@ public class OrderService {
     private final ProductVariationRepository productVariationRepository;
     private final ProductVariationMapper productVariationMapper;
     private final UserRepository userRepository;
+    private ReviewRepository reviewRepository;
 
     @Autowired
     public OrderService(OrderRepository orderRepository,
@@ -55,7 +53,9 @@ public class OrderService {
                         ProductVariationRepository productVariationRepository,
                         ProductVariationMapper productVariationMapper,
                         OrderDetailService orderDetailService,
-                        UserRepository userRepository, ProductRepository productRepository) {
+                        UserRepository userRepository,
+                        ProductRepository productRepository,
+                        ReviewRepository reviewRepository) { // thêm reviewRepository
         this.orderRepository = orderRepository;
         this.orderMapper = orderMapper;
         this.orderDetailMapper = orderDetailMapper;
@@ -68,9 +68,9 @@ public class OrderService {
         this.productVariationMapper = productVariationMapper;
         this.userRepository = userRepository;
         this.productRepository = productRepository;
-
-
+        this.reviewRepository = reviewRepository; // gán reviewRepository
     }
+
 
     @Transactional
     public Page<OrderDTO> getOrders(String status, String userId, Pageable pageable) {
@@ -80,7 +80,31 @@ public class OrderService {
 
     @Transactional
     public Optional<Map<String, Object>> getOrderById(String orderId) {
-        return orderRepository.findById(orderId).map(this::buildOrderResponseJson);
+        Optional<Order> orderOptional = orderRepository.findById(orderId);
+        if (orderOptional.isPresent()) {
+            Order order = orderOptional.get();
+
+            // Build basic order response
+            Map<String, Object> orderJson = buildOrderResponseJson(order);
+
+            // Fetch reviews related to this order
+            List<Map<String, Object>> reviews = order.getOrderDetails().stream()
+                    .flatMap(orderDetail -> reviewRepository.findReviewByProductId(orderDetail.getVariationId().toString()).stream())
+                    .map(reviewData -> {
+                        Map<String, Object> reviewJson = new HashMap<>();
+                        reviewJson.put("reviewId", reviewData[0]);
+                        reviewJson.put("fullName", reviewData[1]);
+                        reviewJson.put("reviewRating", reviewData[2]);
+                        reviewJson.put("reviewComment", reviewData[3]);
+                        return reviewJson;
+                    })
+                    .collect(Collectors.toList());
+
+            // Add reviews to the response
+            orderJson.put("reviews", reviews);
+            return Optional.of(orderJson);
+        }
+        return Optional.empty();
     }
 
     @Transactional
