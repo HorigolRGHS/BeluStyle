@@ -31,11 +31,13 @@ public class SaleRestController {
         this.saleRepository = saleRepository;
     }
 
+    @PreAuthorize("hasAnyAuthority('STAFF', 'ADMIN')")
     @GetMapping
     public List<Sale> getAllSales() {
         return saleService.findAll();
     }
 
+    @PreAuthorize("hasAnyAuthority('STAFF', 'ADMIN')")
     @GetMapping("/{saleId}")
     public ResponseEntity<?> getSaleById(@PathVariable Integer saleId) {
         ResponseDTO responseDTO = new ResponseDTO();
@@ -50,11 +52,13 @@ public class SaleRestController {
         return ResponseEntity.status(responseDTO.getStatusCode()).body(sale);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping
     public ResponseEntity<?> createSale(@RequestBody Sale sale) {
         return saleService.createSale(sale);
     }
 
+    @PreAuthorize("hasAnyAuthority('STAFF', 'ADMIN')")
     @PutMapping("/{saleId}")
     public ResponseEntity<ResponseDTO> updateSale(@PathVariable Integer saleId, @RequestBody Sale sale) {
         ResponseDTO responseDTO = new ResponseDTO();
@@ -70,6 +74,7 @@ public class SaleRestController {
         }
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{saleId}")
     public ResponseEntity<ResponseDTO> deleteSale(@PathVariable Integer saleId) {
         ResponseDTO responseDTO = new ResponseDTO();
@@ -90,6 +95,7 @@ public class SaleRestController {
         return saleService.addProductsToSale(saleId, productIds);
     }
 
+    @PreAuthorize("hasAnyAuthority('STAFF', 'ADMIN')")
     @DeleteMapping("/{saleId}/products")
     public ResponseEntity<?> removeProductFromSale(
             @PathVariable int saleId,
@@ -98,6 +104,7 @@ public class SaleRestController {
         return saleService.removeProductFromSale(saleId, productId);
     }
 
+    @PreAuthorize("hasAnyAuthority('STAFF', 'ADMIN')")
     @GetMapping("/{saleId}/products")
     public ResponseEntity<List<Product>> getProductsInSale(
             @PathVariable int saleId) {
