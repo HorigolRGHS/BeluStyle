@@ -23,6 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.text.SimpleDateFormat;
+
 
 @Service
 public class OrderService {
@@ -454,11 +456,8 @@ public class OrderService {
             order.setOrderStatus(isSuccess ? Order.OrderStatus.PROCESSING : Order.OrderStatus.CANCELLED);
             orderRepository.save(order);
 
-            if (isSuccess) {
-                sendPaymentSuccessEmail(order);
-            } else {
-                sendOrderCancellationEmail(order);
-            }
+            // Send payment callback email
+            sendPaymentCallbackEmail(order, isSuccess);
         }
     }
 
@@ -507,17 +506,18 @@ public class OrderService {
     }
 
     private void sendPaymentCallbackEmail(Order order, boolean isSuccess) {
-        String subject = "Order Confirmation #" + order.getOrderId();
-        String message = isSuccess ? "Your order has been successfully paid!" : "Payment failed.";
-        String body = buildOrderEmailBody(order, order.getOrderDetails(), message + " Thank you for shopping at BeluStyle!");
+        String subject = isSuccess ? "Payment Successful - Order #" + order.getOrderId() : "Payment Failed - Order #" + order.getOrderId();
+        String message = isSuccess ? "Your order has been successfully paid and is being processed." : "Unfortunately, the payment for your order has failed.";
+        String body = buildPaymentCallbackEmailBody(order, message);
         emailService.sendHtmlMessage(order.getUser().getEmail(), subject, body);
     }
 
     private void sendOrderCancellationEmail(Order order) {
-        String subject = "Order Cancellation #" + order.getOrderId();
-        String body = buildOrderEmailBody(order, order.getOrderDetails(), "Your order has been successfully canceled.");
+        String subject = "Order Cancellation Notification - Order #" + order.getOrderId();
+        String body = buildOrderCancellationEmailBody(order); // Call the cancellation-specific email body
         emailService.sendHtmlMessage(order.getUser().getEmail(), subject, body);
     }
+
 
     private void sendOrderCreatedEmail(Order order, List<OrderDetail> orderDetails) {
         String subject = "Order Created #" + order.getOrderId();
@@ -598,6 +598,8 @@ public class OrderService {
         String accentColor = "#555"; // Secondary text color
         String facebookIconUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/2023_Facebook_icon.svg/2048px-2023_Facebook_icon.svg.png";
         String facebookUrl = "https://www.facebook.com/profile.php?id=61552976986503"; // URL to your Facebook page
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy"); // Define date format
+        String formattedOrderDate = dateFormat.format(order.getOrderDate()); // Format order date
 
         StringBuilder body = new StringBuilder();
         body.append("<div style='font-family: Arial, sans-serif; max-width: 600px; margin: auto; color: ")
@@ -617,7 +619,7 @@ public class OrderService {
                 .append(order.getUser().getFullName()).append(",</strong></p>")
                 .append("<p style='font-size: 16px; color: ").append(accentColor).append(";'>Thank you for shopping with BeLuStyle!</p>")
                 .append("<p style='font-size: 16px; color: ").append(accentColor).append(";'>We are pleased to confirm your order <strong>#")
-                .append(order.getOrderId()).append("</strong> placed on ").append(order.getOrderDate()).append(".</p>")
+                .append(order.getOrderId()).append("</strong> placed on ").append(formattedOrderDate).append(".</p>")
 
                 // Order Information Section
                 .append("<h3 style='color: ").append(primaryColor).append("; font-size: 18px;'>Order Information:</h3>")
@@ -693,6 +695,130 @@ public class OrderService {
         return body.toString();
     }
 
+
+    private String buildOrderCancellationEmailBody(Order order) {
+        String logoUrl = "https://i.imgur.com/DjTbAx2.png"; // Shop logo URL
+        String primaryColor = "#62C0EE"; // Primary color of the email
+        String accentColor = "#555"; // Secondary text color
+        String facebookIconUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/2023_Facebook_icon.svg/2048px-2023_Facebook_icon.svg.png";
+        String facebookUrl = "https://www.facebook.com/profile.php?id=61552976986503"; // URL to your Facebook page
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy"); // Define date format
+        String formattedOrderDate = dateFormat.format(order.getOrderDate()); // Format order date
+
+        StringBuilder body = new StringBuilder();
+        body.append("<div style='font-family: Arial, sans-serif; max-width: 600px; margin: auto; color: ")
+                .append(accentColor).append("; background-color: #ffffff; border-radius: 8px; border: 1px solid ")
+                .append(primaryColor).append(";'>")
+
+                // Header with Logo and Shop Name
+                .append("<div style='text-align: center; padding: 20px; background-color: ").append(primaryColor)
+                .append("; color: #ffffff;'>")
+                .append("<img src='").append(logoUrl).append("' alt='BeluStyle Logo' style='height: 45px; vertical-align: middle; margin-right: 10px;' />")
+                .append("<span style='font-size: 24px; vertical-align: middle; font-weight: bold;'>BeluStyle</span>")
+                .append("</div>")
+
+                // Greeting and Cancellation Notice
+                .append("<div style='padding: 20px;'>")
+                .append("<p style='font-size: 16px; color: ").append(accentColor).append(";'>")
+                .append("<strong>Dear ").append(order.getUser().getFullName()).append(",</strong></p>")
+                .append("<p style='font-size: 16px; color: ").append(accentColor).append(";'>Thank you for shopping with BeLuStyle!</p>")
+                .append("<p style='font-size: 16px; color: ").append(accentColor).append(";'>We regret to inform you that your order <strong>#")
+                .append(order.getOrderId()).append("</strong> placed on ").append(formattedOrderDate).append(".</p>")
+                .append(", has been canceled.</p>")
+
+                // Apology Message
+                .append("<p style='font-size: 16px; color: ").append(accentColor).append(";'>")
+                .append("We sincerely apologize for any inconvenience caused and appreciate your understanding.")
+                .append("</p>")
+
+                // Contact Section
+                .append("<div style='text-align: center; padding: 10px;'>")
+                .append("<p style='font-size: 16px; color: ").append(accentColor).append("; margin: 0 0 10px;'>")
+                .append("Please don’t hesitate to contact us:")
+                .append("</p>")
+                .append("<a href='").append(facebookUrl).append("' style='text-decoration: none;' target='_blank'>")
+                .append("<img src='").append(facebookIconUrl).append("' alt='Facebook' style='width: 24px; height: 24px; margin: 5px 0;' />")
+                .append("</a>")
+                .append("</div>")
+
+                // Closing Message
+                .append("<div style='text-align: center; padding: 10px;'>")
+                .append("<p style='font-size: 16px; color: ").append(accentColor).append("; margin: 0;'>")
+                .append("Thank you for choosing BeluStyle. We look forward to serving you again in the future.")
+                .append("</p>")
+                .append("<p style='font-size: 16px; color: ").append(accentColor).append("; margin: 5px 0;'>")
+                .append("Best regards,<br><strong>BeluStyle Developer Team</strong>")
+                .append("</p>")
+                .append("</div>")
+
+                // Footer
+                .append("<div style='text-align: center; background-color: ").append(primaryColor)
+                .append("; color: #ffffff; padding: 10px; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px;'>")
+                .append("<p style='margin: 0; font-size: 14px;'>© 2024 BeluStyle</p>")
+                .append("</div>")
+                .append("</div>");
+
+        return body.toString();
+    }
+
+    private String buildPaymentCallbackEmailBody(Order order, String message) {
+        String logoUrl = "https://i.imgur.com/DjTbAx2.png"; // Shop logo URL
+        String primaryColor = "#62C0EE"; // Primary color of the email
+        String accentColor = "#555"; // Secondary text color
+        String facebookIconUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/2023_Facebook_icon.svg/2048px-2023_Facebook_icon.svg.png";
+        String facebookUrl = "https://www.facebook.com/profile.php?id=61552976986503"; // URL to your Facebook page
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy"); // Define date format
+        String formattedOrderDate = dateFormat.format(order.getOrderDate()); // Format order date
+
+        StringBuilder body = new StringBuilder();
+        body.append("<div style='font-family: Arial, sans-serif; max-width: 600px; margin: auto; color: ")
+                .append(accentColor).append("; background-color: #ffffff; border-radius: 8px; border: 1px solid ")
+                .append(primaryColor).append(";'>")
+
+                // Header with Logo and Shop Name
+                .append("<div style='text-align: center; padding: 20px; background-color: ").append(primaryColor)
+                .append("; color: #ffffff;'>")
+                .append("<img src='").append(logoUrl).append("' alt='BeluStyle Logo' style='height: 45px; vertical-align: middle; margin-right: 10px;' />")
+                .append("<span style='font-size: 24px; vertical-align: middle; font-weight: bold;'>BeluStyle</span>")
+                .append("</div>")
+
+                // Greeting and Message
+                .append("<div style='padding: 20px;'>")
+                .append("<p style='font-size: 16px; color: ").append(accentColor).append(";'><strong>Dear ")
+                .append(order.getUser().getFullName()).append(",</strong></p>")
+                .append("<p style='font-size: 16px; color: ").append(accentColor).append(";'>Thank you for shopping with BeLuStyle!</p>")
+                .append("<p style='font-size: 16px; color: ").append(accentColor).append(";'>").append(message).append("</p>")
+
+                // Order Information
+                .append("<h3 style='color: ").append(primaryColor).append("; font-size: 18px;'>Order Information:</h3>")
+                .append("<ul style='list-style-type: none; padding: 0; color: ").append(accentColor).append(";'>")
+                .append("<li><strong>Order ID:</strong> ").append(order.getOrderId()).append("</li>")
+                .append("<li><strong>Order Date:</strong> ").append(formattedOrderDate).append(".</p>")
+                .append("<li><strong>Total Amount:</strong> ").append(order.getTotalAmount()).append(" VND</li>")
+                .append("</ul>")
+
+                // Contact and Footer
+                .append("<div style='text-align: center; padding: 10px;'>")
+                .append("<p style='font-size: 16px; color: ").append(accentColor).append(";'>")
+                .append("If you have any questions, please don't hesitate to contact us:")
+                .append("</p>")
+                .append("<a href='").append(facebookUrl).append("' style='text-decoration: none;' target='_blank'>")
+                .append("<img src='").append(facebookIconUrl).append("' alt='Facebook' style='width: 24px; height: 24px;' />")
+                .append("</a>")
+                .append("</div>")
+                .append("<div style='text-align: center; padding: 10px;'>")
+                .append("<p style='font-size: 16px; color: ").append(accentColor).append(";'>")
+                .append("Best regards,<br><strong>BeluStyle Developer Team</strong>")
+                .append("</p>")
+                .append("</div>")
+                .append("<div style='text-align: center; background-color: ").append(primaryColor)
+                .append("; color: #ffffff; padding: 10px;'>")
+                .append("<p style='margin: 0; font-size: 14px;'>© 2024 BeluStyle</p>")
+                .append("</div>")
+                .append("</div>");
+
+        return body.toString();
+    }
 
 
 
