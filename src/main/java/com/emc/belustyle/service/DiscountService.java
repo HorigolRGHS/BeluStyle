@@ -242,6 +242,9 @@ public class DiscountService {
         boolean hasDiscount = checkDiscountUsage(userId, discountCode) > 0;
         if (hasDiscount) {
             DiscountDTO discountDTO = discountOpt.get();
+            if (Objects.equals(discountDTO.getDiscountStatus(), "EXPIRED")) {
+                return ResponseEntity.status(HttpStatus.GONE).body(new ResponseDTO(HttpStatus.GONE.value(), "Discount expired"));
+            }
             return ResponseEntity.ok(discountDTO);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
