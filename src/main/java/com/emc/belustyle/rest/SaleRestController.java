@@ -52,7 +52,8 @@ public class SaleRestController {
         return ResponseEntity.status(responseDTO.getStatusCode()).body(sale);
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'STAFF')")
     @PostMapping
     public ResponseEntity<?> createSale(@RequestBody Sale sale) {
         return saleService.createSale(sale);
@@ -89,7 +90,7 @@ public class SaleRestController {
 
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'STAFF')")
     @PostMapping("/{saleId}/products")
     public ResponseEntity<?> addProductsToSale(@PathVariable int saleId, @RequestBody List<String> productIds) {
         return saleService.addProductsToSale(saleId, productIds);

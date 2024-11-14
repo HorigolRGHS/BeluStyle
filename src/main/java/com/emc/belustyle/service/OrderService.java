@@ -855,6 +855,7 @@ public class OrderService {
         Map<String, Object> detailJson = new HashMap<>();
         ProductVariation variation = productVariationRepository.findById(detail.getVariationId()).orElse(null);
 
+
         if (variation != null && variation.getProduct() != null) {
             detailJson.put("productName", variation.getProduct().getProductName());
             detailJson.put("color", variation.getColor() != null ? variation.getColor().getColorName() : null);
