@@ -596,6 +596,7 @@ public class OrderService {
         String logoUrl = "https://i.imgur.com/DjTbAx2.png"; // Shop logo URL
         String primaryColor = "#62C0EE"; // Primary color of the email
         String accentColor = "#555"; // Secondary text color
+        String facebookIconUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/2023_Facebook_icon.svg/2048px-2023_Facebook_icon.svg.png";
         String facebookUrl = "https://www.facebook.com/profile.php?id=61552976986503"; // URRL to your Facebook page
 
         StringBuilder body = new StringBuilder();
@@ -610,9 +611,9 @@ public class OrderService {
                 .append("</div>")
 
                 // Order Content
-                .append("<div style='padding: 20px; background-color: #ffffff; border: 1px solid ").append(primaryColor).append("; '>")
-                .append("<h2 style='color: ").append(primaryColor).append("; font-size: 20px;'>").append(headerMessage).append("</h2>")
-                .append("<p style='font-size: 16px; color: ").append(accentColor).append(";'>Thank you for shopping at BeluStyle! Below are the details of your order.</p>")
+                .append("<div style='padding: 20px;'>")
+                .append("<h2 style='color: ").append(primaryColor).append("; font-size: 20px; text-align: center;'>").append(headerMessage).append("</h2>")
+                .append("<p style='font-size: 16px; color: ").append(accentColor).append("; text-align: center;'>Thank you for shopping at BeluStyle! Below are the details of your order.</p>")
 
                 .append("<h3 style='color: ").append(primaryColor).append("; font-size: 18px;'>Order Information:</h3>")
                 .append("<ul style='list-style-type: none; padding: 0; color: ").append(accentColor).append(";'>")
@@ -656,15 +657,15 @@ public class OrderService {
         body.append("</tbody>")
                 .append("</table>")
 
-                // Contact Us
+                // Footer with Facebook Icon
                 .append("<div style='text-align: center; margin-top: 20px;'>")
-                .append("<p style='font-size: 16px; color: ").append(accentColor).append(";'>If you have any questions, please contact us:</p>")
-                .append("<a href='").append(facebookUrl).append("' style='color: ").append(primaryColor).append("; font-size: 16px; text-decoration: none;'>Contact Us</a>")
+                .append("<p style='font-size: 16px; color: ").append(accentColor).append("; margin-bottom: 10px;'>If you have any questions, please contact us:</p>")
+                .append("<a href='").append(facebookUrl).append("' style='text-decoration: none;' target='_blank'>")
+                .append("<img src='").append(facebookIconUrl).append("' alt='Facebook' style='width: 24px; height: 24px;' />")
+                .append("</a>")
                 .append("</div>")
 
-                .append("</div>")
-
-                // Footer
+                // Final Footer
                 .append("<footer style='text-align: center; padding: 10px; background-color: ").append(primaryColor).append("; color: #ffffff; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px;'>")
                 .append("<p style='margin: 0; font-size: 14px;'>© 2024 BeluStyle</p>")
                 .append("</footer>")
