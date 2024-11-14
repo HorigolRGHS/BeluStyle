@@ -701,9 +701,19 @@ public class OrderService {
             detailJson.put("unitPrice", detail.getUnitPrice());
             detailJson.put("discountAmount", detail.getDiscountAmount());
             detailJson.put("productImage", variation.getProductVariationImage()); // Lấy ảnh từ ProductVariation
+        } else {
+            detailJson.put("productName", null);
+            detailJson.put("color", null);
+            detailJson.put("size", null);
+            detailJson.put("orderQuantity", detail.getOrderQuantity());
+            detailJson.put("unitPrice", detail.getUnitPrice());
+            detailJson.put("discountAmount", detail.getDiscountAmount());
+            detailJson.put("productImage", null);
         }
+
         return detailJson;
     }
+
 
     private String generateTrackingNumber() {
         String prefix = "TN";
