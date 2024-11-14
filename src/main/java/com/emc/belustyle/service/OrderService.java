@@ -596,7 +596,7 @@ public class OrderService {
         String logoUrl = "https://i.imgur.com/DjTbAx2.png"; // Shop logo URL
         String primaryColor = "#62C0EE"; // Primary color of the email
         String accentColor = "#555"; // Secondary text color
-        String facebookUrl = "https://www.facebook.com/belusstyle.2024/"; // URL to your Facebook page
+        String facebookUrl = "https://www.facebook.com/profile.php?id=61552976986503"; // URL to your Facebook page
 
         StringBuilder body = new StringBuilder();
         body.append("<div style='font-family: Arial, sans-serif; max-width: 600px; margin: auto; color: ")
@@ -689,19 +689,37 @@ public class OrderService {
         return orderJson;
     }
 
+
     private Map<String, Object> buildOrderDetailJson(OrderDetail detail) {
         Map<String, Object> detailJson = new HashMap<>();
         ProductVariation variation = productVariationRepository.findById(detail.getVariationId()).orElse(null);
 
-        if (variation != null) {
+        if (variation != null && variation.getProduct() != null) {
             detailJson.put("productName", variation.getProduct().getProductName());
-            detailJson.put("color", variation.getColor().getColorName());
-            detailJson.put("size", variation.getSize().getSizeName());
+            detailJson.put("color", variation.getColor() != null ? variation.getColor().getColorName() : null);
+            detailJson.put("size", variation.getSize() != null ? variation.getSize().getSizeName() : null);
             detailJson.put("orderQuantity", detail.getOrderQuantity());
             detailJson.put("unitPrice", detail.getUnitPrice());
             detailJson.put("discountAmount", detail.getDiscountAmount());
-            detailJson.put("productImage", variation.getProductVariationImage()); // Lấy ảnh từ ProductVariation
+            detailJson.put("productImage", variation.getProductVariationImage());
+
+            // Fetch reviews for this specific product
+            List<Map<String, Object>> reviews = reviewRepository.findReviewByProductId(variation.getProduct().getProductId())
+                    .stream()
+                    .map(reviewData -> {
+                        Map<String, Object> reviewJson = new HashMap<>();
+                        reviewJson.put("reviewId", reviewData[0]);
+                        reviewJson.put("fullName", reviewData[1]);
+                        reviewJson.put("reviewRating", reviewData[2]);
+                        reviewJson.put("reviewComment", reviewData[3]);
+                        return reviewJson;
+                    })
+                    .collect(Collectors.toList());
+
+            // Add reviews to the detail JSON
+            detailJson.put("reviews", reviews);
         } else {
+            // Handle the case where product variation or product is missing
             detailJson.put("productName", null);
             detailJson.put("color", null);
             detailJson.put("size", null);
@@ -709,10 +727,12 @@ public class OrderService {
             detailJson.put("unitPrice", detail.getUnitPrice());
             detailJson.put("discountAmount", detail.getDiscountAmount());
             detailJson.put("productImage", null);
+            detailJson.put("reviews", Collections.emptyList()); // No reviews if product is missing
         }
 
         return detailJson;
     }
+
 
 
     private String generateTrackingNumber() {
