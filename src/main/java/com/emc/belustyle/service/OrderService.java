@@ -581,13 +581,19 @@ public class OrderService {
                 .orElseThrow(() -> new IllegalArgumentException("Invalid staff name"));
 
         if (order.getOrderStatus() == Order.OrderStatus.PROCESSING) {
-            order.setOrderStatus(isApproved ? Order.OrderStatus.SHIPPED: Order.OrderStatus.CANCELLED);
+            if (isApproved) {
+                order.setOrderStatus(Order.OrderStatus.SHIPPED);
+            } else {
+                order.setOrderStatus(Order.OrderStatus.CANCELLED);
+                sendOrderCancellationEmail(order); // Send cancellation email to the customer
+            }
             order.setStaff(staff); // Gán staff vào order
             orderRepository.save(order);
         } else {
             throw new IllegalStateException("Order must be in PROCESSING status to be reviewed by staff.");
         }
     }
+
 
 
     public void confirmOrderReceived(String orderId) {
@@ -731,7 +737,7 @@ public class OrderService {
                 .append("<strong>Dear ").append(order.getUser().getFullName()).append(",</strong></p>")
                 .append("<p style='font-size: 16px; color: ").append(accentColor).append(";'>Thank you for shopping with BeLuStyle!</p>")
                 .append("<p style='font-size: 16px; color: ").append(accentColor).append(";'>We regret to inform you that your order <strong>#")
-                .append(order.getOrderId()).append("</strong> placed on ").append(formattedOrderDate).append(".</p>")
+                .append(order.getOrderId()).append("</strong> placed on ").append(formattedOrderDate)
                 .append(", has been canceled.</p>")
 
                 // Apology Message
