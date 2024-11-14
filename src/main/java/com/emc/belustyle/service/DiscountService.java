@@ -26,6 +26,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.time.ZoneId;
@@ -213,7 +214,8 @@ public class DiscountService {
     }
 
 
-    public ResponseEntity<?> checkUserDiscount(String discountCode) {
+    public ResponseEntity<?> checkUserDiscount(String discountCode, BigDecimal subTotal) {
+        System.out.println(subTotal);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUsername = null;
         if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
@@ -242,7 +244,14 @@ public class DiscountService {
         boolean hasDiscount = checkDiscountUsage(userId, discountCode) > 0;
         if (hasDiscount) {
             DiscountDTO discountDTO = discountOpt.get();
-            return ResponseEntity.ok(discountDTO);
+            if (Objects.equals(discountDTO.getDiscountStatus(), "EXPIRED")) {
+                return ResponseEntity.status(HttpStatus.GONE).body(new ResponseDTO(HttpStatus.GONE.value(), "Discount expired"));
+            }
+            if (discountDTO.getMinimumOrderValue().compareTo(subTotal) <= 0) {
+                return ResponseEntity.ok(discountDTO);
+            }else{
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseDTO(HttpStatus.BAD_REQUEST.value(), "Minimum Order Value is " + discountDTO.getMinimumOrderValue()));
+            }
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ResponseDTO(HttpStatus.NOT_FOUND.value(), "User does not have this discount"));
