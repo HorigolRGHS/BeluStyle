@@ -29,7 +29,7 @@ public interface OrderRepository extends JpaRepository<Order, String>, JpaSpecif
     Page<Order> findAllByStatusAndUserId(String status, String userId, Pageable pageable);
 
 
-    @Query("SELECT o FROM Order o WHERE o.user.userId = :userId")
+    @Query("SELECT o FROM Order o WHERE o.user.userId = :userId ORDER BY o.orderDate DESC")
     Page<Order> findByUserId(@Param("userId") String userId, Pageable pageable);
     @Modifying
     @Query("UPDATE Order o SET o.orderStatus = 'CANCELLED' WHERE o.orderId = :orderId")

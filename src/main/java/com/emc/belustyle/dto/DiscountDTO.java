@@ -22,7 +22,6 @@ public class DiscountDTO {
     private BigDecimal minimumOrderValue;
     private BigDecimal maximumDiscountValue;
     private Integer usageLimit;
-
     private Integer usageCount;
 
     public DiscountDTO(Integer discountId, String discountCode, String discountType, BigDecimal discountValue,
