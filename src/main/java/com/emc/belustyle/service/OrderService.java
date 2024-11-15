@@ -89,21 +89,38 @@ public class OrderService {
             // Build basic order response
             Map<String, Object> orderJson = buildOrderResponseJson(order);
 
-            // Fetch reviews related to this order
-            List<Map<String, Object>> reviews = order.getOrderDetails().stream()
-                    .flatMap(orderDetail -> reviewRepository.findReviewByProductId(orderDetail.getVariationId().toString()).stream())
-                    .map(reviewData -> {
-                        Map<String, Object> reviewJson = new HashMap<>();
-                        reviewJson.put("reviewId", reviewData[0]);
-                        reviewJson.put("fullName", reviewData[1]);
-                        reviewJson.put("reviewRating", reviewData[2]);
-                        reviewJson.put("reviewComment", reviewData[3]);
-                        return reviewJson;
+            // Fetch reviews related only to this order's details
+            List<Map<String, Object>> orderDetailsReviews = order.getOrderDetails().stream()
+                    .map(orderDetail -> {
+                        Map<String, Object> detailJson = new HashMap<>();
+                        detailJson.put("orderDetailId", orderDetail.getOrderDetailId());
+
+                        // Fetch reviews specifically for this OrderDetail's product variation and order ID
+                        List<Map<String, Object>> reviews = reviewRepository
+                                .findByOrderDetail_OrderDetailIdAndOrderDetail_Order_OrderId(orderDetail.getOrderDetailId(), order.getOrderId())
+                                .stream()
+                                .map(reviewData -> {
+                                    Map<String, Object> reviewJson = new HashMap<>();
+                                    if (reviewData.length >= 4) {
+                                        reviewJson.put("reviewId", reviewData[0] != null ? reviewData[0] : "N/A");
+                                        reviewJson.put("fullName", reviewData[1] != null ? reviewData[1] : "Anonymous");
+                                        reviewJson.put("reviewRating", reviewData[2] != null ? reviewData[2] : 0);
+                                        reviewJson.put("reviewComment", reviewData[3] != null ? reviewData[3] : "No comment");
+                                    } else {
+                                        reviewJson.put("error", "Data incomplete");
+                                    }
+                                    return reviewJson;
+                                })
+                                .collect(Collectors.toList());
+
+
+                        detailJson.put("reviews", reviews);
+                        return detailJson;
                     })
                     .collect(Collectors.toList());
 
-            // Add reviews to the response
-            orderJson.put("reviews", reviews);
+            // Add filtered reviews to the response
+            orderJson.put("orderDetailsReviews", orderDetailsReviews);
             return Optional.of(orderJson);
         }
         return Optional.empty();

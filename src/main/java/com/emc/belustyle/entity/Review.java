@@ -20,8 +20,10 @@ public class Review {
     @Column(name = "review_id")
     private Integer reviewId;
 
-    @Column(name = "order_detail_id")
-    private Integer orderDetailId;
+    @ManyToOne
+    @JoinColumn(name = "order_detail_id", referencedColumnName = "order_detail_id", insertable = false, updatable = false)
+    private OrderDetail orderDetail;
+
 
     @Column(name = "product_id")
     private String productId;
