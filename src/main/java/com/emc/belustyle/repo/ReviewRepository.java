@@ -30,5 +30,12 @@ public interface ReviewRepository extends JpaRepository<Review, Integer> {
     List<Object[]> countAndAvgRatingByProductId(@Param("productId") String productId);
 
 
-    List<Object[]> findByOrderDetail_OrderDetailIdAndOrderDetail_Order_OrderId(Integer orderDetailId, String orderId);
+    @Query("SELECT r.reviewId, COALESCE(u.fullName, 'Anonymous') as fullName, r.reviewRating, r.reviewComment " +
+            "FROM Review r " +
+            "LEFT JOIN r.orderDetail od " +
+            "LEFT JOIN od.order o " +
+            "LEFT JOIN o.user u " +
+            "WHERE od.orderDetailId = :orderDetailId AND o.orderId = :orderId")
+    List<Object[]> findReviewsByOrderDetailIdAndOrderId(@Param("orderDetailId") Integer orderDetailId, @Param("orderId") String orderId);
+
 }
