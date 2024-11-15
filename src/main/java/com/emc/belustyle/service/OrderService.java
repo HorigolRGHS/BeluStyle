@@ -95,10 +95,11 @@ public class OrderService {
                         Map<String, Object> detailJson = new HashMap<>();
                         detailJson.put("orderDetailId", orderDetail.getOrderDetailId());
 
-                        // Fetch reviews specifically for this OrderDetail's product variation and order ID
+                        // Fetch reviews specifically for this OrderDetail
                         List<Map<String, Object>> reviews = reviewRepository
                                 .findByOrderDetail_OrderDetailIdAndOrderDetail_Order_OrderId(orderDetail.getOrderDetailId(), order.getOrderId())
                                 .stream()
+                                .filter(reviewData -> reviewData[0] != null && reviewData[0].equals(orderDetail.getOrderDetailId())) // Lọc theo `orderDetailId`
                                 .map(reviewData -> {
                                     Map<String, Object> reviewJson = new HashMap<>();
                                     if (reviewData.length >= 4) {
@@ -113,7 +114,6 @@ public class OrderService {
                                 })
                                 .collect(Collectors.toList());
 
-
                         detailJson.put("reviews", reviews);
                         return detailJson;
                     })
@@ -125,6 +125,7 @@ public class OrderService {
         }
         return Optional.empty();
     }
+
 
     @Transactional
     public Optional<Map<String, Object>> getMyOrderById(String orderId, String username) {
