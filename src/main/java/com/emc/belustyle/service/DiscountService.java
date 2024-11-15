@@ -303,8 +303,8 @@ public class DiscountService {
         );
 
         // Calculate the usage count
-        int usageCount = userDiscountRepository.findAllByDiscount_DiscountId(discount.getDiscountId()).size();
-        discountDTO.setUsageCount(usageCount); // Set the usage count
+        UserDiscount userDiscounts = userDiscountRepository.findByDiscount_DiscountId(discount.getDiscountId());
+        discountDTO.setUsageCount(userDiscounts.getUsageCount());
 
         return discountDTO;
     }

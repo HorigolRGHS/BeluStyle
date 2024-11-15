@@ -12,6 +12,8 @@ public interface UserDiscountRepository extends JpaRepository<UserDiscount, Inte
 
     List<UserDiscount> findAllByDiscount_DiscountId(int discountId);
 
+    UserDiscount findByDiscount_DiscountId(int discountId);
+
     List<UserDiscount> findAllByUser_UserId(String userId);
 
     List<UserDiscount> findAllByUser_Username(String username);
