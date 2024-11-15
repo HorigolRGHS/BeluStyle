@@ -85,7 +85,6 @@ public class OrderService {
         Optional<Order> orderOptional = orderRepository.findById(orderId);
         if (orderOptional.isPresent()) {
             Order order = orderOptional.get();
-
             Map<String, Object> orderJson = buildOrderResponseJson(order);
 
             List<Map<String, Object>> orderDetailsList = order.getOrderDetails().stream()
@@ -104,13 +103,14 @@ public class OrderService {
                             detailJson.put("discountAmount", orderDetail.getDiscountAmount());
                             detailJson.put("productImage", variation.getProductVariationImage());
 
-                            // Lấy các review cho từng OrderDetail
+                            // Lấy các review cho từng OrderDetail, bao gồm cả productId
                             List<Map<String, Object>> reviews = reviewRepository
                                     .findReviewsByOrderDetailIdAndOrderId(orderDetail.getOrderDetailId(), order.getOrderId())
                                     .stream()
                                     .map(reviewData -> {
                                         Map<String, Object> reviewJson = new HashMap<>();
                                         reviewJson.put("reviewId", reviewData[0]);
+                                        reviewJson.put("productId", reviewData[4]); // Bao gồm productId
                                         reviewJson.put("fullName", reviewData[1]);
                                         reviewJson.put("reviewRating", reviewData[2]);
                                         reviewJson.put("reviewComment", reviewData[3]);
@@ -138,8 +138,6 @@ public class OrderService {
         }
         return Optional.empty();
     }
-
-
 
     @Transactional
     public Optional<Map<String, Object>> getMyOrderById(String orderId, String username) {
