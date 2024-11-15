@@ -32,4 +32,23 @@ public interface ProductRepository extends JpaRepository<Product, String> {
 
     @Query("SELECT p.productName FROM Product p left join ProductVariation pv on p.productId = pv.product.productId WHERE pv.variationId = :variationId")
     String getProductNameById(@Param("variationId") Integer variationId);
+
+    @Query(value = "SELECT " +
+            "    months.month, " +
+            "    IFNULL(SUM(od.order_quantity * (od.unit_price - od.discount_amount)), 0) AS total_revenue " +
+            "FROM " +
+            "    (SELECT DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL n MONTH), '%Y-%m') AS month " +
+            "     FROM (SELECT 0 AS n UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION " +
+            "                  SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION " +
+            "                  SELECT 8 UNION SELECT 9 UNION SELECT 10 UNION SELECT 11) AS months " +
+            "    ) months " +
+            "LEFT JOIN " +
+            "    `order` o ON DATE_FORMAT(o.order_date, '%Y-%m') = months.month " +
+            "LEFT JOIN " +
+            "    order_detail od ON o.order_id = od.order_id AND o.order_status = 'COMPLETED' " +
+            "GROUP BY " +
+            "    months.month " +
+            "ORDER BY " +
+            "    months.month", nativeQuery = true)
+    List<Object[]> findTotalRevenuePerMonth();
 }

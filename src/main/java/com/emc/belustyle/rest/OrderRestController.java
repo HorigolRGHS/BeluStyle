@@ -161,8 +161,7 @@ public class OrderRestController {
         }
     }
 
-
-
+    @PreAuthorize("hasAuthority('CUSTOMER')")
     @PutMapping("/{orderId}/confirm-receipt")
     public ResponseEntity<ResponseDTO> confirmOrderReceived(@PathVariable String orderId) {
         try {
