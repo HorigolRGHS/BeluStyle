@@ -86,45 +86,60 @@ public class OrderService {
         if (orderOptional.isPresent()) {
             Order order = orderOptional.get();
 
-            // Build basic order response
             Map<String, Object> orderJson = buildOrderResponseJson(order);
 
-            // Fetch reviews related only to this order's details
-            List<Map<String, Object>> orderDetailsReviews = order.getOrderDetails().stream()
+            List<Map<String, Object>> orderDetailsList = order.getOrderDetails().stream()
                     .map(orderDetail -> {
                         Map<String, Object> detailJson = new HashMap<>();
                         detailJson.put("orderDetailId", orderDetail.getOrderDetailId());
 
-                        // Fetch reviews specifically for this OrderDetail's product variation and order ID
-                        List<Map<String, Object>> reviews = reviewRepository
-                                .findByOrderDetail_OrderDetailIdAndOrderDetail_Order_OrderId(orderDetail.getOrderDetailId(), order.getOrderId())
-                                .stream()
-                                .map(reviewData -> {
-                                    Map<String, Object> reviewJson = new HashMap<>();
-                                    if (reviewData.length >= 4) {
-                                        reviewJson.put("reviewId", reviewData[0] != null ? reviewData[0] : "N/A");
-                                        reviewJson.put("fullName", reviewData[1] != null ? reviewData[1] : "Anonymous");
-                                        reviewJson.put("reviewRating", reviewData[2] != null ? reviewData[2] : 0);
-                                        reviewJson.put("reviewComment", reviewData[3] != null ? reviewData[3] : "No comment");
-                                    } else {
-                                        reviewJson.put("error", "Data incomplete");
-                                    }
-                                    return reviewJson;
-                                })
-                                .collect(Collectors.toList());
+                        ProductVariation variation = productVariationRepository.findById(orderDetail.getVariationId()).orElse(null);
 
+                        if (variation != null) {
+                            detailJson.put("productName", variation.getProduct().getProductName());
+                            detailJson.put("color", variation.getColor().getColorName());
+                            detailJson.put("size", variation.getSize().getSizeName());
+                            detailJson.put("orderQuantity", orderDetail.getOrderQuantity());
+                            detailJson.put("unitPrice", orderDetail.getUnitPrice());
+                            detailJson.put("discountAmount", orderDetail.getDiscountAmount());
+                            detailJson.put("productImage", variation.getProductVariationImage());
 
-                        detailJson.put("reviews", reviews);
+                            // Lấy các review cho từng OrderDetail
+                            List<Map<String, Object>> reviews = reviewRepository
+                                    .findReviewsByOrderDetailIdAndOrderId(orderDetail.getOrderDetailId(), order.getOrderId())
+                                    .stream()
+                                    .map(reviewData -> {
+                                        Map<String, Object> reviewJson = new HashMap<>();
+                                        reviewJson.put("reviewId", reviewData[0]);
+                                        reviewJson.put("fullName", reviewData[1]);
+                                        reviewJson.put("reviewRating", reviewData[2]);
+                                        reviewJson.put("reviewComment", reviewData[3]);
+                                        return reviewJson;
+                                    })
+                                    .collect(Collectors.toList());
+
+                            detailJson.put("reviews", reviews);
+                        } else {
+                            detailJson.put("productName", null);
+                            detailJson.put("color", null);
+                            detailJson.put("size", null);
+                            detailJson.put("orderQuantity", orderDetail.getOrderQuantity());
+                            detailJson.put("unitPrice", orderDetail.getUnitPrice());
+                            detailJson.put("discountAmount", orderDetail.getDiscountAmount());
+                            detailJson.put("productImage", null);
+                            detailJson.put("reviews", Collections.emptyList());
+                        }
                         return detailJson;
                     })
                     .collect(Collectors.toList());
 
-            // Add filtered reviews to the response
-            orderJson.put("orderDetailsReviews", orderDetailsReviews);
+            orderJson.put("orderDetails", orderDetailsList);
             return Optional.of(orderJson);
         }
         return Optional.empty();
     }
+
+
 
     @Transactional
     public Optional<Map<String, Object>> getMyOrderById(String orderId, String username) {
