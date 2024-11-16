@@ -23,7 +23,7 @@ public interface ProductRepository extends JpaRepository<Product, String> {
             ") " +
             "LEFT JOIN SaleProduct sp ON p.productId = sp.product.productId " +
             "LEFT JOIN Sale s ON sp.sale.saleId = s.saleId AND s.saleStatus = 'ACTIVE' " +
-            "LEFT JOIN Review r ON p.productId = r.productId " +
+            "LEFT JOIN Review r ON p.productId = r.product.productId " +
             "LEFT JOIN StockProduct sp2 ON pv.variationId = sp2.productVariation.variationId " + // Join stock_product table
             "GROUP BY p.productId, p.productName, p.productDescription, b.brandId, b.brandName, c.categoryId, c.categoryName, " +
             "pv.productVariationImage, pv.productPrice, s.saleType, s.saleValue, sp2.quantity " + // Include quantity in GROUP BY

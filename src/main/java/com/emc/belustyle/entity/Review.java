@@ -1,6 +1,7 @@
 package com.emc.belustyle.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,13 +21,15 @@ public class Review {
     @Column(name = "review_id")
     private Integer reviewId;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "order_detail_id", referencedColumnName = "order_detail_id", insertable = false, updatable = false)
     private OrderDetail orderDetail;
 
-
-    @Column(name = "product_id")
-    private String productId;
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "product_id")
+    private Product product;
 
     @Column(name = "review_rating")
     private Integer reviewRating;
