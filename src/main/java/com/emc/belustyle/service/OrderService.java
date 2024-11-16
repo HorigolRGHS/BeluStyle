@@ -142,8 +142,61 @@ public class OrderService {
     @Transactional
     public Optional<Map<String, Object>> getMyOrderById(String orderId, String username) {
         Optional<Order> order = orderRepository.findOrderByUserIdAndOrderId(username, orderId);
-        return orderRepository.findOrderByUserIdAndOrderId(username, orderId)
-                .map(this::buildOrderResponseJson);
+        return order.map(o -> {
+            Map<String, Object> orderJson = buildOrderResponseJson(o);
+
+            List<Map<String, Object>> orderDetailsList = o.getOrderDetails().stream()
+                    .map(orderDetail -> {
+                        Map<String, Object> detailJson = new HashMap<>();
+                        detailJson.put("orderDetailId", orderDetail.getOrderDetailId());
+
+                        // Fetch product variation to include productId
+                        ProductVariation variation = productVariationRepository.findById(orderDetail.getVariationId()).orElse(null);
+
+                        if (variation != null) {
+                            detailJson.put("productId", variation.getProduct().getProductId()); // Add productId here
+                            detailJson.put("productName", variation.getProduct().getProductName());
+                            detailJson.put("color", variation.getColor().getColorName());
+                            detailJson.put("size", variation.getSize().getSizeName());
+                            detailJson.put("orderQuantity", orderDetail.getOrderQuantity());
+                            detailJson.put("unitPrice", orderDetail.getUnitPrice());
+                            detailJson.put("discountAmount", orderDetail.getDiscountAmount());
+                            detailJson.put("productImage", variation.getProductVariationImage());
+
+                            // Add reviews for each product in order detail
+                            List<Map<String, Object>> reviews = reviewRepository
+                                    .findReviewsByOrderDetailIdAndOrderId(orderDetail.getOrderDetailId(), o.getOrderId())
+                                    .stream()
+                                    .map(reviewData -> {
+                                        Map<String, Object> reviewJson = new HashMap<>();
+                                        reviewJson.put("reviewId", reviewData[0]);
+                                        reviewJson.put("productId", reviewData[4]); // Ensure productId is included in reviews
+                                        reviewJson.put("fullName", reviewData[1]);
+                                        reviewJson.put("reviewRating", reviewData[2]);
+                                        reviewJson.put("reviewComment", reviewData[3]);
+                                        return reviewJson;
+                                    })
+                                    .collect(Collectors.toList());
+
+                            detailJson.put("reviews", reviews);
+                        } else {
+                            detailJson.put("productId", null);
+                            detailJson.put("productName", null);
+                            detailJson.put("color", null);
+                            detailJson.put("size", null);
+                            detailJson.put("orderQuantity", orderDetail.getOrderQuantity());
+                            detailJson.put("unitPrice", orderDetail.getUnitPrice());
+                            detailJson.put("discountAmount", orderDetail.getDiscountAmount());
+                            detailJson.put("productImage", null);
+                            detailJson.put("reviews", Collections.emptyList());
+                        }
+                        return detailJson;
+                    })
+                    .collect(Collectors.toList());
+
+            orderJson.put("orderDetails", orderDetailsList);
+            return orderJson;
+        });
     }
 
     @Transactional
