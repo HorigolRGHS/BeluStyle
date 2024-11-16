@@ -1,6 +1,8 @@
 package com.emc.belustyle.service;
 
+import com.emc.belustyle.dto.BestSellingMonthDTO;
 import com.emc.belustyle.dto.MonthlyRevenueDTO;
+import com.emc.belustyle.dto.OrderStatusMonthDTO;
 import com.emc.belustyle.repo.BrandRepository;
 import com.emc.belustyle.repo.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +36,7 @@ public class StatisticsService {
     }
 
     public List<MonthlyRevenueDTO> getMonthlyRevenue() {
-        List<Object[]> rawResults = orderRepository.getMonthlyRevenue();
+        List<Object[]> rawResults = orderRepository.findMonthlyRevenue();
         return rawResults.stream()
                 .map(row -> new MonthlyRevenueDTO(
                         ((Integer) row[0]), // year
@@ -44,11 +46,29 @@ public class StatisticsService {
                 .collect(Collectors.toList());
     }
 
+
     public List<Object[]> getOrderStatusStatistics() {
         return orderRepository.findOrderStatusStatistics();
     }
 
     public List<Object[]> getBestSellingProducts() {
         return orderRepository.findBestSellingProducts();
+    }
+
+    public List<BestSellingMonthDTO> getBestSellingByMonth(String month) {
+        List<Object[]> rawResults = orderRepository.findBestSellingByMonth(month);
+        return rawResults.stream().map(result -> new BestSellingMonthDTO(
+                (String) result[0], // productId
+                (String) result[1], // productName
+                ((Number) result[2]).intValue() // totalQuantitySold
+        )).collect(Collectors.toList());
+    }
+
+    public List<OrderStatusMonthDTO> getOrderStatusByMonth(String month) {
+        List<Object[]> rawResults = orderRepository.findOrderStatusByMonth(month);
+        return rawResults.stream().map(result -> new OrderStatusMonthDTO(
+                (String) result[0], // orderStatus
+                ((Number) result[1]).intValue() // totalOrders
+        )).collect(Collectors.toList());
     }
 }

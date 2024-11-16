@@ -2,6 +2,7 @@ package com.emc.belustyle.repo;
 
 import com.emc.belustyle.dto.ProductReviewDTO;
 import com.emc.belustyle.dto.RatingSummaryDTO;
+import com.emc.belustyle.dto.ReviewDTO;
 import com.emc.belustyle.entity.Review;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -24,11 +25,26 @@ public interface ReviewRepository extends JpaRepository<Review, Integer> {
     @Query("SELECT COALESCE(count(r.reviewRating), 0) as totalRating, COALESCE(avg(r.reviewRating), 0) as avgRating FROM Review r join Product p on r.productId = p.productId WHERE p.productId = :productId")
     List<Object[]> countAndAvgRatingByProductId(@Param("productId") String productId);
 
-    @Query("SELECT r FROM Review r WHERE r.productId = :productId")
-    List<Review> findReviewDetails(@Param("productId") String productId);
+//    @Query("SELECT r FROM Review r WHERE r.productId = :productId")
+//    List<Review> findReviewDetails(@Param("productId") String productId);
 
 @Query("SELECT r FROM Review r WHERE r.orderDetailId = :orderDetailId")
 List<Review> findReviewsByOrderDetailId(@Param("orderDetailId") Integer orderDetailId);
 
-    List<Review> findAll();
+    @Query("SELECT new com.emc.belustyle.dto.ReviewDTO(r.reviewId, r.productId,r.reviewRating, r.reviewComment, u.username, o.orderId) " +
+            "FROM Review r " +
+            "JOIN Product p ON r.productId = p.productId " +
+            "JOIN OrderDetail od ON r.orderDetailId = od.orderDetailId " +
+            "JOIN Order o ON od.order.orderId = o.orderId " +
+            "JOIN User u ON o.user.userId = u.userId " +
+            "WHERE p.productId = :productId")
+    List<ReviewDTO> findReviewDetails(@Param("productId") String productId);
+
+    @Query("SELECT new com.emc.belustyle.dto.ReviewDTO(r.reviewId, r.productId,r.reviewRating, r.reviewComment, u.username, o.orderId) " +
+            "FROM Review r " +
+            "JOIN Product p ON r.productId = p.productId " +
+            "JOIN OrderDetail od ON r.orderDetailId = od.orderDetailId " +
+            "JOIN Order o ON od.order.orderId = o.orderId " +
+            "JOIN User u ON o.user.userId = u.userId ")
+    List<ReviewDTO> findAlls();
 }

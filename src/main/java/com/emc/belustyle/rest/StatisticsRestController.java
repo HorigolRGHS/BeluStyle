@@ -1,11 +1,15 @@
 package com.emc.belustyle.rest;
 
+import com.emc.belustyle.dto.BestSellingMonthDTO;
 import com.emc.belustyle.dto.MonthlyRevenueDTO;
+import com.emc.belustyle.dto.OrderStatusMonthDTO;
 import com.emc.belustyle.service.StatisticsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -54,6 +58,18 @@ public class StatisticsRestController {
     @GetMapping("/best-selling-products")
     public List<Object[]> bestSellingProductsStatistics() {
         return statisticsService.getBestSellingProducts();
+    }
+
+    @GetMapping("/best-selling-products/month")
+    public ResponseEntity<List<BestSellingMonthDTO>> getBestSelling(@RequestParam String month) {
+        List<BestSellingMonthDTO> results = statisticsService.getBestSellingByMonth(month);
+        return ResponseEntity.ok(results);
+    }
+
+    @GetMapping("/order-status/month")
+    public ResponseEntity<List<OrderStatusMonthDTO>> getOrderStatus(@RequestParam String month) {
+        List<OrderStatusMonthDTO> results = statisticsService.getOrderStatusByMonth(month);
+        return ResponseEntity.ok(results);
     }
 
 }
