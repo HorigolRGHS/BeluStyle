@@ -34,8 +34,11 @@ public class StockTransactionRestController {
     @PostMapping
     public ResponseEntity<String> bulkImportTransactions(
             @RequestBody StockTransactionDTO stockTransactionDTO) {
-        stockTransactionService.createStockTransactions(stockTransactionDTO);
-        return ResponseEntity.ok("Bulk import of stock transactions successful");
+        boolean check = stockTransactionService.createStockTransactions(stockTransactionDTO);
+        if (check) {
+            return ResponseEntity.ok("Bulk import of stock transactions successful");
 
+        }
+        return ResponseEntity.badRequest().body("Bulk import of stock transactions failed");
     }
 }

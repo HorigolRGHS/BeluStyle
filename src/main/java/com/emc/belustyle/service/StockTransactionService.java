@@ -7,6 +7,7 @@ import com.emc.belustyle.entity.Stock;
 import com.emc.belustyle.entity.StockTransaction;
 import com.emc.belustyle.repo.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -48,26 +49,31 @@ public class StockTransactionService {
     }
 
     @Transactional
-    public void createStockTransactions(StockTransactionDTO stockTransactionDTO) {
-        Optional<Stock> stock = stockRepository.findById(stockTransactionDTO.getStockId());
-        if (stock.isEmpty()) {
-            throw new IllegalArgumentException("Stock not found with ID: " + stockTransactionDTO.getStockId());
-        }
-
-        for (StockTransactionDTO.ProductVariationQuantity variationQuantity : stockTransactionDTO.getVariations()) {
-            Optional<ProductVariation> productVariation = productVariationRepository.findById(variationQuantity.getProductVariationId());
-            if (productVariation.isEmpty()) {
-                throw new IllegalArgumentException("Product variation not found with ID: " + variationQuantity.getProductVariationId());
+    public boolean createStockTransactions(StockTransactionDTO stockTransactionDTO) {
+        try {
+            Optional<Stock> stock = stockRepository.findById(stockTransactionDTO.getStockId());
+            if (stock.isEmpty()) {
+                throw new IllegalArgumentException("Stock not found with ID: " + stockTransactionDTO.getStockId());
             }
 
-            StockTransaction stockTransaction = new StockTransaction();
-            stockTransaction.setStock(stock.get());
-            stockTransaction.setProductVariation(productVariation.get());
-            stockTransaction.setUser(userRepository.findByUsername(stockTransactionDTO.getUsername()).orElse(null));
-            stockTransaction.setTransactionType(StockTransaction.TransactionType.IN); // Assuming IN transaction
-            stockTransaction.setQuantity(variationQuantity.getQuantity());
+            for (StockTransactionDTO.ProductVariationQuantity variationQuantity : stockTransactionDTO.getVariations()) {
+                Optional<ProductVariation> productVariation = productVariationRepository.findById(variationQuantity.getProductVariationId());
+                if (productVariation.isEmpty()) {
+                    throw new IllegalArgumentException("Product variation not found with ID: " + variationQuantity.getProductVariationId());
+                }
 
-            stockTransactionRepository.save(stockTransaction);
+                StockTransaction stockTransaction = new StockTransaction();
+                stockTransaction.setStock(stock.get());
+                stockTransaction.setProductVariation(productVariation.get());
+                stockTransaction.setUser(userRepository.findByUsername(stockTransactionDTO.getUsername()).orElse(null));
+                stockTransaction.setTransactionType(StockTransaction.TransactionType.IN); // Assuming IN transaction
+                stockTransaction.setQuantity(variationQuantity.getQuantity());
+
+                stockTransactionRepository.save(stockTransaction);
+            }
+        } catch (IllegalArgumentException e) {
+            return false;
         }
+        return true;
     }
 }
