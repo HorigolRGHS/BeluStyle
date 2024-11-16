@@ -171,4 +171,9 @@ public class SaleService {
         }
     }
 
+    @Transactional
+    public ResponseEntity<?> getListProductsInSales() {
+        return ResponseEntity.status(HttpStatus.OK).body(saleProductRepository.getAllProductsInSales());
+    }
+
 }

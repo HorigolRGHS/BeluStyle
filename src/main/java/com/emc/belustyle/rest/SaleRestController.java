@@ -21,14 +21,11 @@ import java.util.List;
 @RequestMapping("/api/sales")
 public class SaleRestController {
 
-    private SaleService saleService;
-
-    private SaleRepository saleRepository;
+    private final SaleService saleService;
 
     @Autowired
     public SaleRestController(SaleService saleService, SaleRepository saleRepository) {
         this.saleService = saleService;
-        this.saleRepository = saleRepository;
     }
 
     @PreAuthorize("hasAnyAuthority('STAFF', 'ADMIN')")
@@ -81,5 +78,11 @@ public class SaleRestController {
     public ResponseEntity<List<Product>> getProductsInSale(
             @PathVariable int saleId) {
         return saleService.getProductsInSale(saleId);
+    }
+
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'STAFF')")
+    @GetMapping("/products")
+    public ResponseEntity<?> getListProductInSales() {
+        return saleService.getListProductsInSales();
     }
 }
