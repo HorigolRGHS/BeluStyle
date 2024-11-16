@@ -3,13 +3,11 @@ package com.emc.belustyle.service;
 import com.emc.belustyle.dto.*;
 import com.emc.belustyle.entity.*;
 import com.emc.belustyle.repo.*;
-import com.emc.belustyle.entity.Brand;
 import com.emc.belustyle.entity.Product;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -126,8 +124,6 @@ public class ProductService {
         return productItemDTO;
     }
 
-
-
     @Transactional
     public void deleteProduct(String id) { productRepository.deleteById(id); }
 
@@ -212,11 +208,9 @@ public class ProductService {
         return productList;
     }
 
-
     @Transactional
     public Product addVariationsToExistingProduct(String productId, List<ProductDTO.ProductVariationDTO> variationDTOs) {
-        Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new EntityNotFoundException("Product not found"));
+        Product product = productRepository.findById(productId).orElseThrow(() -> new EntityNotFoundException("Product not found"));
 
         List<ProductVariation> variations = new ArrayList<>();
         for (ProductDTO.ProductVariationDTO variationDTO : variationDTOs) {
@@ -225,7 +219,7 @@ public class ProductService {
             variation.setColor(colorRepository.findById(variationDTO.getColorId()).orElse(null));
             variation.setProductPrice(variationDTO.getProductPrice());
             variation.setProductVariationImage(variationDTO.getProductVariationImage());
-            variation.setProduct(product); // Link variation to the product
+            variation.setProduct(product);
             variations.add(variation);
         }
         productVariationRepository.saveAll(variations);
