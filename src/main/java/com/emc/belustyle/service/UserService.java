@@ -19,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Optional;
 import java.util.List;
@@ -249,18 +250,17 @@ public class UserService {
 
     public Page<ViewUserDTO> getAllUser(int page, int size, String search) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+        List<UserRole.RoleName> rolesToInclude = Arrays.asList(UserRole.RoleName.CUSTOMER, UserRole.RoleName.STAFF);
 
         Page<User> userPage;
-
-        if (search != null && !search.isEmpty()) {
-            userPage = userRepository.findByUsernameContainingOrEmailContaining(search, search, pageable);
+        if (search != null && !search.trim().isEmpty()) {
+            userPage = userRepository.findByRolesAndSearch(rolesToInclude, search.trim(), pageable);
         } else {
-            userPage = userRepository.findAll(pageable);
+            userPage = userRepository.findByRolesOnly(rolesToInclude, pageable);
         }
 
-        List<ViewUserDTO> filteredUsers = userPage.getContent().stream()
-                .filter(user -> user.getRole().getRoleName() == UserRole.RoleName.CUSTOMER
-                        || user.getRole().getRoleName() == UserRole.RoleName.STAFF)
+        // Convert to DTO
+        List<ViewUserDTO> userDTOList = userPage.getContent().stream()
                 .map(user -> new ViewUserDTO(
                         user.getUserId(),
                         user.getUsername(),
@@ -270,7 +270,8 @@ public class UserService {
                         user.getCreatedAt(),
                         user.getUpdatedAt()))
                 .collect(Collectors.toList());
-        return new PageImpl<>(filteredUsers, pageable, userPage.getTotalElements());
+
+        return new PageImpl<>(userDTOList, pageable, userPage.getTotalElements());
     }
 
     @Transactional
