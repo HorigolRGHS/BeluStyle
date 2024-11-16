@@ -1,12 +1,19 @@
 package com.emc.belustyle.dto;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
+import java.util.Date;
+
+
+@Getter
+@Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class ReviewDTO {
-    private String user;
-    private int rating;
-    private String comment;
+    private Integer orderDetailId;
+    private Integer reviewId;
+    private String productId;
+    private Integer reviewRating;
+    private String reviewComment;
+    private Date createdAt;
 }

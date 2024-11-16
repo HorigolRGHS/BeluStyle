@@ -40,54 +40,26 @@ public class SaleRestController {
     @PreAuthorize("hasAnyAuthority('STAFF', 'ADMIN')")
     @GetMapping("/{saleId}")
     public ResponseEntity<?> getSaleById(@PathVariable Integer saleId) {
-        ResponseDTO responseDTO = new ResponseDTO();
-        Sale sale = saleService.findSaleById(saleId);
-        if (sale == null) {
-            responseDTO.setStatusCode(HttpStatus.NO_CONTENT.value());
-            responseDTO.setMessage("No sale found");
-            responseDTO.setStatusCode(404);
-            return ResponseEntity.status(responseDTO.getStatusCode()).body(responseDTO);
-        }
-        responseDTO.setStatusCode(HttpStatus.OK.value());
-        return ResponseEntity.status(responseDTO.getStatusCode()).body(sale);
+        return saleService.findSaleById(saleId);
     }
 
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'STAFF')")
     @PostMapping
-    public ResponseEntity<?> createSale(@RequestBody Sale sale) {
+    public Sale createSale(@RequestBody Sale sale) {
         return saleService.createSale(sale);
     }
 
     @PreAuthorize("hasAnyAuthority('STAFF', 'ADMIN')")
     @PutMapping("/{saleId}")
-    public ResponseEntity<ResponseDTO> updateSale(@PathVariable Integer saleId, @RequestBody Sale sale) {
-        ResponseDTO responseDTO = new ResponseDTO();
-        try {
-            Sale updatedSale = saleService.updateSale(saleId, sale);
-            responseDTO.setMessage("Sale updated successfully");
-            responseDTO.setStatusCode(HttpStatus.OK.value());
-            return ResponseEntity.ok(responseDTO);
-        } catch (RuntimeException ex) {
-            responseDTO.setMessage(ex.getMessage());
-            responseDTO.setStatusCode(HttpStatus.NOT_FOUND.value());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseDTO);
-        }
+    public ResponseEntity<?> updateSale(@PathVariable Integer saleId, @RequestBody Sale sale) {
+        return saleService.updateSale(saleId, sale);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{saleId}")
-    public ResponseEntity<ResponseDTO> deleteSale(@PathVariable Integer saleId) {
-        ResponseDTO responseDTO = new ResponseDTO();
-        if (!saleService.deleteSale(saleId) ) {
-            responseDTO.setMessage("Sale not found");
-            responseDTO.setStatusCode(404);
-            return ResponseEntity.status(404).body(responseDTO);
-        }
-        responseDTO.setMessage("Sale deleted");
-        responseDTO.setStatusCode(200);
-        return ResponseEntity.status(200).body(responseDTO);
-
+    public ResponseEntity<?> deleteSale(@PathVariable Integer saleId) {
+        return saleService.deleteSale(saleId);
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'STAFF')")
@@ -101,7 +73,6 @@ public class SaleRestController {
     public ResponseEntity<?> removeProductFromSale(
             @PathVariable int saleId,
             @RequestParam String productId) {
-
         return saleService.removeProductFromSale(saleId, productId);
     }
 
@@ -109,7 +80,6 @@ public class SaleRestController {
     @GetMapping("/{saleId}/products")
     public ResponseEntity<List<Product>> getProductsInSale(
             @PathVariable int saleId) {
-
         return saleService.getProductsInSale(saleId);
     }
 }

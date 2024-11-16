@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -37,5 +38,22 @@ public interface OrderRepository extends JpaRepository<Order, String>, JpaSpecif
 
     @Query("SELECT o FROM Order o left join User u on u.username = o.user.username WHERE u.username = :username AND o.orderId = :orderId ")
     Optional<Order> findOrderByUserIdAndOrderId(String username, String orderId);
+
+    //Statistics
+
+        @Query("SELECT SUM(o.totalAmount) FROM Order o WHERE o.orderStatus = 'COMPLETED'")
+        Double findTotalRevenue();
+
+        @Query("SELECT o.orderDate, SUM(o.totalAmount) FROM Order o WHERE o.orderStatus = 'COMPLETED' GROUP BY o.orderDate ORDER BY o.orderDate ASC")
+        List<Object[]> findDailyRevenue();
+
+    @Query(value = "SELECT * FROM MonthlyRevenueView ORDER BY year ASC, month ASC", nativeQuery = true)
+    List<Object[]> getMonthlyRevenue();
+
+    @Query("SELECT o.orderStatus, COUNT(o) FROM Order o GROUP BY o.orderStatus")
+    List<Object[]> findOrderStatusStatistics();
+
+    @Query(value = "SELECT productId, productName, totalSold FROM BestSellingProducts", nativeQuery = true)
+    List<Object[]> findBestSellingProducts();
 
 }

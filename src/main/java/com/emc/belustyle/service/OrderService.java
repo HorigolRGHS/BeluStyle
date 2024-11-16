@@ -383,7 +383,7 @@ public class OrderService {
                 .collect(Collectors.toList());
 
         PayOsLinkRequestBodyDTO payOsRequest = new PayOsLinkRequestBodyDTO(
-                "Thanh Toan Đơn Hàng",
+                "Thanh Toán Đơn Hàng",
                 null,
                 (int) (orderDTO.getTotalAmount() * 1),
                 null,

@@ -38,54 +38,59 @@ public class SaleService {
     }
 
     @Transactional
-    public ResponseEntity<?> createSale(Sale sale) {
-        ResponseDTO responseDTO = new ResponseDTO();
-
-        if (sale.getSaleType() == Sale.SaleType.PERCENTAGE && sale.getSaleValue().compareTo(new BigDecimal("100")) >= 0) {
-            responseDTO.setStatusCode(HttpStatus.BAD_REQUEST.value());
-            responseDTO.setMessage("Sale value must be less than 100 for percentage sale type");
-            return ResponseEntity.status(responseDTO.getStatusCode()).body(responseDTO);
-        }
-
-        Sale createdSale = saleRepository.save(sale);
-        responseDTO.setStatusCode(HttpStatus.CREATED.value());
-        return ResponseEntity.status(responseDTO.getStatusCode()).body(createdSale);
+    public Sale createSale(Sale sale) {
+        return saleRepository.save(sale);
     }
 
     @Transactional
-    public Sale updateSale(Integer saleId, Sale saleData) {
-        Sale existingSale = saleRepository.findById(saleId)
-                .orElseThrow(() -> new RuntimeException("Sale not found"));
+    public ResponseEntity<?> updateSale(Integer saleId, Sale saleData) {
+        ResponseDTO responseDTO = new ResponseDTO();
+        responseDTO.setMessage("Updated sale Successfully");
+        Sale existingSale = saleRepository.findById(saleId).orElse(null);
 
         // Update the sale properties
+        if (existingSale == null) {
+            responseDTO.setMessage("Sale not found");
+            responseDTO.setStatusCode(HttpStatus.NOT_FOUND.value());
+            return ResponseEntity.status(responseDTO.getStatusCode()).body(responseDTO);
+        }
         existingSale.setSaleType(saleData.getSaleType());
         existingSale.setSaleValue(saleData.getSaleValue());
         existingSale.setStartDate(saleData.getStartDate());
         existingSale.setEndDate(saleData.getEndDate());
         existingSale.setSaleStatus(saleData.getSaleStatus());
         existingSale.setUpdatedAt(new java.util.Date());
+        Sale EditedSale = saleRepository.save(existingSale);
 
-        return saleRepository.save(existingSale);
+        return ResponseEntity.ok().body(EditedSale);
     }
 
     @Transactional
-    public boolean deleteSale(Integer saleId) {
+    public ResponseEntity<?> deleteSale(Integer saleId) {
+        ResponseDTO responseDTO = new ResponseDTO();
+        responseDTO.setMessage("Delete sale successfully");
         if (!saleRepository.existsById(saleId)) {
-            return false;
+            responseDTO.setMessage("Sale not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseDTO);
         }
 
-        // Remove associated SaleProduct entries
         saleProductRepository.deleteBySaleId(saleId);
 
-        // Remove the sale
         saleRepository.deleteById(saleId);
 
-        return true;
+        return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
     }
 
         @Transactional
-    public Sale findSaleById(Integer saleId) {
-        return saleRepository.findById(saleId).orElse(null);
+    public ResponseEntity<?> findSaleById(Integer saleId) {
+        ResponseDTO responseDTO = new ResponseDTO();
+            Sale sale = saleRepository.findById(saleId).orElse(null);
+            if (sale == null) {
+                responseDTO.setMessage("Sale not found");
+                responseDTO.setStatusCode(HttpStatus.NOT_FOUND.value());
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseDTO);
+            }
+        return ResponseEntity.ok().body(sale);
     }
 
     @Transactional
