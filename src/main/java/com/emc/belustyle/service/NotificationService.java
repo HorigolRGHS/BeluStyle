@@ -19,8 +19,8 @@ import java.util.Optional;
 @Service
 public class NotificationService {
 
-    private NotificationRepository notificationRepository;
-    private UserRoleRepository userRoleRepository;
+    private final NotificationRepository notificationRepository;
+    private final UserRoleRepository userRoleRepository;
 
     @Autowired
     public NotificationService(NotificationRepository notificationRepository, UserRoleRepository userRoleRepository) {
