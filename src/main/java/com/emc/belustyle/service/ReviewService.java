@@ -1,5 +1,6 @@
 package com.emc.belustyle.service;
 
+import com.emc.belustyle.dto.ReviewDTO;
 import com.emc.belustyle.entity.Review;
 import com.emc.belustyle.repo.ReviewRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,11 +15,11 @@ public class ReviewService {
     @Autowired
     private ReviewRepository reviewRepository;
 
-    public List<Review> getAllReviews() {
-        return reviewRepository.findAll();
+    public List<ReviewDTO> getAllReviews() {
+        return reviewRepository.findAlls();
     }
 
-    public List<Review> getReviewsByProductId(String productId) {
+    public List<ReviewDTO> getReviewsByProductId(String productId) {
         return reviewRepository.findReviewDetails(productId);
     }
 
