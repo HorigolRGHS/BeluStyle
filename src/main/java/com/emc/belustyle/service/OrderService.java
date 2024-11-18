@@ -114,6 +114,7 @@ public class OrderService {
                                         reviewJson.put("fullName", reviewData[1]);
                                         reviewJson.put("reviewRating", reviewData[2]);
                                         reviewJson.put("reviewComment", reviewData[3]);
+                                        reviewJson.put("createdAt", reviewData[5]);
                                         return reviewJson;
                                     })
                                     .collect(Collectors.toList());
@@ -174,6 +175,7 @@ public class OrderService {
                                         reviewJson.put("fullName", reviewData[1]);
                                         reviewJson.put("reviewRating", reviewData[2]);
                                         reviewJson.put("reviewComment", reviewData[3]);
+                                        reviewJson.put("reviewComment", reviewData[5]);
                                         return reviewJson;
                                     })
                                     .collect(Collectors.toList());
@@ -957,6 +959,7 @@ public class OrderService {
                         reviewJson.put("fullName", reviewData[1]);
                         reviewJson.put("reviewRating", reviewData[2]);
                         reviewJson.put("reviewComment", reviewData[3]);
+                        reviewJson.put("createdAt", reviewData[4]);
                         return reviewJson;
                     })
                     .collect(Collectors.toList());

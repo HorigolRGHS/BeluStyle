@@ -15,7 +15,7 @@ public class ReviewDTO {
     private String productId;
     private Integer reviewRating;
     private String reviewComment;
-//    private Date createdAt;
+    private Date createdAt;
     private String username;
     private String orderId;
 }

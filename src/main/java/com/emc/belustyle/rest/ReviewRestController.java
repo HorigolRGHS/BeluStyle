@@ -16,19 +16,19 @@ public class ReviewRestController {
     @Autowired
     private ReviewService reviewService;
 
-    @GetMapping("/all")
+    @GetMapping
     public ResponseEntity<List<ReviewDTO>> getAllReviews() {
         List<ReviewDTO> reviews = reviewService.getAllReviews();
         return ResponseEntity.ok(reviews);
     }
 
-    @GetMapping("/product/{productId}")
+    @GetMapping("/products/{productId}")
     public ResponseEntity<List<ReviewDTO>> getReviewsByProductId(@PathVariable String productId) {
         List<ReviewDTO> reviews = reviewService.getReviewsByProductId(productId);
         return ResponseEntity.ok(reviews);
     }
 
-    @GetMapping("/orderdetail")
+    @GetMapping("/order-details")
     public ResponseEntity<List<Review>> getReviewsByOrderDetailId(@RequestParam Integer orderDetailId) {
         List<Review> reviews = reviewService.getReviewsByOrderDetailId(orderDetailId);
         return ResponseEntity.ok(reviews);
