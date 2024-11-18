@@ -14,7 +14,7 @@ import java.util.List;
 
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, Integer> {
-    @Query("SELECT r.reviewId, u.fullName, r.reviewRating, r.reviewComment, r.createdAt FROM Review r " +
+    @Query("SELECT r.reviewId, u.fullName, r.reviewRating, r.reviewComment, p.productId, r.createdAt FROM Review r " +
             "left join Product p on r.product.productId = p.productId " +
             "left Join OrderDetail od on r.orderDetail.orderDetailId = od.orderDetailId " +
             "left join Order o on o.orderId = od.order.orderId " +

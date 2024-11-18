@@ -94,7 +94,8 @@ public class OrderService {
 
                         ProductVariation variation = productVariationRepository.findById(orderDetail.getVariationId()).orElse(null);
 
-                        if (variation != null) {
+                        if (variation != null && variation.getProduct() != null) {
+                            detailJson.put("productId", variation.getProduct().getProductId()); // Thêm productId
                             detailJson.put("productName", variation.getProduct().getProductName());
                             detailJson.put("color", variation.getColor().getColorName());
                             detailJson.put("size", variation.getSize().getSizeName());
@@ -103,14 +104,13 @@ public class OrderService {
                             detailJson.put("discountAmount", orderDetail.getDiscountAmount());
                             detailJson.put("productImage", variation.getProductVariationImage());
 
-                            // Lấy các review cho từng OrderDetail, bao gồm cả productId
                             List<Map<String, Object>> reviews = reviewRepository
                                     .findReviewsByOrderDetailIdAndOrderId(orderDetail.getOrderDetailId(), order.getOrderId())
                                     .stream()
                                     .map(reviewData -> {
                                         Map<String, Object> reviewJson = new HashMap<>();
                                         reviewJson.put("reviewId", reviewData[0]);
-                                        reviewJson.put("productId", reviewData[4]); // Bao gồm productId
+                                        reviewJson.put("productId", reviewData[4]);
                                         reviewJson.put("fullName", reviewData[1]);
                                         reviewJson.put("reviewRating", reviewData[2]);
                                         reviewJson.put("reviewComment", reviewData[3]);
@@ -121,6 +121,7 @@ public class OrderService {
 
                             detailJson.put("reviews", reviews);
                         } else {
+                            detailJson.put("productId", null); // Nếu không có ProductVariation hoặc Product
                             detailJson.put("productName", null);
                             detailJson.put("color", null);
                             detailJson.put("size", null);
@@ -139,6 +140,7 @@ public class OrderService {
         }
         return Optional.empty();
     }
+
 
     @Transactional
     public Optional<Map<String, Object>> getMyOrderById(String orderId, String username) {
@@ -940,8 +942,8 @@ public class OrderService {
         Map<String, Object> detailJson = new HashMap<>();
         ProductVariation variation = productVariationRepository.findById(detail.getVariationId()).orElse(null);
 
-
         if (variation != null && variation.getProduct() != null) {
+            detailJson.put("productId", variation.getProduct().getProductId()); // Đảm bảo productId được thêm vào đây
             detailJson.put("productName", variation.getProduct().getProductName());
             detailJson.put("color", variation.getColor() != null ? variation.getColor().getColorName() : null);
             detailJson.put("size", variation.getSize() != null ? variation.getSize().getSizeName() : null);
@@ -950,24 +952,23 @@ public class OrderService {
             detailJson.put("discountAmount", detail.getDiscountAmount());
             detailJson.put("productImage", variation.getProductVariationImage());
 
-            // Fetch reviews for this specific product
             List<Map<String, Object>> reviews = reviewRepository.findReviewByProductId(variation.getProduct().getProductId())
                     .stream()
                     .map(reviewData -> {
                         Map<String, Object> reviewJson = new HashMap<>();
                         reviewJson.put("reviewId", reviewData[0]);
+                        reviewJson.put("productId", reviewData[4]); // Bao gồm productId
                         reviewJson.put("fullName", reviewData[1]);
                         reviewJson.put("reviewRating", reviewData[2]);
                         reviewJson.put("reviewComment", reviewData[3]);
-                        reviewJson.put("createdAt", reviewData[4]);
+                        reviewJson.put("createdAt", reviewData[5]);
                         return reviewJson;
                     })
                     .collect(Collectors.toList());
 
-            // Add reviews to the detail JSON
             detailJson.put("reviews", reviews);
         } else {
-            // Handle the case where product variation or product is missing
+            detailJson.put("productId", null); // Nếu không có ProductVariation hoặc Product
             detailJson.put("productName", null);
             detailJson.put("color", null);
             detailJson.put("size", null);
@@ -975,12 +976,11 @@ public class OrderService {
             detailJson.put("unitPrice", detail.getUnitPrice());
             detailJson.put("discountAmount", detail.getDiscountAmount());
             detailJson.put("productImage", null);
-            detailJson.put("reviews", Collections.emptyList()); // No reviews if product is missing
+            detailJson.put("reviews", Collections.emptyList());
         }
 
         return detailJson;
     }
-
 
 
     private String generateTrackingNumber() {
