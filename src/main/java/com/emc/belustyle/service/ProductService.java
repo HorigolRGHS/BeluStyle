@@ -189,9 +189,9 @@ public class ProductService {
                 productListDTO.setProductId(productId);
                 productListDTO.setProductName((String) row[1]);
                 productListDTO.setProductDescription((String) row[2]);
-                productListDTO.setBrandId((Integer) row[3]);
+                productListDTO.setBrandId(row[3] != null ? (Integer) row[3] : -1);
                 productListDTO.setBrandName((String) row[4]);
-                productListDTO.setCategoryId((Integer) row[5]);
+                productListDTO.setCategoryId(row[5] != null ? (Integer) row[5] : -1);
                 productListDTO.setCategoryName((String) row[6]);
                 productListDTO.setProductVariationImage((String) row[7]);
                 productListDTO.setProductPrice((BigDecimal) row[8]);
