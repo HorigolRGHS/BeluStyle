@@ -10,7 +10,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ReviewDTO {
-//    private Integer orderDetailId;
+    private Integer orderDetailId;
     private Integer reviewId;
     private String productId;
     private Integer reviewRating;

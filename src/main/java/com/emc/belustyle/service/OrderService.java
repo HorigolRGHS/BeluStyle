@@ -141,7 +141,6 @@ public class OrderService {
         return Optional.empty();
     }
 
-
     @Transactional
     public Optional<Map<String, Object>> getMyOrderById(String orderId, String username) {
         Optional<Order> order = orderRepository.findOrderByUserIdAndOrderId(username, orderId);
@@ -572,9 +571,10 @@ public class OrderService {
             Order order = orderRepository.findById(orderId)
                     .orElseThrow(() -> new IllegalArgumentException("Invalid order ID: " + orderId));
 
-            if (!order.getOrderStatus().equals(Order.OrderStatus.PENDING)) {
-                throw new IllegalStateException("Cannot cancel an order that is not pending");
+            if (!(order.getOrderStatus().equals(Order.OrderStatus.PENDING) || order.getOrderStatus().equals(Order.OrderStatus.SHIPPED))) {
+                throw new IllegalStateException("Cannot cancel an order that is not pending or shipped");
             }
+
 
             // Cập nhật trạng thái đơn hàng thành "CANCELLED" và lưu vào database
             order.setOrderStatus(Order.OrderStatus.CANCELLED);

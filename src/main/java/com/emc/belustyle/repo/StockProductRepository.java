@@ -17,10 +17,10 @@ public interface StockProductRepository extends JpaRepository<StockProduct, Stoc
             "JOIN FETCH p.brand b " +
             "JOIN FETCH pv.size s " +
             "JOIN FETCH pv.color co " +
-            "WHERE sp.stock.id = :stockId")
+            "WHERE sp.stock.stockId = :stockId")
     List<StockProduct> findAllByStockId(@Param("stockId") int stockId);
 
-    @Query("SELECT sp FROM StockProduct sp join ProductVariation pv on sp.productVariation.variationId = pv.variationId WHERE pv.variationId = :variationId")
-    List<StockProduct> findStockProductByProductVariationId(@Param("variationId") int variationId);
+    @Query("SELECT SUM(sp.quantity) FROM StockProduct sp join ProductVariation pv on sp.productVariation.variationId = pv.variationId join Stock s on s.stockId = sp.stock.stockId WHERE pv.variationId = :variationId GROUP BY pv.variationId")
+    Integer findStockProductByProductVariationId(@Param("variationId") int variationId);
 }
 

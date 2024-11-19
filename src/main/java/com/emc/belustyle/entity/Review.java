@@ -23,7 +23,7 @@ public class Review {
 
     @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "order_detail_id", referencedColumnName = "order_detail_id", insertable = false, updatable = false)
+    @JoinColumn(name = "order_detail_id", referencedColumnName = "order_detail_id", updatable = false)
     private OrderDetail orderDetail;
 
     @JsonIgnore
@@ -40,6 +40,11 @@ public class Review {
     @Column(name = "created_at", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = new Date();
+    }
 
 }
 

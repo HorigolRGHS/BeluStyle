@@ -47,7 +47,7 @@ List<Review> findReviewsByOrderDetailId(@Param("orderDetailId") Integer orderDet
 
 
 
-    @Query("SELECT new com.emc.belustyle.dto.ReviewDTO(r.reviewId, r.product.productId,r.reviewRating, r.reviewComment, r.createdAt, u.username, o.orderId) " +
+    @Query("SELECT new com.emc.belustyle.dto.ReviewDTO(od.orderDetailId, r.reviewId, r.product.productId,r.reviewRating, r.reviewComment, r.createdAt, u.username, o.orderId) " +
             "FROM Review r " +
             "JOIN Product p ON r.product.productId = p.productId " +
             "JOIN OrderDetail od ON r.orderDetail.orderDetailId = od.orderDetailId " +
@@ -57,7 +57,7 @@ List<Review> findReviewsByOrderDetailId(@Param("orderDetailId") Integer orderDet
             "ORDER BY r.createdAt DESC")
     List<ReviewDTO> findReviewDetails(@Param("productId") String productId);
 
-    @Query("SELECT new com.emc.belustyle.dto.ReviewDTO(r.reviewId, r.product.productId,r.reviewRating, r.reviewComment, r.createdAt, u.username, o.orderId) " +
+    @Query("SELECT new com.emc.belustyle.dto.ReviewDTO(od.orderDetailId, r.reviewId, r.product.productId,r.reviewRating, r.reviewComment, r.createdAt, u.username, o.orderId) " +
             "FROM Review r " +
             "JOIN Product p ON r.product.productId = p.productId " +
             "JOIN OrderDetail od ON r.orderDetail.orderDetailId = od.orderDetailId " +

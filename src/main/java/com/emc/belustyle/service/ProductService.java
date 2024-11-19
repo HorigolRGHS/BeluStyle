@@ -86,12 +86,8 @@ public class ProductService {
                                 productVariationDTO.setPrice(variation.getProductPrice());
                                 productVariationDTO.setImages(variation.getProductVariationImage());
                                 // Set quantity for this variation
-                                List<StockProduct> stockProduct = stockProductRepository.findStockProductByProductVariationId(variation.getVariationId());
-                                for (StockProduct stockProduct1 : stockProduct) {
-                                    if (stockProduct1.getProductVariation().getVariationId() == variation.getVariationId()) {
-                                        productVariationDTO.setQuantity(stockProduct1.getQuantity());
-                                    }
-                                }
+                                Integer stockProduct = stockProductRepository.findStockProductByProductVariationId(variation.getVariationId());
+                                        productVariationDTO.setQuantity(stockProduct);
                                 sizeMap.put(size.getSizeName(), productVariationDTO);
                             });
                 }

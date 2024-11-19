@@ -5,6 +5,7 @@ import com.emc.belustyle.entity.Review;
 import com.emc.belustyle.service.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,8 +35,9 @@ public class ReviewRestController {
         return ResponseEntity.ok(reviews);
     }
 
+    @PreAuthorize("hasAuthority('CUSTOMER')")
     @PostMapping
-    public ResponseEntity<Review> addReview(@RequestBody Review review) {
+    public ResponseEntity<Review> addReview(@RequestBody ReviewDTO review) {
         Review createdReview = reviewService.addReview(review);
         return ResponseEntity.ok(createdReview);
     }
