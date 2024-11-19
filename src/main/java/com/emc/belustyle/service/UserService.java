@@ -136,6 +136,7 @@ public class UserService {
             user.setGoogleId(googleId);
             user.setUsername(email);
             user.setPasswordHash(password);
+            user.setPhoneNumber(user.getPhoneNumber());
             user.setEmail(email);
             user.setFullName(fullName);
             user.setUserImage(userImage);
