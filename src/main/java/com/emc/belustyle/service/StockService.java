@@ -43,10 +43,10 @@ public class StockService {
             stockDetails.setProductPrice((BigDecimal) row[4]);
             stockDetails.setProductVariationImage((String) row[5]);
             stockDetails.setProductName((String) row[6]);
-            stockDetails.setProductId((String) row[7]); // Set product ID
-            stockDetails.setBrandId((Integer) row[8]); // Set brand ID
+            stockDetails.setProductId((String) row[7]);
+            stockDetails.setBrandId((Integer) row[8]);
             stockDetails.setBrandName((String) row[9]);
-            stockDetails.setCategoryId((Integer) row[10]); // Set category ID
+            stockDetails.setCategoryId((Integer) row[10]);
             stockDetails.setCategoryName((String) row[11]);
             stockDetails.setSizeName((String) row[12]);
             stockDetails.setColorName((String) row[13]);
@@ -54,6 +54,10 @@ public class StockService {
             stockDetails.setQuantity((Integer) row[15]);
 
             stockDetailsList.add(stockDetails);
+        }
+
+        if(stockDetailsList.size() == 1 && stockDetailsList.get(0).getProductId() == null) {
+            return null;
         }
 
         return stockDetailsList;
