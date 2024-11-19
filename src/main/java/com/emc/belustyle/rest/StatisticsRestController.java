@@ -3,6 +3,7 @@ package com.emc.belustyle.rest;
 import com.emc.belustyle.dto.BestSellingMonthDTO;
 import com.emc.belustyle.dto.MonthlyRevenueDTO;
 import com.emc.belustyle.dto.OrderStatusMonthDTO;
+import com.emc.belustyle.dto.StatisticsDTO;
 import com.emc.belustyle.service.StatisticsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -70,6 +71,12 @@ public class StatisticsRestController {
     public ResponseEntity<List<OrderStatusMonthDTO>> getOrderStatus(@RequestParam String month) {
         List<OrderStatusMonthDTO> results = statisticsService.getOrderStatusByMonth(month);
         return ResponseEntity.ok(results);
+    }
+
+    @GetMapping()
+    public ResponseEntity<StatisticsDTO> getStatistics(@RequestParam String month) {
+        StatisticsDTO statistics = statisticsService.getStatistics(month);
+        return ResponseEntity.ok(statistics);
     }
 
 }

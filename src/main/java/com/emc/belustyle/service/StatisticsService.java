@@ -1,8 +1,6 @@
 package com.emc.belustyle.service;
 
-import com.emc.belustyle.dto.BestSellingMonthDTO;
-import com.emc.belustyle.dto.MonthlyRevenueDTO;
-import com.emc.belustyle.dto.OrderStatusMonthDTO;
+import com.emc.belustyle.dto.*;
 import com.emc.belustyle.repo.BrandRepository;
 import com.emc.belustyle.repo.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -70,5 +69,33 @@ public class StatisticsService {
                 (String) result[0], // orderStatus
                 ((Number) result[1]).intValue() // totalOrders
         )).collect(Collectors.toList());
+    }
+
+    public StatisticsDTO getStatistics(String month) {
+        // Revenue
+        List<Object[]> revenueData = orderRepository.getRevenueByMonth();
+        BigDecimal revenue = revenueData.stream()
+                .filter(data -> data[0].equals(month))
+                .map(data -> (BigDecimal) data[1])
+                .findFirst()
+                .orElse(BigDecimal.ZERO);
+
+        // Order Status
+        List<Object[]> orderStatusData = orderRepository.getOrderStatusByMonth();
+        Map<String, Long> orderStatusMap = orderStatusData.stream()
+                .filter(data -> data[0].equals(month))
+                .collect(Collectors.toMap(
+                        data -> (String) data[1],
+                        data -> ((Number) data[2]).longValue()
+                ));
+
+        // Best-Selling Products
+        List<Object[]> bestSellingData = orderRepository.getBestSellingProducts();
+        List<ProductStatisticsDTO> bestSellingProducts = bestSellingData.stream()
+                .map(data -> new ProductStatisticsDTO((String) data[0], (String) data[1], ((Number) data[2]).intValue()))
+                .collect(Collectors.toList());
+
+        // Aggregate into DTO
+        return new StatisticsDTO(revenue, orderStatusMap, bestSellingProducts);
     }
 }

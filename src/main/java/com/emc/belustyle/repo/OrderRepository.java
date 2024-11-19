@@ -111,4 +111,52 @@ public interface OrderRepository extends JpaRepository<Order, String>, JpaSpecif
     """, nativeQuery = true)
     List<Object[]> findOrderStatusByMonth(@Param("month") String month);
 
+    @Query(value = """
+        SELECT 
+            YEAR(o.order_date) AS year,
+            MONTH(o.order_date) AS month,
+            SUM(o.total_amount) AS totalAmount
+        FROM `order` o
+        WHERE o.order_status = 'COMPLETED'
+        GROUP BY YEAR(o.order_date), MONTH(o.order_date)
+        ORDER BY year, month
+        """, nativeQuery = true)
+    List<Object[]> getRevenueByMonth();
+
+    @Query(value = """
+    SELECT 
+        o.order_status AS orderStatus, 
+        COUNT(o.order_id) AS totalOrders
+    FROM 
+        `order` o
+    WHERE 
+        DATE_FORMAT(o.order_date, '%Y-%m') = :month
+    GROUP BY 
+        o.order_status
+    ORDER BY 
+        totalOrders DESC
+    """, nativeQuery = true)
+    List<Object[]> getOrderStatusByMonth();
+
+    @Query(value = """
+    SELECT 
+        p.product_id AS productId, 
+        p.product_name AS productName, 
+        SUM(od.order_quantity) AS totalQuantitySold
+    FROM 
+        `order` o
+    JOIN 
+        order_detail od ON o.order_id = od.order_id
+    JOIN 
+        product_variation pv ON od.variation_id = pv.variation_id    
+    JOIN 
+        product p ON pv.product_id = p.product_id
+    WHERE 
+        o.order_status = 'COMPLETED' AND DATE_FORMAT(o.order_date, '%Y-%m') = :month
+    GROUP BY 
+        p.product_id, p.product_name
+    ORDER BY 
+        totalQuantitySold DESC
+    """, nativeQuery = true)
+    List<Object[]> getBestSellingProducts();
 }

@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductService {
@@ -227,4 +228,21 @@ public class ProductService {
         return productRepository.save(product);
     }
 
+    public List<ProductVariationCheckDTO> checkProductVariations(String productId) {
+        List<ProductVariation> variations = productVariationRepository.findByProductId(productId);
+
+        if (variations.isEmpty()) {
+            throw new IllegalArgumentException("No variations found for the given product ID: " + productId);
+        }
+
+        return variations.stream().map(variation -> new ProductVariationCheckDTO(
+                variation.getVariationId(),
+                variation.getSize(),
+                variation.getColor(),
+                variation.getProductPrice(),
+                variation.getProductVariationImage()
+        )).collect(Collectors.toList());
+    }
+
 }
+

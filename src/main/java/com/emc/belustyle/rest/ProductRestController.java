@@ -1,9 +1,6 @@
 package com.emc.belustyle.rest;
 
-import com.emc.belustyle.dto.ProductDTO;
-import com.emc.belustyle.dto.ProductItemDTO;
-import com.emc.belustyle.dto.ProductListDTO;
-import com.emc.belustyle.dto.ResponseDTO;
+import com.emc.belustyle.dto.*;
 import com.emc.belustyle.dto.mapper.ProductMapper;
 import com.emc.belustyle.entity.Product;
 import com.emc.belustyle.service.BrandService;
@@ -92,4 +89,9 @@ public class ProductRestController {
         productService.deleteProduct(id);
     }
 
+    @GetMapping("/{productId}/variations")
+    public ResponseEntity<List<ProductVariationCheckDTO>> getProductVariations(@PathVariable String productId) {
+        List<ProductVariationCheckDTO> variations = productService.checkProductVariations(productId);
+        return ResponseEntity.ok(variations);
+    }
 }
