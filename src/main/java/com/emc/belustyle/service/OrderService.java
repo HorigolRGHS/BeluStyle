@@ -154,20 +154,31 @@ public class OrderService {
             // Kiểm tra danh sách chi tiết đơn hàng
             List<Map<String, Object>> orderDetailsList = order.getOrderDetails().stream().map(detail -> {
                 Map<String, Object> detailJson = new HashMap<>();
-                ProductVariation variation = productVariationRepository.findById(detail.getVariationId()).orElse(null);
 
-                // Kiểm tra nếu Product hoặc ProductVariation bị xóa hoặc null
-                if (variation == null || variation.getProduct() == null) {
-                    throw new IllegalStateException("Order contains a product or variation that has been deleted");
-                }
-
-                detailJson.put("productName", variation.getProduct().getProductName());
-                detailJson.put("color", variation.getColor() != null ? variation.getColor().getColorName() : null);
-                detailJson.put("size", variation.getSize() != null ? variation.getSize().getSizeName() : null);
+                detailJson.put("productName", "Deleted product");
+                detailJson.put("color", "Not avaiable");
+                detailJson.put("size", "Not avaiable");
                 detailJson.put("orderQuantity", detail.getOrderQuantity());
                 detailJson.put("unitPrice", detail.getUnitPrice());
                 detailJson.put("discountAmount", detail.getDiscountAmount());
-                detailJson.put("productImage", variation.getProductVariationImage());
+                detailJson.put("productImage", "Not avaiable");
+
+                if (detail.getVariationId() != null) {
+                    ProductVariation variation = productVariationRepository.findById(detail.getVariationId()).orElse(null);
+
+                    // Kiểm tra nếu Product hoặc ProductVariation bị xóa hoặc null
+                    if (variation == null || variation.getProduct() == null) {
+                        throw new IllegalStateException("Order contains a product or variation that has been deleted");
+                    }
+
+                    detailJson.put("productName", variation.getProduct().getProductName());
+                    detailJson.put("color", variation.getColor() != null ? variation.getColor().getColorName() : null);
+                    detailJson.put("size", variation.getSize() != null ? variation.getSize().getSizeName() : null);
+                    detailJson.put("orderQuantity", detail.getOrderQuantity());
+                    detailJson.put("unitPrice", detail.getUnitPrice());
+                    detailJson.put("discountAmount", detail.getDiscountAmount());
+                    detailJson.put("productImage", variation.getProductVariationImage());
+                }
                 return detailJson;
             }).collect(Collectors.toList());
 
@@ -258,21 +269,27 @@ public class OrderService {
             orderJson.put("totalAmount", order.getTotalAmount());
 
             // Chi tiết đơn hàng
-            List<Map<String, Object>> orderDetailsList = order.getOrderDetails().stream().map(detail -> {
-                Map<String, Object> detailJson = new HashMap<>();
-                ProductVariation variation = productVariationRepository.findById(detail.getVariationId()).orElse(null);
+            List<Map<String, Object>> orderDetailsList = order.getOrderDetails().stream()
+                    .map(detail -> {
+                        ProductVariation variation = productVariationRepository.findById(detail.getVariationId()).orElse(null);
 
-                if (variation != null) {
-                    detailJson.put("productName", variation.getProduct().getProductName());
-                    detailJson.put("color", variation.getColor().getColorName());
-                    detailJson.put("size", variation.getSize().getSizeName());
-                    detailJson.put("orderQuantity", detail.getOrderQuantity());
-                    detailJson.put("unitPrice", detail.getUnitPrice());
-                    detailJson.put("discountAmount", detail.getDiscountAmount());
-                    detailJson.put("productImage", variation.getProductVariationImage());
-                }
-                return detailJson;
-            }).collect(Collectors.toList());
+                        // Only include details where the variation is not null
+                        if (variation != null) {
+                            Map<String, Object> detailJson = new HashMap<>();
+                            detailJson.put("productName", variation.getProduct().getProductName());
+                            detailJson.put("color", variation.getColor().getColorName());
+                            detailJson.put("size", variation.getSize().getSizeName());
+                            detailJson.put("orderQuantity", detail.getOrderQuantity());
+                            detailJson.put("unitPrice", detail.getUnitPrice());
+                            detailJson.put("discountAmount", detail.getDiscountAmount());
+                            detailJson.put("productImage", variation.getProductVariationImage());
+                            return detailJson;
+                        }
+                        // If variation is null, return null to filter it out
+                        return null;
+                    })
+                    .filter(Objects::nonNull) // Filter out any null details
+                    .collect(Collectors.toList());
 
             orderJson.put("orderDetails", orderDetailsList);
             return orderJson;
@@ -287,9 +304,6 @@ public class OrderService {
 
         return response;
     }
-
-
-
 
     @Transactional
     public List<OrderDetailDTO> getOrderDetails(String orderId) {
