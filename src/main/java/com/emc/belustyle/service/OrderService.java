@@ -142,6 +142,51 @@ public class OrderService {
     }
 
     @Transactional
+    public Map<String, Object> getOrdersByUserIdWithValidation(String userId, Pageable pageable) {
+        Page<Order> ordersPage = orderRepository.findByUserId(userId, pageable);
+
+        List<Map<String, Object>> ordersList = ordersPage.stream().map(order -> {
+            Map<String, Object> orderJson = new HashMap<>();
+            orderJson.put("orderId", order.getOrderId());
+            orderJson.put("orderStatus", order.getOrderStatus().toString());
+            orderJson.put("totalAmount", order.getTotalAmount());
+
+            // Kiểm tra danh sách chi tiết đơn hàng
+            List<Map<String, Object>> orderDetailsList = order.getOrderDetails().stream().map(detail -> {
+                Map<String, Object> detailJson = new HashMap<>();
+                ProductVariation variation = productVariationRepository.findById(detail.getVariationId()).orElse(null);
+
+                // Kiểm tra nếu Product hoặc ProductVariation bị xóa hoặc null
+                if (variation == null || variation.getProduct() == null) {
+                    throw new IllegalStateException("Order contains a product or variation that has been deleted");
+                }
+
+                detailJson.put("productName", variation.getProduct().getProductName());
+                detailJson.put("color", variation.getColor() != null ? variation.getColor().getColorName() : null);
+                detailJson.put("size", variation.getSize() != null ? variation.getSize().getSizeName() : null);
+                detailJson.put("orderQuantity", detail.getOrderQuantity());
+                detailJson.put("unitPrice", detail.getUnitPrice());
+                detailJson.put("discountAmount", detail.getDiscountAmount());
+                detailJson.put("productImage", variation.getProductVariationImage());
+                return detailJson;
+            }).collect(Collectors.toList());
+
+            orderJson.put("orderDetails", orderDetailsList);
+            return orderJson;
+        }).collect(Collectors.toList());
+
+        // Tạo đối tượng JSON phản hồi bao gồm dữ liệu trang
+        Map<String, Object> response = new HashMap<>();
+        response.put("orders", ordersList);
+        response.put("currentPage", ordersPage.getNumber());
+        response.put("totalItems", ordersPage.getTotalElements());
+        response.put("totalPages", ordersPage.getTotalPages());
+
+        return response;
+    }
+
+
+    @Transactional
     public Optional<Map<String, Object>> getMyOrderById(String orderId, String username) {
         Optional<Order> order = orderRepository.findOrderByUserIdAndOrderId(username, orderId);
         return order.map(o -> {

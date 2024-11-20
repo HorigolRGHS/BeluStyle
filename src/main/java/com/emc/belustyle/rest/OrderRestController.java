@@ -102,7 +102,7 @@ public class OrderRestController {
         }
 
         Pageable pageable = PageRequest.of(page, size);
-        Map<String, Object> ordersResponse = orderService.getOrdersByUserId(currentUser.getUserId(), pageable);
+        Map<String, Object> ordersResponse = orderService.getOrdersByUserIdWithValidation(currentUser.getUserId(), pageable);
 
         return ResponseEntity.ok(ordersResponse);
     }
