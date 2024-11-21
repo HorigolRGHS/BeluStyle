@@ -43,6 +43,8 @@ public class OrderService {
     private final ProductVariationMapper productVariationMapper;
     private final UserRepository userRepository;
     private ReviewRepository reviewRepository;
+    private final DiscountService discountService;
+
 
     @Autowired
     public OrderService(OrderRepository orderRepository,
@@ -57,7 +59,8 @@ public class OrderService {
                         OrderDetailService orderDetailService,
                         UserRepository userRepository,
                         ProductRepository productRepository,
-                        ReviewRepository reviewRepository) { // thêm reviewRepository
+                        ReviewRepository reviewRepository,
+                        DiscountService discountService) { // thêm reviewRepository
         this.orderRepository = orderRepository;
         this.orderMapper = orderMapper;
         this.orderDetailMapper = orderDetailMapper;
@@ -70,7 +73,8 @@ public class OrderService {
         this.productVariationMapper = productVariationMapper;
         this.userRepository = userRepository;
         this.productRepository = productRepository;
-        this.reviewRepository = reviewRepository; // gán reviewRepository
+        this.reviewRepository = reviewRepository;
+        this.discountService = discountService;
     }
 
 
@@ -324,6 +328,14 @@ public class OrderService {
         Order order = initializeOrder(orderDTO);
         order.setOrderStatus(Order.OrderStatus.PENDING);
         order = orderRepository.saveAndFlush(order);
+
+        if (orderDTO.getDiscountCode() != null && !orderDTO.getDiscountCode().isEmpty()) {
+            try {
+                discountService.updateUsageLimit(orderDTO.getDiscountCode(), orderDTO.getUserId());
+            } catch (Exception e) {
+                throw new IllegalStateException("Failed to apply discount: " + e.getMessage());
+            }
+        }
 
         // 3. Gán OrderId vào OrderDetail và lưu OrderDetail vào database
         List<OrderDetail> orderDetails = saveOrderDetails(order, orderDTO);

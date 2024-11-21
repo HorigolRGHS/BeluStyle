@@ -15,7 +15,11 @@ import java.util.Optional;
 @Repository
 public interface DiscountRepository extends JpaRepository<Discount, Integer> {
 
+
     Optional<Discount> findByDiscountCode(String discountCode);
+
+
+    // Optional<Discount> findByCode(String code);
 
     Page<Discount> findAllByDiscountStatus(Discount.DiscountStatus status, Pageable pageable);
 
@@ -32,6 +36,4 @@ public interface DiscountRepository extends JpaRepository<Discount, Integer> {
             "LEFT JOIN UserDiscount ud ON d.discountId = ud.discount.discountId " +
             "WHERE ud.id.userId = :userId")
     List<Object[]> findDiscountsWithUsageCountByUserId(@Param("userId") String userId);
-
-
 }

@@ -2,6 +2,8 @@ package com.emc.belustyle.repo;
 
 import com.emc.belustyle.entity.UserDiscount;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -19,4 +21,12 @@ public interface UserDiscountRepository extends JpaRepository<UserDiscount, Inte
     List<UserDiscount> findAllByUser_Username(String username);
 
     Optional<UserDiscount> findByUser_UserIdAndDiscount_DiscountId(String userId, Integer discountId);
+
+    @Query("SELECT COUNT(ud) FROM UserDiscount ud WHERE ud.id.userId = :userId AND ud.id.discountId = :discountId")
+    int countByUserIdAndDiscountId(@Param("userId") String userId, @Param("discountId") Integer discountId);
+
+    @Query("SELECT COUNT(ud) FROM UserDiscount ud WHERE ud.discount.discountId = :discountId")
+    int countByDiscountId(@Param("discountId") Integer discountId);
+
+
 }

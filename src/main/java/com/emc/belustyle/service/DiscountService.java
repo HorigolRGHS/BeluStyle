@@ -69,6 +69,17 @@ public class DiscountService {
 
     @Transactional
     public DiscountDTO addDiscount(DiscountDTO discountDTO) {
+        // Kiểm tra ngày bắt đầu và kết thúc
+        if (discountDTO.getStartDate() != null && discountDTO.getEndDate() != null &&
+                discountDTO.getStartDate().after(discountDTO.getEndDate())) {
+            throw new IllegalArgumentException("Start date cannot be after end date.");
+        }
+
+        // Đặt usage_limit mặc định nếu không được cung cấp
+        if (discountDTO.getUsageLimit() == null) {
+            discountDTO.setUsageLimit(Integer.MAX_VALUE); // Không giới hạn
+        }
+
         Discount discount = convertToEntity(discountDTO);
         return convertToDTO(discountRepository.save(discount));
     }
@@ -113,15 +124,24 @@ public class DiscountService {
 
     public int checkDiscountUsage(String userId, String discountCode) {
         Optional<Discount> discountOpt = discountRepository.findByDiscountCode(discountCode);
-        if (discountOpt.isPresent()) {
-            int discountId = discountOpt.get().getDiscountId();
-            List<UserDiscount> userDiscounts = userDiscountRepository.findAllByDiscount_DiscountId(discountId);
-            return (int) userDiscounts.stream()
-                    .filter(userDiscount -> userDiscount.getId().getUserId().equals(userId))
-                    .count();
+        if (!discountOpt.isPresent()) {
+            throw new IllegalArgumentException("Discount code not found.");
         }
-        return 0;
+
+        Discount discount = discountOpt.get();
+
+        // Kiểm tra nếu discount đã được sử dụng hết
+        if (discount.getUsageLimit() == 0) {
+            throw new IllegalStateException("This discount has been fully used by all users.");
+        }
+
+        // Kiểm tra số lần sử dụng của user cụ thể
+        return userDiscountRepository
+                .findByUser_UserIdAndDiscount_DiscountId(userId, discount.getDiscountId())
+                .map(UserDiscount::getUsageCount)
+                .orElse(0); // Mặc định trả về 0 nếu user chưa từng sử dụng
     }
+
 
     @Transactional
     public void addUsersToDiscount(List<String> userIds, Integer discountId) {
@@ -166,14 +186,24 @@ public class DiscountService {
 
     public List<DiscountDTO> getDiscountsByUserId(String userId) {
         List<UserDiscount> userDiscounts = userDiscountRepository.findAllByUser_UserId(userId);
+
         return userDiscounts.stream()
                 .map(userDiscount -> {
-                    Optional<Discount> discountOpt = discountRepository.findById(userDiscount.getId().getDiscountId());
-                    return discountOpt.map(this::convertToDTO).orElse(null);
+                    Discount discount = discountRepository.findById(userDiscount.getId().getDiscountId())
+                            .orElseThrow(() -> new IllegalArgumentException("Invalid discount ID"));
+
+                    // Kiểm tra trạng thái và trả về DTO
+                    if (discount.getDiscountStatus() == Discount.DiscountStatus.EXPIRED ||
+                            discount.getDiscountStatus() == Discount.DiscountStatus.USED) {
+                        return null; // Bỏ qua các discount không hợp lệ
+                    }
+
+                    return convertToDTO(discount);
                 })
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
+
 
     public List<DiscountDTO> getDiscountsByUsername(String username) {
         List<UserDiscount> userDiscounts = userDiscountRepository.findAllByUser_Username(username);
@@ -286,6 +316,47 @@ public class DiscountService {
         }
     }
 
+    @Transactional
+    public void updateUsageLimit(String discountCode, String userId) {
+        Optional<Discount> discountOpt = discountRepository.findByDiscountCode(discountCode);
+        if (discountOpt.isPresent()) {
+            Discount discount = discountOpt.get();
+
+            // Kiểm tra nếu usageLimit > 0 thì mới giảm
+            if (discount.getUsageLimit() > 0) {
+                // Tìm hoặc tạo mới UserDiscount
+                UserDiscount userDiscount = userDiscountRepository
+                        .findByUser_UserIdAndDiscount_DiscountId(userId, discount.getDiscountId())
+                        .orElseGet(() -> {
+                            User user = userRepository.findById(userId)
+                                    .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + userId));
+                            return new UserDiscount(user, discount); // Sử dụng constructor đã định nghĩa
+                        });
+
+                // Tăng usageCount cho user
+                userDiscount.setUsageCount(userDiscount.getUsageCount() + 1);
+                userDiscount.setUsedAt(new Date()); // Cập nhật thời gian sử dụng
+                userDiscountRepository.save(userDiscount);
+
+                // Giảm usageLimit của discount
+                discount.setUsageLimit(discount.getUsageLimit() - 1);
+
+                // Nếu usageLimit đã hết, cập nhật trạng thái
+                if (discount.getUsageLimit() == 0) {
+                    discount.setDiscountStatus(Discount.DiscountStatus.USED);
+                }
+
+                discountRepository.save(discount);
+            } else {
+                throw new IllegalStateException("Discount code has been fully used.");
+            }
+        } else {
+            throw new IllegalArgumentException("Invalid discount code.");
+        }
+    }
+
+
+
 
     private DiscountDTO convertToDTO(Discount discount) {
         DiscountDTO discountDTO = new DiscountDTO(
@@ -302,13 +373,16 @@ public class DiscountService {
                 discount.getUsageLimit()
         );
 
-        // Calculate the usage count
-        List<UserDiscount> userDiscounts = userDiscountRepository.findAllByDiscount_DiscountId(discount.getDiscountId());
-        int totalUsageCount = 0;
-        for (UserDiscount userDiscount : userDiscounts) {
-            totalUsageCount += userDiscount.getUsageCount();
+        // Tính toán tổng số lần sử dụng
+        int totalUsageCount = userDiscountRepository.countByDiscountId(discount.getDiscountId());
+        discountDTO.setUsageCount(totalUsageCount);
+
+        // Cập nhật trạng thái nếu đạt giới hạn
+        if (discount.getUsageLimit() != null && totalUsageCount >= discount.getUsageLimit()) {
+            discount.setDiscountStatus(Discount.DiscountStatus.USED);
+            discountRepository.save(discount); // Lưu trạng thái mới
         }
-            discountDTO.setUsageCount(totalUsageCount);
+
         return discountDTO;
     }
 
