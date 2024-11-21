@@ -146,35 +146,28 @@ public class DiscountService {
     @Transactional
     public void addUsersToDiscount(List<String> userIds, Integer discountId) {
         Optional<Discount> discountOpt = discountRepository.findById(discountId);
-        if (discountOpt.isPresent()) {
-            Discount discount = discountOpt.get();
-            List<UserDiscount> userDiscounts = new ArrayList<>();
-
-            for (String userId : userIds) {
-                // Create UserDiscountId object using userId and discountId
-                UserDiscountId userDiscountId = new UserDiscountId(userId, discountId);
-
-                // Check if the relationship between user and discount already exists
-                Optional<UserDiscount> existingUserDiscount = userDiscountRepository.findByUser_UserIdAndDiscount_DiscountId(userId, discountId);
-                if (!existingUserDiscount.isPresent()) {
-                    UserDiscount userDiscount = new UserDiscount();
-                    userDiscount.setId(userDiscountId);
-                    userDiscount.setUser(userRepository.findById(userId).orElse(null));  // Assuming 'user' is part of the discount, or set it correctly
-                    userDiscount.setDiscount(discount);       // Associate the discount
-                    userDiscount.setUsageCount(0);
-
-                    userDiscounts.add(userDiscount);  // Collect all userDiscounts for batch saving
-                }
-            }
-
-            // Save all userDiscounts in bulk at once for better performance
-            if (!userDiscounts.isEmpty()) {
-                userDiscountRepository.saveAll(userDiscounts);
-            }
-        } else {
+        if (!discountOpt.isPresent()) {
             throw new ResourceNotFoundException("Discount not found.");
         }
+
+        Discount discount = discountOpt.get();
+        List<UserDiscount> userDiscounts = new ArrayList<>();
+
+        for (String userId : userIds) {
+            if (!userDiscountRepository.existsByUser_UserIdAndDiscount_DiscountId(userId, discountId)) {
+                User user = userRepository.findById(userId)
+                        .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + userId));
+                UserDiscount userDiscount = new UserDiscount(user, discount);
+                userDiscount.setUsageCount(1); // Mặc định 1 lần sử dụng
+                userDiscounts.add(userDiscount);
+            }
+        }
+
+        if (!userDiscounts.isEmpty()) {
+            userDiscountRepository.saveAll(userDiscounts);
+        }
     }
+
 
 
     @Transactional
@@ -318,43 +311,44 @@ public class DiscountService {
 
     @Transactional
     public void updateUsageLimit(String discountCode, String userId) {
+        // Tìm mã giảm giá
         Optional<Discount> discountOpt = discountRepository.findByDiscountCode(discountCode);
-        if (discountOpt.isPresent()) {
-            Discount discount = discountOpt.get();
-
-            // Kiểm tra nếu usageLimit > 0 thì mới giảm
-            if (discount.getUsageLimit() > 0) {
-                // Tìm hoặc tạo mới UserDiscount
-                UserDiscount userDiscount = userDiscountRepository
-                        .findByUser_UserIdAndDiscount_DiscountId(userId, discount.getDiscountId())
-                        .orElseGet(() -> {
-                            User user = userRepository.findById(userId)
-                                    .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + userId));
-                            return new UserDiscount(user, discount); // Sử dụng constructor đã định nghĩa
-                        });
-
-                // Tăng usageCount cho user
-                userDiscount.setUsageCount(userDiscount.getUsageCount() + 1);
-                userDiscount.setUsedAt(new Date()); // Cập nhật thời gian sử dụng
-                userDiscountRepository.save(userDiscount);
-
-                // Giảm usageLimit của discount
-                discount.setUsageLimit(discount.getUsageLimit() - 1);
-
-                // Nếu usageLimit đã hết, cập nhật trạng thái
-                if (discount.getUsageLimit() == 0) {
-                    discount.setDiscountStatus(Discount.DiscountStatus.USED);
-                }
-
-                discountRepository.save(discount);
-            } else {
-                throw new IllegalStateException("Discount code has been fully used.");
-            }
-        } else {
-            throw new IllegalArgumentException("Invalid discount code.");
+        if (!discountOpt.isPresent()) {
+            throw new IllegalArgumentException("Discount code not found.");
         }
-    }
 
+        Discount discount = discountOpt.get();
+
+        // Kiểm tra nếu `usage_limit` của mã giảm giá đã hết
+        if (discount.getUsageLimit() <= 0) {
+            throw new IllegalStateException("This discount has been fully used.");
+        }
+
+        // Kiểm tra `UserDiscount` của người dùng hiện tại
+        UserDiscount userDiscount = userDiscountRepository
+                .findByUser_UserIdAndDiscount_DiscountId(userId, discount.getDiscountId())
+                .orElseThrow(() -> new IllegalStateException("User has not been assigned this discount."));
+
+        // Kiểm tra nếu `usage_count` của người dùng đã hết
+        if (userDiscount.getUsageCount() <= 0) {
+            throw new IllegalStateException("User has already used this discount.");
+        }
+
+        // Giảm `usage_count` của người dùng
+        userDiscount.setUsageCount(userDiscount.getUsageCount() - 1);
+        userDiscount.setUsedAt(new Date());
+        userDiscountRepository.save(userDiscount);
+
+        // Giảm `usage_limit` tổng quan của mã giảm giá
+        if (discount.getUsageLimit() > 0) {
+            discount.setUsageLimit(discount.getUsageLimit() - 1);
+            if (discount.getUsageLimit() == 0) {
+                discount.setDiscountStatus(Discount.DiscountStatus.USED);
+            }
+        }
+
+        discountRepository.save(discount);
+    }
 
 
 

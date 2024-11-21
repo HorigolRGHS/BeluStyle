@@ -12,6 +12,8 @@ import java.util.Optional;
 @Repository
 public interface UserDiscountRepository extends JpaRepository<UserDiscount, Integer> {
 
+    boolean existsByUser_UserIdAndDiscount_DiscountId(String userId, Integer discountId);
+
     List<UserDiscount> findAllByDiscount_DiscountId(int discountId);
 
     UserDiscount findByDiscount_DiscountId(int discountId);
