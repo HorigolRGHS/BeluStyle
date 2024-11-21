@@ -109,7 +109,7 @@ public class OrderRestController {
 
 
 
-    @PreAuthorize("permitAll()")
+    @PreAuthorize("hasAuthority('CUSTOMER')")
     @PostMapping
     public ResponseEntity<Map<String, Object>> createOrder(@RequestBody OrderDTO orderDTO, HttpServletRequest request) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -131,7 +131,7 @@ public class OrderRestController {
     }
 
 
-    @PreAuthorize("permitAll()")
+    @PreAuthorize("hasAuthority('CUSTOMER')")
     @PostMapping("/{orderId}/payment-callback")
     public ResponseEntity<ResponseDTO> handlePaymentCallback(
             @PathVariable String orderId,

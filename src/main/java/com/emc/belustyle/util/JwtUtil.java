@@ -36,6 +36,7 @@ public class JwtUtil {
                 .claim("email", user.getEmail())
                 .claim("image", user.getUserImage())
                 .claim("address", user.getUserAddress())
+                .claim("enabled", user.isEnabled())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .signWith(SECRET_KEY)
@@ -55,7 +56,7 @@ public class JwtUtil {
 
     public boolean isValidToken(String token, UserDetails userDetails) {
         final String username = extractSubject(token);
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token) && userDetails.isEnabled());
     }
 
     public boolean isTokenExpired(String token){
