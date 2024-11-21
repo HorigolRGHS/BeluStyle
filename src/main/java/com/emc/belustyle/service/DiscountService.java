@@ -303,23 +303,39 @@ public class DiscountService {
 
     @Transactional
     public void assignNewUserDiscount(String userId) {
-        Optional<Discount> newUserDiscount = discountRepository.findByDiscountCode("BELUSTYLEGIFT");
+  
+        Optional<Discount> newUserDiscountOpt = discountRepository.findByDiscountCode("BELUSTYLEGIFT");
 
-        if (newUserDiscount.isPresent()) {
-            Discount discount = newUserDiscount.get();
-            Optional<UserDiscount> existingUserDiscount = userDiscountRepository.findByUser_UserIdAndDiscount_DiscountId(userId, discount.getDiscountId());
+        if (newUserDiscountOpt.isPresent()) {
+            Discount discount = newUserDiscountOpt.get();
+
+
+            Optional<UserDiscount> existingUserDiscount = userDiscountRepository
+                    .findByUser_UserIdAndDiscount_DiscountId(userId, discount.getDiscountId());
 
             if (!existingUserDiscount.isPresent()) {
+
+                User user = userRepository.findById(userId)
+                        .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + userId));
+
                 UserDiscount userDiscount = new UserDiscount();
                 userDiscount.setId(new UserDiscount.UserDiscountId(userId, discount.getDiscountId()));
-                userDiscount.setUser(userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found")));
+                userDiscount.setUser(user);
                 userDiscount.setDiscount(discount);
-                userDiscount.setUsageCount(0);
+
+                userDiscount.setUsageCount(1);
 
                 userDiscountRepository.save(userDiscount);
+
+                discount.setUsageLimit((discount.getUsageLimit() == null ? 0 : discount.getUsageLimit()) + 1);
+
+                discountRepository.save(discount);
             }
+        } else {
+            throw new ResourceNotFoundException("Default discount BELUSTYLEGIFT not found.");
         }
     }
+
 
     @Transactional
     public void updateUsageLimit(String discountCode, String userId) {
