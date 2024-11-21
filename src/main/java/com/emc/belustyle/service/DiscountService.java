@@ -199,13 +199,25 @@ public class DiscountService {
 
 
     public List<DiscountDTO> getDiscountsByUsername(String username) {
+        // Lấy danh sách UserDiscount liên kết với username
         List<UserDiscount> userDiscounts = userDiscountRepository.findAllByUser_Username(username);
+
         return userDiscounts.stream()
                 .map(userDiscount -> {
+                    // Tìm Discount tương ứng
                     Optional<Discount> discountOpt = discountRepository.findById(userDiscount.getId().getDiscountId());
-                    return discountOpt.map(this::convertToDTO).orElse(null);
+                    if (discountOpt.isPresent()) {
+                        Discount discount = discountOpt.get();
+                        DiscountDTO discountDTO = convertToDTO(discount);
+
+                        // Gán usageCount chỉ cho người dùng cụ thể
+                        discountDTO.setUsageCount(userDiscount.getUsageCount());
+
+                        return discountDTO;
+                    }
+                    return null;
                 })
-                .filter(Objects::nonNull)
+                .filter(Objects::nonNull) // Loại bỏ các giá trị null (nếu có lỗi khi tìm discount)
                 .collect(Collectors.toList());
     }
 
